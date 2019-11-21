@@ -6,13 +6,23 @@ module.exports = (connection, Sequelize) => connection.define(
       primaryKey: true,
       autoIncrement: true,
     },
+    showId: {
+      type: Sequelize.INTEGER,
+      foreignKey: true,
+    },
+    weekId: {
+      type: Sequelize.INTEGER,
+      foreignKey: true,
+    },
     episodeDiscussionId: {
       type: Sequelize.INTEGER,
       foreignKey: true,
+      unique: true
     },
     episodeDiscussionResultId: {
       type: Sequelize.INTEGER,
       foreignKey: true,
+      unique: true
     },
     createdAt: {
       allowNull: false,

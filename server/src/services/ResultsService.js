@@ -4,6 +4,7 @@ const axios = require('axios')
 const cheerio = require('cheerio')
 const {
   Week,
+  EpisodeResultLink,
   EpisodeDiscussion,
   EpisodeDiscussionResult,
   MALSnapshot,
@@ -39,40 +40,57 @@ async function scrapePollData(url) {
  * @returns {Array} An array of all the results for a given week
  */
 service.getResultsByWeek = async (id) => {
-  const week = await Week.findOne({ where: { id }, order: [[EpisodeDiscussionResult, 'ups', 'DESC']], include: [{ model: EpisodeDiscussionResult, include: [MALSnapshot, { model: Show, include: [Asset] }, EpisodeDiscussion] }] })
-  const prevWeek = moment(new Date(week.start_dt)).subtract(7, 'days').format('YYYY-MM-DD HH:mm:ss')
-  const previusWeeksResults = await Week.findOne({ where: { [Op.and]: { start_dt: { [Op.lte]: prevWeek }, end_dt: { [Op.gte]: prevWeek } } }, order: [[EpisodeDiscussionResult, 'ups', 'DESC']], include: [{ model: EpisodeDiscussionResult, include: [MALSnapshot, EpisodeDiscussion] }] })
-  const results = []
-  for (const result of week.EpisodeDiscussionResults) {
-    results.push({
-      current: result.dataValues,
-      currentMal: result.MALSnapshot.dataValues,
-      currentRal: {},
-      currentPoll: null,
-      discussion: result.EpisodeDiscussion.dataValues,
-      show: result.Show.dataValues,
+  //order: [[EpisodeDiscussionResult, 'ups', 'DESC']], include: [{ model: EpisodeDiscussionResult, include: [MALSnapshot, { model: Show, include: [Asset] }, EpisodeDiscussion] }] 
+  const week = await Week.findOne({ where: { id }})
+  const resultLinks = await EpisodeResultLink.findAll({where: {weekId: week.id, episodeDiscussionResultId: {[Op.ne]: null}}, include: [ {model: Show, include: [Asset]}, EpisodeDiscussion, { model: EpisodeDiscussionResult, include: [MALSnapshot] }]})
+  const prevWeekDt = moment(new Date(week.start_dt)).subtract(7, 'days').format('YYYY-MM-DD HH:mm:ss')
+  const prevWeek = await Week.findOne({ where: { [Op.and]: { start_dt: { [Op.lte]: prevWeekDt }, end_dt: { [Op.gte]: prevWeekDt } } }})
+  const previousResultLinks = await EpisodeResultLink.findAll({where: {weekId: prevWeek.id}, include: [ {model: Show, include: [Asset]}, EpisodeDiscussion, { model: EpisodeDiscussionResult, include: [MALSnapshot] }]})
+  
+  const resultObjects = {}
+  const previous = {}
+  for(const rl of resultLinks) {
+    resultObjects[rl.Show.id] = {
+      show: rl.Show.dataValues,
       asset: {
-        season: result.Show.Assets[0].season,
+        season: rl.Show.Assets[0].season,
       },
-      previous: {},
-      previousMal: {},
-      previousPoll: null,
-    })
-  }
-  if (previusWeeksResults) {
-    let prevPosition = 0
-    for (const preResult of previusWeeksResults.EpisodeDiscussionResults) {
-      for (const result of results) {
-        if (result.current.showId === preResult.showId) {
-          result.previous = preResult.dataValues
-          result.previous.position = prevPosition
-          result.previousMal = preResult.MALSnapshot.dataValues
+      result: rl.EpisodeDiscussionResult.dataValues,
+      discussion: rl.EpisodeDiscussion.dataValues,
+      mal: rl.EpisodeDiscussionResult.MALSnapshot.dataValues,
+      ral: {},
+      poll: {},
+      previous: {}
+    }
+    // Sort the previous results to get their previous positions
+    previousResultLinks.sort((a, b) => b.EpisodeDiscussionResult.ups - a.EpisodeDiscussionResult.ups)
+    const prevPosition = 0
+    for(const prl of previousResultLinks) {
+      if (rl.Show.id === prl.Show.id) {
+        resultObjects[rl.Show.id].previous = {
+          show: prl.Show.dataValues,
+          asset: {
+            season: prl.Show.Assets[0].season,
+          },
+          result: prl.EpisodeDiscussionResult.dataValues,
+          discussion: prl.EpisodeDiscussion.dataValues,
+          mal: prl.EpisodeDiscussionResult.MALSnapshot.dataValues,
+          ral: {},
+          poll: {},
+          position: prevPosition
         }
       }
       prevPosition += 1
     }
   }
-  return results
+  const resultsArray = []
+  for (const key of Object.keys(resultObjects)) {
+    resultsArray.push(resultObjects[key])
+  }
+  // Sort by karma
+  resultsArray.sort((a, b) => b.result.ups - a.result.ups)
+
+  return resultsArray
 }
 
 service.createDiscussionResult = async (link) => {
