@@ -44,13 +44,16 @@ service.getResultsByWeek = async (id) => {
   const week = await Week.findOne({ where: { id }})
   const resultLinks = await EpisodeResultLink.findAll({where: {weekId: week.id, episodeDiscussionResultId: {[Op.ne]: null}}, include: [ {model: Show, include: [Asset]}, EpisodeDiscussion, { model: EpisodeDiscussionResult, include: [MALSnapshot] }]})
   const prevWeekDt = moment(new Date(week.start_dt)).subtract(7, 'days').format('YYYY-MM-DD HH:mm:ss')
+  
   const prevWeek = await Week.findOne({ where: { [Op.and]: { start_dt: { [Op.lte]: prevWeekDt }, end_dt: { [Op.gte]: prevWeekDt } } }})
-  const previousResultLinks = await EpisodeResultLink.findAll({where: {weekId: prevWeek.id}, include: [ {model: Show, include: [Asset]}, EpisodeDiscussion, { model: EpisodeDiscussionResult, include: [MALSnapshot] }]})
+  let previousResultLinks
+  if (prevWeek)
+    previousResultLinks = await EpisodeResultLink.findAll({where: {weekId: prevWeek.id}, include: [ {model: Show, include: [Asset]}, EpisodeDiscussion, { model: EpisodeDiscussionResult, include: [MALSnapshot] }]})
   
   const resultObjects = {}
   const previous = {}
   for(const rl of resultLinks) {
-    resultObjects[rl.Show.id] = {
+    resultObjects[rl.showId] = {
       show: rl.Show.dataValues,
       asset: {
         season: rl.Show.Assets[0].season,
@@ -62,25 +65,27 @@ service.getResultsByWeek = async (id) => {
       poll: {},
       previous: {}
     }
-    // Sort the previous results to get their previous positions
-    previousResultLinks.sort((a, b) => b.EpisodeDiscussionResult.ups - a.EpisodeDiscussionResult.ups)
-    const prevPosition = 0
-    for(const prl of previousResultLinks) {
-      if (rl.Show.id === prl.Show.id) {
-        resultObjects[rl.Show.id].previous = {
-          show: prl.Show.dataValues,
-          asset: {
-            season: prl.Show.Assets[0].season,
-          },
-          result: prl.EpisodeDiscussionResult.dataValues,
-          discussion: prl.EpisodeDiscussion.dataValues,
-          mal: prl.EpisodeDiscussionResult.MALSnapshot.dataValues,
-          ral: {},
-          poll: {},
-          position: prevPosition
+    if (previousResultLinks) {
+      // Sort the previous results to get their previous positions
+      previousResultLinks.sort((a, b) => b.EpisodeDiscussionResult.ups - a.EpisodeDiscussionResult.ups)
+      let prevPosition = 0
+      for(const prl of previousResultLinks) {
+        if (rl.showId === prl.showId) {
+          resultObjects[rl.showId].previous = {
+            show: prl.Show.dataValues,
+            asset: {
+              season: prl.Show.Assets[0].season,
+            },
+            result: prl.EpisodeDiscussionResult.dataValues,
+            discussion: prl.EpisodeDiscussion.dataValues,
+            mal: prl.EpisodeDiscussionResult.MALSnapshot.dataValues,
+            ral: {},
+            poll: {},
+            position: prevPosition
+          }
         }
+        prevPosition += 1
       }
-      prevPosition += 1
     }
   }
   const resultsArray = []
@@ -94,12 +99,13 @@ service.getResultsByWeek = async (id) => {
 }
 
 service.createDiscussionResult = async (link) => {
+  console.log('creating result')
   const discussion = link.EpisodeDiscussion
-  const malDetails = await findAnime(discussion.Show.mal_id)
+  const malDetails = await findAnime(link.Show.mal_id)
   if (malDetails) {
     const malSnapshot = await MALSnapshot.create({
-      showId: discussion.Show.id,
-      weekId: discussion.Week.id,
+      showId: link.Show.id,
+      weekId: link.Week.id,
       score: malDetails.score,
       scored_by: malDetails.scored_by,
       rank: malDetails.rank,
@@ -116,8 +122,8 @@ service.createDiscussionResult = async (link) => {
     const edr = await EpisodeDiscussionResult.create({
       episodeDiscussionId: discussion.id,
       malSnapshotId: malSnapshot.id,
-      weekId: discussion.Week.id,
-      showId: discussion.Show.id,
+      weekId: link.Week.id,
+      showId: link.Show.id,
       ups: post.ups,
       comment_count: post.num_comments,
       poll_results: pollDetails,
@@ -125,7 +131,7 @@ service.createDiscussionResult = async (link) => {
     link.episodeDiscussionResultId = edr.id
     link.save()
   } else {
-    logger.info(`could not get MAL Details for Show ID: ${discussion.Show.id}`)
+    logger.info(`could not get MAL Details for Show ID: ${link.Show.id}`)
   }
 }
 

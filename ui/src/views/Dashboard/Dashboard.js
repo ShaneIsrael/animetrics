@@ -36,6 +36,7 @@ function createResults(results, setHandler) {
   try {
     if (!results.length > 0) return []
     const render = results.map((res, index) => {
+      console.log(res)
       const posPrevious = res.previous ? res.previous.position : null
       return <AnimeRankingResult 
         key={5000+index}
@@ -45,11 +46,11 @@ function createResults(results, setHandler) {
         pos={index} 
         posPrevious={posPrevious}
         score={res.result.ups}
-        scorePrevious={res.previous.result.ups}
+        scorePrevious={res.previous.result ? res.previous.result.ups : null}
         commentCount={res.result.comment_count}
         episode={res.discussion.episode}
         malScore={res.mal.score.toFixed(2)}
-        malScorePrevious={res.result.previous.mal.score}
+        malScorePrevious={res.previous.result ? res.previous.mal.score : null}
         ralScore={9.12}
         ralScorePrevious={9.12}
         pollScore={8.70}

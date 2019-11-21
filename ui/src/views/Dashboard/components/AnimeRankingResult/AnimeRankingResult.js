@@ -59,7 +59,7 @@ const AnimeRankingResult = (props) => {
     setAnimeSelection({id, showId, banner, title})
   }
   return (
-    <div onClick={() => handleSelection(result.id, result.showId, banner, title)} style={{margin: 2, flexGrow: 0, cursor: 'pointer'}}>
+    <div onClick={() => handleSelection(result.id, result.show.id, banner, title)} style={{margin: 2, flexGrow: 0, cursor: 'pointer'}}>
       <div className={clsx(classes.root, 'grow')}>
         <Paper className={classes.paper} square={true}>
           <Grid container>

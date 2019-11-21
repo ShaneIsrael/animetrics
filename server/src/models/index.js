@@ -74,12 +74,12 @@ db.EpisodeDiscussionResult.hasOne(db.EpisodeDiscussion, {
 })
 db.EpisodeDiscussion.hasOne(db.EpisodeDiscussionResult)
 
-db.EpisodeDiscussion.hasOne(db.EpisodeResultLink)
-db.EpisodeDiscussionResult.hasOne(db.EpisodeResultLink)
 db.Show.hasMany(db.EpisodeResultLink)
 db.Week.hasMany(db.EpisodeResultLink)
 db.EpisodeResultLink.belongsTo(db.Show)
 db.EpisodeResultLink.belongsTo(db.Week)
+db.EpisodeResultLink.belongsTo(db.EpisodeDiscussion)
+db.EpisodeResultLink.belongsTo(db.EpisodeDiscussionResult)
 
 // db.EpisodeDiscussionResult.belongsTo(db.EpisodeDiscussion, {
 //   foreignKey: 'id',

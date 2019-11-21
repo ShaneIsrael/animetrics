@@ -29,7 +29,7 @@ async function generateDiscussionResults() {
           [Op.eq]: null,
         },
       },
-      include: [{ model: EpisodeDiscussion, include: [Show, Week] }],
+      include: [EpisodeDiscussion, Show, Week],
     },
   )
   for (const link of links) {
@@ -57,24 +57,28 @@ async function getDiscussionsAndPopulate() {
   }
 }
 
-// // Every Hour | Get Episode Discussions and populate data
-// cron.schedule('0 0 * * * *', async () => {
-//   getDiscussionsAndPopulate()
-// })
+// Every Hour | Get Episode Discussions and populate data
+cron.schedule('0 0 * * * *', async () => {
+  getDiscussionsAndPopulate()
+})
 
-// // Every 6 Hours | Re-auth with TvDb
-// cron.schedule('0 0 */6 * * *', async () => {
-//   try {
-//     await authTvDb()
-//   } catch (err) {
-//     logger.error(err)
-//   }
-// })
+// Every 6 Hours | Re-auth with TvDb
+cron.schedule('0 0 */6 * * *', async () => {
+  try {
+    await authTvDb()
+  } catch (err) {
+    logger.error(err)
+  }
+})
 
 async function init() {
-  logger.info('beginning test')
-  await authTvDb()
-  await getDiscussionsAndPopulate()
-  logger.info('-- test finished')
+  try {
+    logger.info('beginning test')
+    await authTvDb()
+    await getDiscussionsAndPopulate()
+    logger.info('-- test finished')
+  } catch(err) {
+    logger.error(err)
+  }
 }
 init()
