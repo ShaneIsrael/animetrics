@@ -1,0 +1,15 @@
+{
+  "development": {
+    "dialect": "sqlite",
+    "storage": "/Users/sisrael/git/anime-episode-ranking/server/src/databases/dev.db",
+    "logging": false
+  },
+  "test": {
+    "dialect": "sqlite",
+    "storage": "databases/test.db"
+  },
+  "production": {
+    "dialect": "sqlite",
+    "storage": "databases/prod.db"
+  }
+}

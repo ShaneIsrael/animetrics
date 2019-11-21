@@ -1,0 +1,4 @@
+server/.vscode
+ui/.vscode
+
+node_modules/
