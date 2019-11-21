@@ -9,9 +9,9 @@ module.exports = {
       API_KEY: 'A2I7IOGLBSTNR757',
     },
     assets: {
-      imagesRootPath: '/Users/sisrael/build/public/images',
-      detectFacePath: '/Users/sisrael/git/anime-episode-ranking/server/src/tools/detectFace.py',
-      detectFaceConfPath: '/Users/sisrael/git/anime-episode-ranking/server/src/config/libcascade_animeface.xml',
+      imagesRootPath: '/mnt/c/git/animetrics/ui/build/images',
+      detectFacePath: '/mnt/c/git/animetrics/server/src/tools/detectFace.py',
+      detectFaceConfPath: '/mnt/c/git/animetrics/server/src/config/libcascade_animeface.xml',
     },
   },
 }

@@ -2,3 +2,6 @@ server/.vscode
 ui/.vscode
 
 node_modules/
+
+package-lock.json
+ui/build

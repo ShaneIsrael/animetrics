@@ -15,7 +15,7 @@ module.exports = {
       .search({
         query: '%episode%discussion',
         limit: 1000,
-        time: 'week',
+        time: 'month',
         sort: 'relevance',
       })
     return posts

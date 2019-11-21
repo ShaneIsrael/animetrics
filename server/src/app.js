@@ -32,6 +32,7 @@ app.use(cors())
 // Routes
 require('./routes/WeeklyResults')(app)
 require('./routes/Details')(app)
+require('./cron')
 
 // Error Handler Middleware
 app.use((err, req, res, next) => {
