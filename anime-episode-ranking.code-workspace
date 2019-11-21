@@ -1,0 +1,26 @@
+{
+	"folders": [
+		{
+			"path": "server"
+		},
+		{
+			"path": "ui"
+		}
+	],
+	"settings": {
+		"editor.detectIndentation": false,
+		"editor.tabSize": 2,
+		"editor.insertSpaces": true,
+    "prettier.semi": false,
+    "sqltools.connections": [
+      {
+        "database": "${workspaceFolder:server}/src/databases/dev.db",
+        "dialect": "SQLite",
+        "name": "dev"
+      }
+    ],
+    "sqltools.useNodeRuntime": true
+	},
+	"launch": {
+	},
+}
