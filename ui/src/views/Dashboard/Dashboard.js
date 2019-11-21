@@ -35,21 +35,21 @@ const useStyles = makeStyles(theme => ({
 function createResults(results, setHandler) {
   try {
     if (!results.length > 0) return []
-    const render = results.map((result, index) => {
-      const posPrevious = result.previous ? result.previous.position : null
+    const render = results.map((res, index) => {
+      const posPrevious = res.previous ? res.previous.position : null
       return <AnimeRankingResult 
         key={5000+index}
-        result={result.current}
-        title={result.show.title}
-        banner={`${result.show.id}_${result.asset.season}.png`} 
+        result={res.result}
+        title={res.show.title}
+        banner={`${res.show.id}_${res.asset.season}.png`} 
         pos={index} 
         posPrevious={posPrevious}
-        score={result.current.ups}
-        scorePrevious={result.previous.ups}
-        commentCount={result.current.comment_count}
-        episode={result.discussion.episode}
-        malScore={result.currentMal.score.toFixed(2)}
-        malScorePrevious={result.previousMal.score}
+        score={res.result.ups}
+        scorePrevious={res.previous.result.ups}
+        commentCount={res.result.comment_count}
+        episode={res.discussion.episode}
+        malScore={res.mal.score.toFixed(2)}
+        malScorePrevious={res.result.previous.mal.score}
         ralScore={9.12}
         ralScorePrevious={9.12}
         pollScore={8.70}

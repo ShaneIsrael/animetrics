@@ -132,6 +132,8 @@ service.digestDiscussionPost = async (post) => {
   const episodeResultLink = await EpisodeResultLink.findOne({ where: { episodeDiscussionId: discussion.id } })
   if (!episodeResultLink) {
     await EpisodeResultLink.create({
+      showId: showRow.id,
+      weekId: weekRow.id,
       episodeDiscussionId: discussion.id,
     })
   }
