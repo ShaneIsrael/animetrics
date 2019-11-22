@@ -71,7 +71,7 @@ service.digestDiscussionPost = async (post) => {
   if (post.link_flair_text && post.link_flair_text !== 'Episode') return
   if (post.title.indexOf('Megathread') !== -1) return
   if (post.title.indexOf('- Episode ') === -1) return
-  logger.info(`Digesting: ${post.title}`)
+  // logger.info(`Digesting: ${post.title}`)
   const seasonSplit = post.title.split(/ Season /)[1];
   const seasonNumber = seasonSplit ? seasonSplit.split(' ')[0] : 1
   const showTitle = post.title.split(' - Episode')[0].split(' Season')[0]
@@ -122,11 +122,12 @@ service.digestDiscussionPost = async (post) => {
     })
   }
   if (!discussion) {
+    console.log(showTitle, seasonNumber, episodeNumber)
     discussion = await EpisodeDiscussion.create({
       showId: showRow.id,
       weekId: weekRow.id,
       post_id: post.id,
-      season: Number(seasonNumber),
+      season: Number(seasonNumber) ? Number(seasonNumber) : 1,
       episode: Number(episodeNumber),
       post_poll_url: pollUrl,
       post_title: post.title,

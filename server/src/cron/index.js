@@ -56,6 +56,24 @@ async function getDiscussionsAndPopulate() {
     logger.error(err)
   }
 }
+async function backPopulate() {
+  try {
+    const discussions = await fetchDiscussions.recursiveFetch(180)
+    const toDo = discussions.length
+    let at = 0
+    for (const discussion of discussions) {
+      console.log(`back populating: ${at}/${toDo}`)
+      await digestDiscussionPost(discussion)
+      at += 1
+    }
+    await updateTvDbIds()
+    await updatePosters()
+    await fetchAssets.fetch()
+    await generateDiscussionResults()
+  } catch (err) {
+    logger.error(err)
+  }
+}
 
 // Every Hour | Get Episode Discussions and populate data
 cron.schedule('0 0 * * * *', async () => {
@@ -73,10 +91,8 @@ cron.schedule('0 0 */6 * * *', async () => {
 
 async function init() {
   try {
-    logger.info('beginning test')
+    logger.info('beginning cron jobs')
     await authTvDb()
-    await getDiscussionsAndPopulate()
-    logger.info('-- test finished')
   } catch(err) {
     logger.error(err)
   }

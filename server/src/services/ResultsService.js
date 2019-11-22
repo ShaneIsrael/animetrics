@@ -99,16 +99,15 @@ service.getResultsByWeek = async (id) => {
 }
 
 service.createDiscussionResult = async (link) => {
-  console.log('creating result')
   const discussion = link.EpisodeDiscussion
   const malDetails = await findAnime(link.Show.mal_id)
   if (malDetails) {
     const malSnapshot = await MALSnapshot.create({
       showId: link.Show.id,
       weekId: link.Week.id,
-      score: malDetails.score,
+      score: malDetails.score || 0,
       scored_by: malDetails.scored_by,
-      rank: malDetails.rank,
+      rank: malDetails.rank || 0,
       episodes: malDetails.episodes,
       favorites: malDetails.favorites,
       popularity: malDetails.popularity,
