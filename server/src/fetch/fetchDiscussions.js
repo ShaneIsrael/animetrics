@@ -12,7 +12,7 @@ const r = new Snoowrap({
 
 module.exports = {
   async fetch() {
-    const posts = await ps.search('%episode%discussion%', {
+    const posts = await ps.search('episode%discussion', {
       subreddit: 'anime',
       author: 'AutoLovepon',
       after: '1d',

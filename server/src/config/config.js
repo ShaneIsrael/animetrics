@@ -1,4 +1,5 @@
 module.exports = {
+  environment: 'local',
   dev: {
     reddit: {
       CLIENT_ID: 'o1P2JRGCX5FQlA',
