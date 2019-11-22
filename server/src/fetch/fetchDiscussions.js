@@ -1,5 +1,7 @@
 const Snoowrap = require('snoowrap')
 const config = require('../config/config').dev.reddit
+const PushShift = require('../tools/pushshift-io.js')
+const ps = new PushShift('submission')
 
 const r = new Snoowrap({
   userAgent: 'search anime subreddit discussion posts',
@@ -10,6 +12,46 @@ const r = new Snoowrap({
 
 module.exports = {
   async fetch() {
+    const posts = await ps.search('%episode%discussion%', {
+      subreddit: 'anime',
+      author: 'AutoLovepon',
+      after: '1d',
+      size: 500,
+      fields: 'id,title,score,num_comments,url,selftext,created_utc,'
+    })
+    return posts
+  },
+  async recursiveFetch(days) {
+    let total = []
+    let left = days
+    let after = 0
+    let before = 0
+    let increment = 10
+    let lastIncrement = 0
+    if (days < 10) return []
+    while (left > 0) {
+      if (left >= increment) {
+        after += increment
+        before += lastIncrement
+      } else {
+        after += left
+        before += lastIncrement
+      }
+      const posts = await ps.search('episode%discussion', {
+        subreddit: 'anime',
+        author: 'AutoLovepon',
+        after: `${after}d`,
+        before: `${before}d`,
+        size: 500,
+        fields: 'id,title,score,num_comments,url,selftext,created_utc,'
+      })
+      total = [...total, ...posts]
+      lastIncrement = left >= increment ? increment : left
+      left = left - increment
+    }
+    return total
+  },
+  async fetchReddit() {
     const posts = await r
       .getSubreddit('anime')
       .search({
@@ -20,6 +62,7 @@ module.exports = {
       })
     return posts
   },
+  
   async getSubmission(id) {
     const post = await r.getSubmission(id).fetch();
     return post;

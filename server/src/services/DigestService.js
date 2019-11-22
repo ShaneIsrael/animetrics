@@ -68,7 +68,7 @@ async function searchMal(seasonNumber, showTitle) {
  * @param {Object} post A reddit discussion post object
  */
 service.digestDiscussionPost = async (post) => {
-  if (post.link_flair_text !== 'Episode') return
+  if (post.link_flair_text && post.link_flair_text !== 'Episode') return
   if (post.title.indexOf('Megathread') !== -1) return
   if (post.title.indexOf('- Episode ') === -1) return
   logger.info(`Digesting: ${post.title}`)
@@ -76,9 +76,16 @@ service.digestDiscussionPost = async (post) => {
   const seasonNumber = seasonSplit ? seasonSplit.split(' ')[0] : 1
   const showTitle = post.title.split(' - Episode')[0].split(' Season')[0]
   const episodeNumber = post.title.split('- Episode ')[1].split(' ')[0]
-  const pollUrl = post.selftext_html
+  let pollUrl = null
+  if (post.selftext && post.selftext.indexOf('Rate this episode here.') >= 0) {
+    pollUrl = post.selftext
+      .split('[Rate this episode here.](')[1]
+      .split(')')[0]
+  } else if (post.selftext_html && post.selftext_html.indexOf('>Rate') >= 0) {
+    pollUrl = post.selftext_html
     .split('">Rate')[0]
     .split('<h1><a href="')[1]
+  }
 
   let showRow = await Show.findOne({ where: { title: showTitle } })
   if (!showRow) {
