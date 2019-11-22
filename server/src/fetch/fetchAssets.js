@@ -106,6 +106,7 @@ module.exports = {
               await download.image({
                 url: `https://www.thetvdb.com/banners/${asset.poster_art}`,
                 dest: `${postersDir}/${show.id}_${asset.season}.jpg`,
+                timeout: 5000,
               })
             } else {
               logger.info('poster asset exists, skipping...')

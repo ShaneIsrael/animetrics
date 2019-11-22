@@ -7,6 +7,14 @@ const config = require('../config/config').dev.tvdb
 const { Show } = require('../models')
 const logger = require('../logger')
 
+const tvdb = axios.create({
+  baseURL: 'https://api.thetvdb.com/',
+  timeout: 5000,
+  headers: {
+    Authorization: `Bearer ${process.env.TVDB_JWT_TOKEN}`
+  }
+})
+
 const service = {}
 
 const sleep = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds))
@@ -14,14 +22,7 @@ const sleep = (milliseconds) => new Promise((resolve) => setTimeout(resolve, mil
 async function updateSeriesInformation(id) {
   const show = await Show.findByPk(id)
   logger.info(`updating ${show.id}`)
-  const info = (await axios.get(
-    `https://api.thetvdb.com/series/${show.tvdb_id}`,
-    {
-      headers: {
-        Authorization: `Bearer ${process.env.TVDB_JWT_TOKEN}`,
-      },
-    },
-  )).data.data;
+  const info = (await tvdb.get(`/series/${show.tvdb_id}`)).data.data;
   show.seriesName = info.seriesName
   show.synopsis = info.overview
   show.airsDayOfWeek = info.airsDayOfWeek
@@ -32,14 +33,11 @@ async function updateSeriesInformation(id) {
 async function search(t, original, attempt) {
   let title = t
   try {
-    const series = await axios.get('https://api.thetvdb.com/search/series', {
+    const series = await tvdb.get('/search/series', {
       params: {
         name: title,
-      },
-      headers: {
-        Authorization: `Bearer ${process.env.TVDB_JWT_TOKEN}`,
-      },
-    });
+      }
+    })
     return series;
   } catch (err) {
     if (err.response.status === 404) {
@@ -94,13 +92,9 @@ async function search(t, original, attempt) {
 
 async function getPoster(id) {
   try {
-    const seasonPoster = (await axios.get(
-      `https://api.thetvdb.com/series/${id}/images/query`,
+    const seasonPoster = (await tvdb.get(`/series/${id}/images/query`,
       {
         params: { keyType: 'poster' },
-        headers: {
-          Authorization: `Bearer ${process.env.TVDB_JWT_TOKEN}`,
-        },
       },
     )).data;
     let highestRated = {}
@@ -116,14 +110,7 @@ async function getPoster(id) {
 }
 
 service.getSeriesById = async (id) => {
-  const result = (await axios.get(
-    `https://api.thetvdb.com/series/${id}`,
-    {
-      headers: {
-        Authorization: `Bearer ${process.env.TVDB_JWT_TOKEN}`,
-      },
-    },
-  )).data.data
+  const result = (await axios.get(`/series/${id}`)).data.data
   return result
 }
 
@@ -133,7 +120,7 @@ service.searchByTitle = async (title, original) => {
 }
 
 service.authTvDb = async () => {
-  const res = (await axios.post('https://api.thetvdb.com/login', {
+  const res = (await tvdb.post('/login', {
     apikey: config.API_KEY,
   })).data;
   process.env.TVDB_JWT_TOKEN = res.token
@@ -179,13 +166,9 @@ service.updateTvDbIds = async () => {
 
 async function getSeasonPoster(id, season) {
   try {
-    const seasonPoster = (await axios.get(
-      `https://api.thetvdb.com/series/${id}/images/query`,
+    const seasonPoster = (await tvdb.get(`/series/${id}/images/query`,
       {
-        params: { keyType: 'season', subKey: season },
-        headers: {
-          Authorization: `Bearer ${process.env.TVDB_JWT_TOKEN}`,
-        },
+        params: { keyType: 'season', subKey: season }
       },
     )).data;
     let highestRated = {}
