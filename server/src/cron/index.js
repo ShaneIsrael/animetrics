@@ -93,6 +93,7 @@ async function init() {
   try {
     logger.info('beginning cron jobs')
     await authTvDb()
+    logger.info('tvdb auth successful')
   } catch(err) {
     logger.error(err)
   }
