@@ -1,10 +1,15 @@
 const cron = require('node-cron')
 const moment = require('moment')
 const logger = require('../logger')
-const { digestDiscussionPost, authTvDb, updateTvDbIds, getSeriesPoster, createDiscussionResult } = require('../services')
-const { Asset, Show, EpisodeResultLink, EpisodeDiscussion, Week, Op } = require('../models')
+const {
+  digestDiscussionPost, authTvDb, refreshTvDb, updateTvDbIds, getSeriesPoster, createDiscussionResult,
+} = require('../services')
+const {
+  Asset, Show, EpisodeResultLink, EpisodeDiscussion, Week, Op,
+} = require('../models')
 const fetchDiscussions = require('../fetch/fetchDiscussions')
 const fetchAssets = require('../fetch/fetchAssets')
+const fetchUsers = require('../fetch/fetchRedditMalUsers')
 // const { Show } = require('../models')
 
 async function updatePosters() {
@@ -43,47 +48,53 @@ async function generateDiscussionResults() {
   }
 }
 async function getDiscussionsAndPopulate() {
-  try {
-    const discussions = await fetchDiscussions.fetch()
-    for (const discussion of discussions) {
-      await digestDiscussionPost(discussion)
-    }
-    await updateTvDbIds()
-    await updatePosters()
-    await fetchAssets.fetch()
-    await generateDiscussionResults()
-  } catch (err) {
-    logger.error(err)
+  const discussions = await fetchDiscussions.fetch()
+  for (const discussion of discussions) {
+    await digestDiscussionPost(discussion)
   }
+  await updateTvDbIds()
+  await updatePosters()
+  await fetchAssets.fetch()
+  await generateDiscussionResults()
 }
-async function backPopulate() {
-  try {
-    const discussions = await fetchDiscussions.recursiveFetch(180)
-    const toDo = discussions.length
-    let at = 0
-    for (const discussion of discussions) {
-      console.log(`back populating: ${at}/${toDo}`)
-      await digestDiscussionPost(discussion)
-      at += 1
-    }
-    await updateTvDbIds()
-    await updatePosters()
-    await fetchAssets.fetch()
-    await generateDiscussionResults()
-  } catch (err) {
-    logger.error(err)
+async function backPopulate(days) {
+  const discussions = await fetchDiscussions.recursiveFetch(days)
+  const toDo = discussions.length
+  let at = 0
+  for (const discussion of discussions) {
+    console.log(`back populating: ${at}/${toDo}`)
+    await digestDiscussionPost(discussion)
+    at += 1
   }
+  await updateTvDbIds()
+  await updatePosters()
+  await fetchAssets.fetch()
+  await generateDiscussionResults()
 }
 
 // Every Hour | Get Episode Discussions and populate data
 cron.schedule('0 0 * * * *', async () => {
-  getDiscussionsAndPopulate()
+  try {
+    getDiscussionsAndPopulate()
+  } catch (err) {
+    logger.error(err.message)
+  }
 })
 
-// Every 6 Hours | Re-auth with TvDb
+// Every Monday at 12:00am update users scores
+cron.schedule('0 0 0 * * 1', async () => {
+  try {
+    await fetchUsers.fetch()
+    fetchUsers.fetchScores()
+  } catch (err) {
+    logger.error(err.message)
+  }
+})
+
+// Every 6 Hours | Refresh with TvDb
 cron.schedule('0 0 */6 * * *', async () => {
   try {
-    await authTvDb()
+    await refreshTvDb()
   } catch (err) {
     logger.error(err)
   }
@@ -94,8 +105,8 @@ async function init() {
     logger.info('beginning cron jobs')
     await authTvDb()
     logger.info('tvdb auth successful')
-  } catch(err) {
-    logger.error(err)
+  } catch (err) {
+    logger.error(err.message)
   }
 }
 init()

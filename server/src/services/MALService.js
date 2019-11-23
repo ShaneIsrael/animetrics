@@ -17,4 +17,9 @@ service.searchAnime = async (title) => {
   return result
 }
 
+service.findUser = async (username, request) => {
+  const result = await mal.findUser(username, request)
+  if (!result.request_cached) await sleep(2000)
+  return result
+}
 module.exports = service

@@ -7,12 +7,11 @@ const {
   Asset,
 } = require('../models')
 
-const config = require('../config/config').dev.assets
+const config = require('../config/config')[process.env.NODE_ENV].assets
 const logger = require('../logger')
 
 async function crop(width, height, path, savePath) {
   const pyProg = await spawn('python', [config.detectFacePath, path, config.detectFaceConfPath]);
-  console.log(pyProg.toString())
   const jsonLoc = `${path.split('.jpg')[0]}_faces.json`
   if (fs.existsSync(jsonLoc)) {
     const facedata = fs.readFileSync(jsonLoc);

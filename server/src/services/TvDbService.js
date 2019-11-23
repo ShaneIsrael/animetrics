@@ -3,26 +3,32 @@
 /* eslint-disable prefer-destructuring */
 
 const axios = require('axios')
-const config = require('../config/config').dev.tvdb
+const config = require('../config/config')[process.env.NODE_ENV].tvdb
 const { Show } = require('../models')
 const logger = require('../logger')
 
 const tvdb = axios.create({
   baseURL: 'https://api.thetvdb.com/',
   timeout: 5000,
-  headers: {
-    Authorization: `Bearer ${process.env.TVDB_JWT_TOKEN}`
-  }
 })
 
 const service = {}
 
 const sleep = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds))
 
+async function get(url, options) {
+  const ops = { ...options }
+  ops.headers = {
+    Authorization: `Bearer ${process.env.TVDB_JWT_TOKEN}`,
+  }
+  const resp = await tvdb.get(url, ops)
+  return resp
+}
+
 async function updateSeriesInformation(id) {
   const show = await Show.findByPk(id)
   logger.info(`updating ${show.id}`)
-  const info = (await tvdb.get(`/series/${show.tvdb_id}`)).data.data;
+  const info = (await get(`/series/${show.tvdb_id}`)).data.data;
   show.seriesName = info.seriesName
   show.synopsis = info.overview
   show.airsDayOfWeek = info.airsDayOfWeek
@@ -33,10 +39,10 @@ async function updateSeriesInformation(id) {
 async function search(t, original, attempt) {
   let title = t
   try {
-    const series = await tvdb.get('/search/series', {
+    const series = await get('/search/series', {
       params: {
         name: title,
-      }
+      },
     })
     return series;
   } catch (err) {
@@ -92,11 +98,10 @@ async function search(t, original, attempt) {
 
 async function getPoster(id) {
   try {
-    const seasonPoster = (await tvdb.get(`/series/${id}/images/query`,
+    const seasonPoster = (await get(`/series/${id}/images/query`,
       {
         params: { keyType: 'poster' },
-      },
-    )).data;
+      })).data;
     let highestRated = {}
     for (const poster of seasonPoster.data) {
       if (!highestRated.ratingsInfo || highestRated.ratingsInfo.average < poster.ratingsInfo.average) {
@@ -110,7 +115,7 @@ async function getPoster(id) {
 }
 
 service.getSeriesById = async (id) => {
-  const result = (await axios.get(`/series/${id}`)).data.data
+  const result = (await get(`/series/${id}`)).data.data
   return result
 }
 
@@ -125,6 +130,9 @@ service.authTvDb = async () => {
   })).data;
   process.env.TVDB_JWT_TOKEN = res.token
 }
+service.refreshTvDb = async () => {
+  await get('/refresh_token')
+}
 
 service.updateTvDbIds = async () => {
   const shows = await Show.findAll({ where: { tvdb_id: null } });
@@ -134,43 +142,41 @@ service.updateTvDbIds = async () => {
     const match = {};
     if (result && result.data) {
       for (const re of result.data.data) {
-        if (show.alt_title) {
+        if (re.status === 'Continuing' && re.slug.indexOf(show.title.toLowerCase()) >= 0) {
+          match.id = re.id
+          match.result = re
+          break
+        } else if (show.alt_title) {
           if (show.title.toLowerCase().indexOf(re.seriesName.toLowerCase()) >= 0 || show.alt_title.toLowerCase().indexOf(re.seriesName.toLowerCase()) >= 0) {
             match.id = re.id
             match.result = re
+            break
           }
         } else if (show.title.toLowerCase().indexOf(re.seriesName.toLowerCase()) >= 0) {
           match.id = re.id
           match.result = re
+          break
         }
-        // if (!earliestMatch.id) {
-        //   earliestMatch.id = r.id;
-        //   earliestMatch.result = r;
-        // } else if (earliestMatch.id > r.id) {
-        //   earliestMatch.id = r.id;
-        //   earliestMatch.result = r;
-        // }
       }
-      if (match.id) {
-        logger.info(`Found tvdb match: ${match.result.seriesName} --> ${show.title}`)
-        show.tvdb_id = match.id
-      } else {
-        logger.info(`NO TVDB MATCH, using first found: ${result.data.data[0].seriesName}`)
-        show.tvdb_id = result.data.data[0].id
-      }
-      show.save();
-      await updateSeriesInformation(show.id)
     }
+    if (match.id) {
+      logger.info(`Found tvdb match: ${match.result.seriesName} --> ${show.title}`)
+      show.tvdb_id = match.id
+    } else {
+      logger.info(`NO TVDB MATCH, using first found: ${result.data.data[0].seriesName}`)
+      show.tvdb_id = result.data.data[0].id
+    }
+    show.save();
+    await updateSeriesInformation(show.id)
   }
 }
 
 async function getSeasonPoster(id, season) {
   try {
-    const seasonPoster = (await tvdb.get(`/series/${id}/images/query`,
+    const seasonPoster = (await get(`/series/${id}/images/query`,
       {
-        params: { keyType: 'season', subKey: season }
-      },
-    )).data;
+        params: { keyType: 'season', subKey: season },
+      })).data;
     let highestRated = {}
     for (const poster of seasonPoster.data) {
       if (!highestRated.ratingsInfo || highestRated.ratingsInfo.average < poster.ratingsInfo.average) {

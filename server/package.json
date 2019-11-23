@@ -13,6 +13,7 @@
     "gm": "^1.23.1",
     "image-downloader": "^3.5.0",
     "jikan-node": "^1.2.0",
+    "lodash": "^4.17.15",
     "moment": "^2.24.0",
     "morgan": "^1.9.1",
     "node-cron": "^2.0.3",
@@ -22,7 +23,8 @@
     "winston": "^3.2.1"
   },
   "scripts": {
-    "start": "node src/app.js",
+    "start": "export NODE_ENV=dev && node src/app.js",
+    "mac": "export NODE_ENV=mac && nodemon node src/app.js",
     "local": "export NODE_ENV=development && ./node_modules/.bin/eslint ./src --ext .js && nodemon src/app.js ",
     "local:lintless": "nodemon src/app.js",
     "lint": "./node_modules/.bin/eslint ./src --ext .js",

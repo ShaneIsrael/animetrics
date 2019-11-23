@@ -16,8 +16,8 @@ const logger = createLogger({
     ),
   transports: [
     new transports.Console({
-      handleExceptions: config.environment !== 'local',
-      stringify: config.environment !== 'local',
+      handleExceptions: true,
+      stringify: true,
       level: 'info',
     }),
   ],

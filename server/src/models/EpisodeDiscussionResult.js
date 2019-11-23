@@ -37,6 +37,9 @@ module.exports = (connection, Sequelize) => connection.define(
     poll_results: {
       type: Sequelize.JSON,
     },
+    ralScore: {
+      type: Sequelize.STRING,
+    },
     createdAt: {
       type: Sequelize.DATE,
       allowNull: false,

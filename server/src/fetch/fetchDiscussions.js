@@ -1,6 +1,7 @@
 const Snoowrap = require('snoowrap')
-const config = require('../config/config').dev.reddit
+const config = require('../config/config')[process.env.NODE_ENV].reddit
 const PushShift = require('../tools/pushshift-io.js')
+
 const ps = new PushShift('submission')
 
 const r = new Snoowrap({
@@ -17,7 +18,7 @@ module.exports = {
       author: 'AutoLovepon',
       after: '1d',
       size: 500,
-      fields: 'id,title,score,num_comments,url,selftext,created_utc,'
+      fields: 'id,title,score,num_comments,url,selftext,created_utc,',
     })
     return posts
   },
@@ -26,7 +27,7 @@ module.exports = {
     let left = days
     let after = 0
     let before = 0
-    let increment = 10
+    const increment = 10
     let lastIncrement = 0
     if (days < 10) return []
     while (left > 0) {
@@ -43,11 +44,11 @@ module.exports = {
         after: `${after}d`,
         before: `${before}d`,
         size: 500,
-        fields: 'id,title,score,num_comments,url,selftext,created_utc,'
+        fields: 'id,title,score,num_comments,url,selftext,created_utc,',
       })
       total = [...total, ...posts]
       lastIncrement = left >= increment ? increment : left
-      left = left - increment
+      left -= increment
     }
     return total
   },
@@ -62,7 +63,7 @@ module.exports = {
       })
     return posts
   },
-  
+
   async getSubmission(id) {
     const post = await r.getSubmission(id).fetch();
     return post;

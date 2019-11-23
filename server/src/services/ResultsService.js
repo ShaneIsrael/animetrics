@@ -15,6 +15,7 @@ const {
 const logger = require('../logger')
 const { findAnime } = require('../services/MALService')
 const fetchDiscussions = require('../fetch/fetchDiscussions')
+const cpoll = require('../tools/calculatePoll')
 
 async function scrapePollData(url) {
   const html = (await axios.get(`${url}/r`)).data
@@ -40,19 +41,18 @@ async function scrapePollData(url) {
  * @returns {Array} An array of all the results for a given week
  */
 service.getResultsByWeek = async (id) => {
-  //order: [[EpisodeDiscussionResult, 'ups', 'DESC']], include: [{ model: EpisodeDiscussionResult, include: [MALSnapshot, { model: Show, include: [Asset] }, EpisodeDiscussion] }] 
-  const week = await Week.findOne({ where: { id }})
-  const resultLinks = await EpisodeResultLink.findAll({where: {weekId: week.id, episodeDiscussionResultId: {[Op.ne]: null}}, include: [ {model: Show, include: [Asset]}, EpisodeDiscussion, { model: EpisodeDiscussionResult, include: [MALSnapshot] }]})
+  // order: [[EpisodeDiscussionResult, 'ups', 'DESC']], include: [{ model: EpisodeDiscussionResult, include: [MALSnapshot, { model: Show, include: [Asset] }, EpisodeDiscussion] }]
+  const week = await Week.findOne({ where: { id } })
   const prevWeekDt = moment(new Date(week.start_dt)).subtract(7, 'days').format('YYYY-MM-DD HH:mm:ss')
-  
-  const prevWeek = await Week.findOne({ where: { [Op.and]: { start_dt: { [Op.lte]: prevWeekDt }, end_dt: { [Op.gte]: prevWeekDt } } }})
+  const resultLinks = await EpisodeResultLink.findAll({ where: { weekId: week.id, episodeDiscussionResultId: { [Op.ne]: null } }, include: [{ model: Show, include: [Asset] }, EpisodeDiscussion, { model: EpisodeDiscussionResult, include: [MALSnapshot] }] })
+
+  const prevWeek = await Week.findOne({ where: { [Op.and]: { start_dt: { [Op.lte]: prevWeekDt }, end_dt: { [Op.gte]: prevWeekDt } } } })
   let previousResultLinks
-  if (prevWeek)
-    previousResultLinks = await EpisodeResultLink.findAll({where: {weekId: prevWeek.id}, include: [ {model: Show, include: [Asset]}, EpisodeDiscussion, { model: EpisodeDiscussionResult, include: [MALSnapshot] }]})
-  
+  if (prevWeek) { previousResultLinks = await EpisodeResultLink.findAll({ where: { weekId: prevWeek.id }, include: [{ model: Show, include: [Asset] }, EpisodeDiscussion, { model: EpisodeDiscussionResult, include: [MALSnapshot] }] }) }
+
   const resultObjects = {}
-  const previous = {}
-  for(const rl of resultLinks) {
+  for (const rl of resultLinks) {
+    let [pollScore, pollResult, pollType] = cpoll.calculateRating(rl.EpisodeDiscussionResult.poll_results)
     resultObjects[rl.showId] = {
       show: rl.Show.dataValues,
       asset: {
@@ -62,15 +62,20 @@ service.getResultsByWeek = async (id) => {
       discussion: rl.EpisodeDiscussion.dataValues,
       mal: rl.EpisodeDiscussionResult.MALSnapshot.dataValues,
       ral: {},
-      poll: {},
-      previous: {}
+      poll: {
+        score: pollScore,
+        votes: pollResult,
+        type: pollType,
+      },
+      previous: {},
     }
     if (previousResultLinks) {
       // Sort the previous results to get their previous positions
       previousResultLinks.sort((a, b) => b.EpisodeDiscussionResult.ups - a.EpisodeDiscussionResult.ups)
       let prevPosition = 0
-      for(const prl of previousResultLinks) {
+      for (const prl of previousResultLinks) {
         if (rl.showId === prl.showId) {
+          [pollScore, pollResult, pollType] = cpoll.calculateRating(prl.EpisodeDiscussionResult.poll_results)
           resultObjects[rl.showId].previous = {
             show: prl.Show.dataValues,
             asset: {
@@ -80,8 +85,12 @@ service.getResultsByWeek = async (id) => {
             discussion: prl.EpisodeDiscussion.dataValues,
             mal: prl.EpisodeDiscussionResult.MALSnapshot.dataValues,
             ral: {},
-            poll: {},
-            position: prevPosition
+            poll: {
+              score: pollScore,
+              votes: pollResult,
+              type: pollType,
+            },
+            position: prevPosition,
           }
         }
         prevPosition += 1
@@ -101,6 +110,7 @@ service.getResultsByWeek = async (id) => {
 service.createDiscussionResult = async (link) => {
   const discussion = link.EpisodeDiscussion
   const malDetails = await findAnime(link.Show.mal_id)
+  const ralScore = await cpoll.calculateRedditMalRating(link.Show.id)
   if (malDetails) {
     const malSnapshot = await MALSnapshot.create({
       showId: link.Show.id,
@@ -126,6 +136,7 @@ service.createDiscussionResult = async (link) => {
       ups: post.ups,
       comment_count: post.num_comments,
       poll_results: pollDetails,
+      ralScore,
     })
     link.episodeDiscussionResultId = edr.id
     link.save()

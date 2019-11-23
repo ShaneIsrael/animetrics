@@ -231,98 +231,14 @@ async function fetchAssets() {
 }
 
 async function populateRedditUsers() {
-  console.log('Populating Reddit Users...')
-  const ral = (await axios.get('http://www.redditanimelist.net/users.php', {
-  })).data;
-  const $ = cheerio.load(ral);
-  const users = []
-  $('table tbody tr').each(
-    async (i, elem) => {
-      let redditName; let malName; let
-        lastActiveDt
-      $(elem).find('td').each((i, elem) => {
-        switch (i) {
-        case 1:
-          redditName = $(elem).text()
-          break
-        case 2:
-          malName = $(elem).text()
-          break
-        case 3:
-          lastActiveDt = moment(new Date($(elem).text())).format('YYYY-MM-DD HH:mm:ss')
-          break
-        }
-      })
-      if (redditName && malName && lastActiveDt) {
-        users.push({ reddit_username: redditName, mal_username: malName, lastActiveAt: lastActiveDt })
-      }
-    },
-  );
-  console.log('Bulk adding users...')
-  await RedditUser.bulkCreate(users, {
-    ignoreDuplicates: true,
-  })
-  console.log('Complete!')
+
 
   // console.log(ral)
 }
 
 const sleep = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds))
 async function populateRedditUsersScores() {
-  console.log('Populating Reddit User Scores... this could take some time.')
-  const users = await RedditUser.findAll({
-    where: {
-      lastActiveAt: {
-        [Op.gt]: moment().subtract(1, 'months').toDate(),
-      },
-    },
-    order: [['lastActiveAt', 'DESC']],
-  })
-  const times = []
-  let startTime; let
-    elapsed
-  let current = 1
-  for (const user of users) {
-    startTime = Date.now()
-    const skip = await RedditUserScore.findOne({ where: { redditUserId: user.id } })
-    if (skip) continue
-    try {
-      const animes = await mal.findUser(user.mal_username, 'animelist')
-      elapsed = Date.now() - startTime
-      times.push(elapsed)
-      // Stop rate limits (30 requests a minute max)
-      await sleep(2000)
-      console.log(`Lookup took: ${elapsed / 1000} seconds (${current}/${users.length}) | ~${(((2000 + ((times.reduce((a, b) => a + b, 0) / times.length))) / 1000) * (users.length - current)) / 60} minutes remaining...`)
-      current += 1
-      for (const anime of animes.anime) {
-        if (anime.score === 0) continue
-        const score = {
-          redditUserId: user.id,
-          mal_show_id: anime.mal_id,
-          score: anime.score,
-        }
-        const found = await RedditUserScore.findOne({
-          where: {
-            mal_show_id: anime.mal_id,
-            redditUserId: user.id,
-          },
-        })
-        if (found) {
-          if (found.score !== anime.score) {
-            found.score = anime.score
-            found.save()
-          }
-        } else {
-          await RedditUserScore.create(score)
-        }
-      }
-    } catch (err) {
-      console.log(err)
-      console.log(user.mal_username)
-    }
-  }
-  const totalTime = (times.reduce((a, b) => a + b, 0))
-  console.log(`Populating Users Scores took ${(totalTime / 1000) / 60} minutes`)
+
 }
 
 // print()
@@ -357,13 +273,20 @@ function digest(post) {
 const PushShift = require('./tools/pushshift-io.js')
 const ps = new PushShift('submission')
 const fetchDiscussions = require('./fetch/fetchDiscussions')
+const polls = require('./tools/calculatePoll')
 async function test() {
   try {
-    const results = await fetchDiscussions.recursiveFetch(23)
-    for (const r of results) {
-      digest(r)
+    const eds = await EpisodeDiscussionResult.findAll({
+      where: {
+        ralScore: null,
+      },
+    })
+    for (const e of eds) {
+      const [ralScore] = await polls.calculateRedditMalRating(e.showId)
+      e.ralScore = ralScore
+      e.save()
     }
-  } catch(err) {
+  } catch (err) {
     console.log(err)
   }
 }
