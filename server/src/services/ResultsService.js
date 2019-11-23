@@ -110,7 +110,7 @@ service.getResultsByWeek = async (id) => {
 service.createDiscussionResult = async (link) => {
   const discussion = link.EpisodeDiscussion
   const malDetails = await findAnime(link.Show.mal_id)
-  const ralScore = await cpoll.calculateRedditMalRating(link.Show.id)
+  const [ralScore] = await cpoll.calculateRedditMalRating(link.Show.id)
   if (malDetails) {
     const malSnapshot = await MALSnapshot.create({
       showId: link.Show.id,

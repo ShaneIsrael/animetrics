@@ -91,7 +91,7 @@ const ResultScores = (props) => {
       <Paper elevation={0} square={true} className={classes.redditRatingPaper}>
         <Typography display="inline" className={clsx({[classes.scoreTitleRal]: true, [classes.malRalFont]: true, [classes.orangeColor]: ralScoreDirection === 'up', [classes.purpleColor]: ralScoreDirection === 'down'})}>R</Typography>
         <Typography display="inline" className={clsx(classes.scoreContent, classes.malRalScoreFont)}>
-          {ralScore}
+          {ralScore ? ralScore : '------'}
         </Typography>  
       </Paper>
     </Grid>

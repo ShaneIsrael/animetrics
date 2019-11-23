@@ -147,7 +147,7 @@ const ResultDetails = (props) => {
                     RP
                     </Typography>
                     <Typography style={{paddingRight: 6, paddingLeft: 6, border: '0.2px solid white', backgroundColor: '#294e8a'}} display="inline" className={clsx({[classes.fontBase]:true, [classes.rpFont]: true})}>
-                      {rpScore}
+                      {rpScore === 0 ? '------' : rpScore}
                     </Typography>
                   </Paper>
                 </Grid>

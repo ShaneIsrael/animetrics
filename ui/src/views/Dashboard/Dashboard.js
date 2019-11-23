@@ -34,31 +34,58 @@ const useStyles = makeStyles(theme => ({
 
 function createResults(results, setHandler) {
   try {
-    if (!results.length > 0) return []
+    if (Object.keys(results).length === 0) return []
     const render = results.map((res, index) => {
-      console.log(res)
       const posPrevious = res.previous ? res.previous.position : null
+      console.log(res)
       return <AnimeRankingResult 
-        key={5000+index}
-        result={res.result}
-        title={res.show.title}
-        banner={`${res.show.id}_${res.asset.season}.png`} 
-        pos={index} 
-        posPrevious={posPrevious}
-        score={res.result.ups}
-        scorePrevious={res.previous.result ? res.previous.result.ups : null}
+        banner={`${res.show.id}_${res.asset.season}.png`}
         commentCount={res.result.comment_count}
         episode={res.discussion.episode}
-        malScore={res.mal.score.toFixed(2)}
+        key={5000+index} 
+        malScore={res.mal.score.toFixed(2)} 
         malScorePrevious={res.previous.result ? res.previous.mal.score : null}
-        ralScore={9.12}
-        ralScorePrevious={9.12}
-        pollScore={8.70}
-        pollScorePrevious={8.70}
+        pollScore={res.poll.score}
+        pollScorePrevious={res.previous.poll ? res.previous.poll.score : 0}
+        pos={index}
+        posPrevious={posPrevious}
+        ralScore={res.result.ralScore}
+        ralScorePrevious={res.previous.result ? res.previous.result.ralScore : null}
+        result={res}
+        score={res.result.ups}
+        scorePrevious={res.previous.result ? res.previous.result.ups : null}
         setAnimeSelection={setHandler}
+        title={res.show.title}
       />
     })
     return render
+  } catch (err) {
+    console.log(err)
+  }    
+}
+
+function createPollResults(results) {
+  try {
+    const prevPollResults = results.map((res, index) => {
+      return {
+        id: res.result.id,
+        poll: res.previous.poll ? res.previous.poll : {score: 0}
+      }
+    })
+    const pollResults = results.map((res, index) => {
+      return {
+        id: res.result.id,
+        title: res.show.title,
+        episode: res.discussion.episode,
+        banner: `${res.show.id}_${res.asset.season}_head.png`,
+        poll: res.poll,
+      }
+    })
+    pollResults.sort((a, b) => b.poll.score - a.poll.score)
+    prevPollResults.sort((a, b) => {
+      return b.poll.score - a.poll.score
+    })
+    return {current: pollResults, previous: prevPollResults}
   } catch (err) {
     console.log(err)
   }    
@@ -72,6 +99,7 @@ const Dashboard = () => {
   const [weekSelectOptions, setWeekSelectOptions] = React.useState([])
   const [selectedAnime, setSelectedAnime] = React.useState(null)
   const [renderedResults, setRenderedResults] = React.useState([])
+  const [renderedPollResults, setRenderedPollResults] = React.useState({})
 
   const setAnimeSelection = (selection) => {
     setSelectedAnime(selection)
@@ -85,6 +113,7 @@ const Dashboard = () => {
         setSelectedWeek(weeks[1].id)
         createWeekSelectOptions(weeks)
         setRenderedResults(createResults(results, setAnimeSelection))
+        setRenderedPollResults(createPollResults(results))
       } catch (err) {
         console.log(err)
       }
@@ -145,9 +174,9 @@ const Dashboard = () => {
                 >Week Of</InputLabel> */}
                 <Select 
                   className={classes.selectEmpty} 
-                  onChange={handleChange} 
+                  native={isMobile} 
+                  onChange={handleChange}
                   value={selectedWeek}
-                  native={isMobile}
                 >
                   {weekSelectOptions}
                 </Select>
