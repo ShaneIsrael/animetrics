@@ -63,10 +63,7 @@ db.MALSnapshot.belongsTo(db.Week)
 db.Week.hasMany(db.EpisodeDiscussionResult)
 db.EpisodeDiscussionResult.belongsTo(db.Week)
 
-db.EpisodeDiscussionResult.hasOne(db.MALSnapshot, {
-  foreignKey: 'id',
-  targetKey: 'malSnapshotId',
-})
+db.EpisodeDiscussionResult.belongsTo(db.MALSnapshot)
 // db.MALSnapshot.belongsTo(db.EpisodeDiscussionResult)
 db.EpisodeDiscussionResult.hasOne(db.EpisodeDiscussion, {
   foreignKey: 'id',

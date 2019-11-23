@@ -5,7 +5,7 @@ const morgan = require('morgan')
 const logger = require('./logger')
 
 const app = express()
-const config = require('./config')
+// const config = require('./config')
 
 app.use(
   morgan('combined', {
@@ -15,7 +15,7 @@ app.use(
     stream: logger.errorStream,
   }),
 )
-if (config.environment !== 'local') {
+if (process.env.NODE_ENV !== 'local') {
   app.use(
     morgan('combined', {
       skip(req, res) {

@@ -5,10 +5,8 @@ const baseURL = 'https://api.pushshift.io/reddit/search'
 class PushShift {
   constructor(searchType) {
     this.searchType = searchType
-    if (searchType === 'comment')
-      this.URL = `${baseURL}/comment/`
-    else
-      this.URL = `${baseURL}/submission`
+    if (searchType === 'comment') this.URL = `${baseURL}/comment/`
+    else this.URL = `${baseURL}/submission`
   }
 
   /**
@@ -20,13 +18,11 @@ class PushShift {
     const p = optionalParams
     p.title = queryString
     const res = (await axios.get(this.URL, {
-      params: p
+      params: p,
     }))
 
-    if (res && res.data) 
-      return res.data.data
-    else
-      return []
+    if (res && res.data) return res.data.data
+    return []
   }
 }
 
