@@ -15,6 +15,9 @@ const useStyles = makeStyles(theme => ({
   flexGrow: {
     flexGrow: 1
   },
+  hamburger: {
+    marginRight: '25px',
+  },
   signOutButton: {
     marginLeft: theme.spacing(1)
   }
@@ -33,6 +36,13 @@ const Topbar = props => {
       className={clsx(classes.root, className)}
     >
       <Toolbar>
+        <IconButton
+          className={classes.hamburger}
+          color="inherit"
+          onClick={onSidebarOpen}
+        >
+          <MenuIcon />
+        </IconButton>
         <RouterLink to="/">
           <img
             alt="ANIRANKS Logo"
@@ -41,12 +51,6 @@ const Topbar = props => {
           />
         </RouterLink>
         <div className={classes.flexGrow} />
-        <IconButton
-          color="inherit"
-          onClick={onSidebarOpen}
-        >
-          <MenuIcon />
-        </IconButton>
       </Toolbar>
     </AppBar>
   )
