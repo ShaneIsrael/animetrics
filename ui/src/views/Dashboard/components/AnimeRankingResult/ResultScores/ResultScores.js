@@ -77,21 +77,44 @@ const useStyles = makeStyles(theme => ({
 
 const ResultScores = (props) => {
   const classes = useStyles()
-
   const {malScore, malScoreDirection, ralScore, ralScoreDirection} = props
   
   return (
-    <Grid item xs={2} className={classes.backgroundPrimary}>
-      <Paper elevation={0} square={true} className={classes.malRatingPaper}>
-        <Typography display="inline" className={clsx({[classes.scoreTitleMal]: true, [classes.malRalFont]: true, [classes.orangeColor]: malScoreDirection === 'up', [classes.purpleColor]: malScoreDirection === 'down'})}>M</Typography>
-        <Typography display="inline" className={clsx(classes.scoreContent, classes.malRalScoreFont)}>
+    <Grid
+      className={classes.backgroundPrimary}
+      item
+      xs={2}
+    >
+      <Paper
+        className={classes.malRatingPaper}
+        elevation={0}
+        square
+      >
+        <Typography
+          className={clsx({[classes.scoreTitleMal]: true, [classes.malRalFont]: true, [classes.orangeColor]: malScoreDirection === 'up', [classes.purpleColor]: malScoreDirection === 'down'})}
+          display="inline"
+        >M</Typography>
+        <Typography
+          className={clsx(classes.scoreContent, classes.malRalScoreFont)}
+          display="inline"
+        >
           {malScore}
         </Typography>  
       </Paper>
-      <Paper elevation={0} square={true} className={classes.redditRatingPaper}>
-        <Typography display="inline" className={clsx({[classes.scoreTitleRal]: true, [classes.malRalFont]: true, [classes.orangeColor]: ralScoreDirection === 'up', [classes.purpleColor]: ralScoreDirection === 'down'})}>R</Typography>
-        <Typography display="inline" className={clsx(classes.scoreContent, classes.malRalScoreFont)}>
-          {ralScore ? ralScore : '------'}
+      <Paper
+        className={classes.redditRatingPaper}
+        elevation={0}
+        square
+      >
+        <Typography
+          className={clsx({[classes.scoreTitleRal]: true, [classes.malRalFont]: true, [classes.orangeColor]: ralScoreDirection === 'up', [classes.purpleColor]: ralScoreDirection === 'down'})}
+          display="inline"
+        >R</Typography>
+        <Typography
+          className={clsx(classes.scoreContent, classes.malRalScoreFont)}
+          display="inline"
+        >
+          {ralScore && Number(ralScore) !== 0 ? ralScore : '------'}
         </Typography>  
       </Paper>
     </Grid>

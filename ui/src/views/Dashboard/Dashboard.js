@@ -1,16 +1,49 @@
+/* eslint-disable react/no-multi-comp */
 import React, {useEffect} from 'react'
+import PropTypes from 'prop-types'
 import {isMobile} from 'react-device-detect'
 import { makeStyles } from '@material-ui/styles'
+import Tabs from '@material-ui/core/Tabs'
+import Tab from '@material-ui/core/Tab'
+import Typography from '@material-ui/core/Typography'
+import Box from '@material-ui/core/Box'
+import PhoneIcon from '@material-ui/icons/Phone'
+import PollIcon from '@material-ui/icons/Poll'
+import ScoreIcon from '@material-ui/icons/Score'
 // eslint-disable-next-line
 import { Grid, Paper, InputLabel, FormControl, Select, MenuItem } from '@material-ui/core'
 import moment from 'moment'
-import { AnimeRankingResult, DetailsCard } from './components'
+import { AnimeRankingResult, DetailsCard, AnimePollRanking } from './components'
 import { WeekService, ResultsService } from '../../services'
 import clsx from 'clsx'
 
+function TabPanel(props) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <Typography
+      aria-labelledby={`nav-tab-${index}`}
+      component="div"
+      hidden={value !== index}
+      id={`nav-tabpanel-${index}`}
+      role="tabpanel"
+      {...other}
+    >
+      <Box p={3}>{children}</Box>
+    </Typography>
+  )
+}
+
+TabPanel.propTypes = {
+  children: PropTypes.node,
+  index: PropTypes.any.isRequired,
+  value: PropTypes.any.isRequired,
+}
+
+
 const useStyles = makeStyles(theme => ({
   root: {
-    padding: theme.spacing(1)
+    padding: theme.spacing(1),
   },
   formControl: {
     margin: theme.spacing(1),
@@ -20,11 +53,16 @@ const useStyles = makeStyles(theme => ({
   selectEmpty: {
     marginTop: theme.spacing(2),
   },
-  rankingsPaper: {
+  karmaRankingPaper: {
     padding: 10,
+    width: 700
+  },
+  pollRankingPaper: {
+    padding: 10,
+    width: 430
   },
   scrolling: {
-    overflowX: 'scroll',
+    // overflowX: 'scroll',
   },
   selectedAnimeCard: {
     maxHeight: '100vh'
@@ -37,7 +75,6 @@ function createResults(results, setHandler) {
     if (Object.keys(results).length === 0) return []
     const render = results.map((res, index) => {
       const posPrevious = res.previous ? res.previous.position : null
-      console.log(res)
       return <AnimeRankingResult 
         banner={`${res.show.id}_${res.asset.season}.png`}
         commentCount={res.result.comment_count}
@@ -66,40 +103,93 @@ function createResults(results, setHandler) {
 
 function createPollResults(results) {
   try {
+    // sort so that we can set the position
+    results.sort((a, b) => {
+      const bScore = b.previous.poll ? b.previous.poll.score : 0
+      const aScore = a.previous.poll ? a.previous.poll.score : 0
+      return bScore - aScore
+    })
     const prevPollResults = results.map((res, index) => {
       return {
         id: res.result.id,
-        poll: res.previous.poll ? res.previous.poll : {score: 0}
+        poll: res.previous.poll ? res.previous.poll : {score: 0},
+        position: index,
       }
+    })
+    // sort again based off not previous poll so we can set the position
+    results.sort((a, b) => {
+      const bScore = b.poll ? b.poll.score : 0
+      const aScore = a.poll ? a.poll.score : 0
+      return bScore - aScore
     })
     const pollResults = results.map((res, index) => {
+      let prevPosition
+      let prevPoll
+      let prevTitle
+      for (const ppr of prevPollResults) {
+        if (ppr.id === res.result.id) {
+          prevPosition = ppr.position
+          prevPoll = ppr.poll
+          prevTitle = ppr.title
+          break
+        }
+      }
       return {
         id: res.result.id,
-        title: res.show.title,
+        title: res.show.alt_title ? res.show.alt_title : res.show.title,
         episode: res.discussion.episode,
-        banner: `${res.show.id}_${res.asset.season}_head.png`,
+        avatar: `${res.show.id}_${res.asset.season}_head.png`,
         poll: res.poll,
+        position: index,
+        prevPoll,
+        prevPosition,
+        prevTitle
       }
     })
-    pollResults.sort((a, b) => b.poll.score - a.poll.score)
-    prevPollResults.sort((a, b) => {
-      return b.poll.score - a.poll.score
+    const render = pollResults.map((poll, index) => {
+      if (poll.poll.score === 0) return false
+      return <AnimePollRanking key={index} current={poll}></AnimePollRanking>
     })
-    return {current: pollResults, previous: prevPollResults}
+    return render
   } catch (err) {
     console.log(err)
   }    
+}
+
+function useKey(key, handler) {
+  // Does an event match the key we're watching?
+  const match = event => key.toLowerCase() == event.key.toLowerCase()
+
+  const onUp = event => {
+    if (match(event)) handler()
+  }
+
+  // Bind and unbind events
+  useEffect(() => {
+    // window.addEventListener('keydown', onDown)
+    window.addEventListener('keyup', onUp)
+    return () => {
+      // window.removeEventListener('keydown', onDown)
+      window.removeEventListener('keyup', onUp)
+    }
+  }, [key])
 }
 
 const Dashboard = () => {
   const classes = useStyles()
   // eslint-disable-next-line
   const inputLabel = React.useRef(null);
-  const [selectedWeek, setSelectedWeek] = React.useState(0);
+  const [weeks, setWeeks] = React.useState(null)
+  const [selectedWeek, setSelectedWeek] = React.useState(1);
   const [weekSelectOptions, setWeekSelectOptions] = React.useState([])
   const [selectedAnime, setSelectedAnime] = React.useState(null)
   const [renderedResults, setRenderedResults] = React.useState([])
-  const [renderedPollResults, setRenderedPollResults] = React.useState({})
+  const [renderedPollResults, setRenderedPollResults] = React.useState([])
+  const [tab, setTab] = React.useState(0)
+
+  const handleTabChange = (event, newValue) => {
+    setTab(newValue);
+  };
 
   const setAnimeSelection = (selection) => {
     setSelectedAnime(selection)
@@ -108,10 +198,11 @@ const Dashboard = () => {
   useEffect(() => {
     async function fetchData() {
       try {
-        const weeks = (await WeekService.getWeeks()).data
-        const results = (await ResultsService.getResultsByWeek(weeks[1].id)).data
-        setSelectedWeek(weeks[1].id)
-        createWeekSelectOptions(weeks)
+        const wks = (await WeekService.getWeeks()).data
+        const results = (await ResultsService.getResultsByWeek(wks[1].id)).data
+        setWeeks(wks)
+        setSelectedWeek(1)
+        createWeekSelectOptions(wks)
         setRenderedResults(createResults(results, setAnimeSelection))
         setRenderedPollResults(createPollResults(results))
       } catch (err) {
@@ -121,46 +212,88 @@ const Dashboard = () => {
     fetchData()
   }, [])
 
+  useEffect(() => {
+    
+    async function fetchData() {
+      try {
+        const results = (await ResultsService.getResultsByWeek(weeks[selectedWeek].id)).data
+        setRenderedResults(createResults(results, setAnimeSelection))
+        setRenderedPollResults(createPollResults(results))
+      } catch (err) {
+        console.log(err)
+      }
+    }
+    if (weeks) {
+      if (selectedWeek < weeks.length && selectedWeek >= 0) {
+        fetchData()
+      } else if (selectedWeek === weeks.length) {
+        setSelectedWeek(weeks.length - 1)
+      } else {
+        setSelectedWeek(0)
+      }
+    }
+  }, [selectedWeek, setSelectedWeek])
+
   const createWeekSelectOptions = async (weeks) => {
     const weekSelectOptions = weeks.map((week, index) => {
       const start = moment(week.start_dt, 'YYYY-MM-DD HH:mm:ss').format('MMM Do, YYYY')
       const end = moment(week.end_dt, 'YYYY-MM-DD HH:mm:ss').format('MMM Do, YYYY')
       if (index === 0) {
-        return isMobile ? <option key={index} value={week.id}>Current Week</option> : <MenuItem key={index} value={week.id}><em>Current Week</em></MenuItem>
+        return isMobile ? <option
+          key={index}
+          value={index}><center>Current Week</center></option> 
+          : <MenuItem key={index} value={index}><center>Current Week</center></MenuItem>
       } else {
         return isMobile 
           ? 
-          <option key={index} value={week.id}>{start} &rarr; {end}</option>
+          <option
+            key={index}
+            value={index}
+          ><center>{start} &rarr; {end}</center></option>
           :
-          <MenuItem key={index} value={week.id}>{start} &rarr; {end}</MenuItem>
+          <MenuItem
+            key={index}
+            value={index}
+          ><center>{start} &rarr; {end}</center></MenuItem>
       }
     })
     setWeekSelectOptions(weekSelectOptions)
   }
 
+
+  useKey('ArrowRight', () => {
+    setSelectedWeek(prevState => prevState + 1)
+  })
+  useKey('ArrowLeft', () => {
+    setSelectedWeek(prevState => prevState - 1)
+  })
+
   const handleChange = async event => {
-    setSelectedWeek(event.target.value);
-    try {
-      const results = (await ResultsService.getResultsByWeek(event.target.value)).data
-      setRenderedResults(createResults(results, setAnimeSelection))
-    } catch (err) {
-      console.log(err)
-    }
+    setSelectedWeek(event.target.value)
   }
 
   return (
-    <div className={clsx({[classes.root]: true, [classes.scrolling]: isMobile})}>
+    <div className={clsx({[classes.root]: true})}>
+      {selectedAnime && 
+        <DetailsCard
+          className={classes.selectedAnimeCard}
+          selectedAnime={selectedAnime}
+        />
+      }
       <Grid
         container
         justify="center"
         spacing={4}
       >
-        <Grid container
+
+        <Grid
+          container
           item
           justify="center"
           xs={12}
         >
-          <Grid item
+          <Grid
+            item
             xs={4}
           >
             <div>
@@ -182,20 +315,74 @@ const Dashboard = () => {
                 </Select>
               </FormControl>
             </div>
+            <Tabs
+              aria-label="icon label tabs example"
+              indicatorColor="secondary"
+              onChange={handleTabChange}
+              textColor="secondary"
+              value={tab}
+              variant="fullWidth"
+            >
+              <Tab
+                icon={<ScoreIcon />}
+                label="Karma Rankings"
+              />
+              <Tab
+                icon={<PollIcon />}
+                label="Poll Rankings"
+              />
+            </Tabs>
           </Grid>
 
         </Grid>
-        {selectedAnime && 
-          <DetailsCard className={classes.selectedAnimeCard} selectedAnime={selectedAnime}/>
-        }
-        <Paper className={clsx({[classes.rankingsPaper]: true})}
-          elevation={10}
-          square={true}
+        <TabPanel
+          index={0}
+          value={tab}
         >
-          <div>
-            {renderedResults}
-          </div>
-        </Paper>
+          <Grid container direction="column" justify="center">
+            <Grid
+              item
+              // xs={12}
+            >
+              <Paper
+                className={clsx({[classes.karmaRankingPaper]: true})}
+                elevation={10}
+                square
+              >
+                <Grid
+                  container
+                  justify="center"
+                >
+                  {renderedResults}
+                </Grid>
+              </Paper>
+            </Grid>
+          </Grid>
+        </TabPanel>
+        <TabPanel
+          index={1}
+          value={tab}
+        >
+          <Grid container justify="center">
+            <Grid
+              item
+              xs={12}
+            >
+              <Paper
+                className={clsx({[classes.pollRankingPaper]: true})}
+                elevation={10}
+                square
+              >
+                <Grid
+                  container
+                  justify="center"
+                >
+                  {renderedPollResults}
+                </Grid>
+              </Paper>
+            </Grid>
+          </Grid>
+        </TabPanel>
       </Grid>
     </div>
   )

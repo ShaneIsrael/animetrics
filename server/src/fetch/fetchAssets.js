@@ -12,6 +12,7 @@ const logger = require('../logger')
 
 async function crop(width, height, path, savePath) {
   const pyProg = await spawn('python', [config.detectFacePath, path, config.detectFaceConfPath]);
+  const avatarSavePath = `${savePath.split('.png')[0]}_head.png`
   const jsonLoc = `${path.split('.jpg')[0]}_faces.json`
   if (fs.existsSync(jsonLoc)) {
     const facedata = fs.readFileSync(jsonLoc);
@@ -22,6 +23,7 @@ async function crop(width, height, path, savePath) {
     const faceAreas = []
     let largestFaceArea = 1
     let largestFaceYValue
+    let largestFace
 
     for (const face of faces) {
       const faceArea = face.width * face.height
@@ -31,6 +33,7 @@ async function crop(width, height, path, savePath) {
       if (faceArea > largestFaceArea) {
         largestFaceArea = faceArea
         largestFaceYValue = face.y + face.height / 2
+        largestFace = face
       }
     }
 
@@ -54,10 +57,18 @@ async function crop(width, height, path, savePath) {
 
     gm(path)
       .gravity('NorthWest')
+      .crop(largestFace.width, largestFace.height, largestFace.x, largestFace.y)
+      .write(avatarSavePath, (err) => {
+        if (err) {
+          logger.error(err)
+        }
+      })
+    gm(path)
+      .gravity('NorthWest')
       .crop(width, height, (680 - 454) / 2, avgY - (height / 2))
       .write(savePath, (err) => {
         if (err) {
-          logger.info(err);
+          logger.err(err);
         }
         // gm(savePath).append(path, false).write(`${savePath.split('.png')[0]}_appended.png`, (err) => {
         //   if (err) {
@@ -66,6 +77,14 @@ async function crop(width, height, path, savePath) {
         // })
       })
   } else {
+    gm(path)
+      .gravity('NorthWest')
+      .crop(100, 100, (680 / 2) - 100, (1000 / 2) - 100)
+      .write(avatarSavePath, (err) => {
+        if (err) {
+          logger.error(err)
+        }
+      })
     gm(path)
       .gravity('NorthWest')
       .crop(width, height, (680 - 454) / 2, 333 - (height / 2))
@@ -110,7 +129,7 @@ module.exports = {
             } else {
               logger.info('poster asset exists, skipping...')
             }
-            if (!fs.existsSync(`${bannersDir}/${show.id}_${asset.season}.png`)) {
+            if (!fs.existsSync(`${bannersDir}/${show.id}_${asset.season}.png`) || !fs.existsSync(`${bannersDir}/${show.id}_${asset.season}_head.png`)) {
               // await crop(758, 140, `${postersDir}/${show.id}.jpg`, `${bannersDir}/${show.id}.png`)
               await crop(454, 80, `${postersDir}/${show.id}_${asset.season}.jpg`, `${bannersDir}/${show.id}_${asset.season}.png`)
             } else {

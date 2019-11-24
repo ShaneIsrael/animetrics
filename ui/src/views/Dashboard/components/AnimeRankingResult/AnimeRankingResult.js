@@ -57,30 +57,37 @@ const AnimeRankingResult = (props) => {
     setAnimeSelection({id, showId, banner, title})
   }
   return (
-    <div onClick={() => handleSelection(result.result.id, result.show.id, banner, title)} style={{margin: 2, flexGrow: 0, cursor: 'pointer'}}>
+    <div
+      onClick={() => handleSelection(result.result.id, result.show.id, banner, title)}
+      style={{margin: 2, flexGrow: 0, cursor: 'pointer'}}
+    >
       <div className={clsx(classes.root, 'grow')}>
-        <Paper className={classes.paper} square={true}>
+        <Paper
+          className={classes.paper}
+          square
+        >
           <Grid container>
             <ResultPosition 
+              direction={!posPrevious || pos === posPrevious ? 'none' : pos < posPrevious ? 'up' : 'down'} 
               position={pos} 
-              positionChange={posChange} 
-              direction={posChange < 0 ? 'up' : posChange > 0 ? 'down' : 'none'}/>
+              positionChange={posChange}
+            />
             <ResultDetails 
-              score={score} 
-              scoreChange={scoreChange} 
-              scoreChangeDirection={scoreChange < 0 ? 'down' : scoreChange > 0 ? 'up' : 'none'}
+              banner={banner} 
+              episode={episode} 
               rpScore={pollScore}
-              rpScoreDirection={pollScoreChange < 0 ? 'down' : pollScoreChange > 0 ? 'up' : 'none'}
+              rpScoreDirection={!pollScorePrevious || pollScore === pollScorePrevious ? 'none' : pollScore < pollScorePrevious ? 'down' : 'up'}
+              score={score}
+              scoreChange={scoreChange}
+              scoreChangeDirection={!scorePrevious || score === scorePrevious ? 'none' : score < scorePrevious ? 'down' : 'up'}
               title={title}
-              episode={episode}
-              banner={banner}
             />
             <ResultComments count={commentCount}/>
             <ResultScores 
               malScore={malScore} 
+              malScoreDirection={!malScorePrevious || malScore === malScorePrevious ? 'none' : malScore < malScorePrevious ? 'down' : 'up'}
               ralScore={ralScore}
-              malScoreDirection={malScore < malScorePrevious ? 'down' : malScore > malScorePrevious ? 'up' : 'none'}
-              ralScoreDirection={ralScore < ralScorePrevious ? 'down' : ralScore > ralScorePrevious ? 'up' : 'none'}
+              ralScoreDirection={!ralScorePrevious || ralScore === ralScorePrevious ? 'none' : ralScore < ralScorePrevious ? 'down' : 'up'}
             />
           </Grid>
         </Paper>
