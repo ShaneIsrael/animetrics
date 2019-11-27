@@ -103,52 +103,7 @@ function createResults(results, setHandler) {
 
 function createPollResults(results) {
   try {
-    // sort so that we can set the position
-    results.sort((a, b) => {
-      const bScore = b.previous.poll ? b.previous.poll.score : 0
-      const aScore = a.previous.poll ? a.previous.poll.score : 0
-      return bScore - aScore
-    })
-
-    const prevPollResults = results.map((res, index) => {
-      return {
-        id: res.result.id,
-        poll: res.previous.poll ? res.previous.poll : {score: 0},
-        position: index + 1,
-      }
-    })
-    // sort again based off not previous poll so we can set the position
-    results.sort((a, b) => {
-      const bScore = b.poll ? b.poll.score : 0
-      const aScore = a.poll ? a.poll.score : 0
-      return bScore - aScore
-    })
-    const pollResults = results.map((res, index) => {
-      let prevPosition
-      let prevPoll
-      let prevTitle
-      for (const ppr of prevPollResults) {
-        if (ppr.id === res.result.id) {
-          prevPosition = ppr.position
-          prevPoll = ppr.poll
-          prevTitle = ppr.title
-          break
-        }
-      }
-      return {
-        id: res.result.id,
-        title: res.show.alt_title ? res.show.alt_title : res.show.title,
-        episode: res.discussion.episode,
-        avatar: `${res.show.id}_${res.asset.season}_head.png`,
-        poll: res.poll,
-        position: index + 1,
-        prevPoll,
-        prevPosition,
-        prevTitle
-      }
-    })
-    const render = pollResults.map((poll, index) => {
-      // if (poll.poll.score === 0) return false
+    const render = results.map((poll, index) => {
       return <AnimePollRanking key={index} current={poll}></AnimePollRanking>
     })
     return render
@@ -201,11 +156,12 @@ const Dashboard = () => {
       try {
         const wks = (await WeekService.getWeeks()).data
         const results = (await ResultsService.getResultsByWeek(wks[1].id)).data
+        const pollResults = (await ResultsService.getRedditPollResultsByWeek(wks[1].id)).data
         setWeeks(wks)
         setSelectedWeek(1)
         createWeekSelectOptions(wks)
         setRenderedResults(createResults(results, setAnimeSelection))
-        setRenderedPollResults(createPollResults(results))
+        setRenderedPollResults(createPollResults(pollResults))
       } catch (err) {
         console.log(err)
       }
@@ -218,17 +174,19 @@ const Dashboard = () => {
     async function fetchData() {
       try {
         const results = (await ResultsService.getResultsByWeek(weeks[selectedWeek].id)).data
+        const pollResults = (await ResultsService.getRedditPollResultsByWeek(weeks[selectedWeek].id)).data
         setRenderedResults(createResults(results, setAnimeSelection))
-        setRenderedPollResults(createPollResults(results))
+        setRenderedPollResults(createPollResults(pollResults))
       } catch (err) {
         console.log(err)
       }
     }
     if (weeks) {
+      console.log(weeks.length, selectedWeek)
       if (selectedWeek < weeks.length && selectedWeek >= 0) {
         fetchData()
       } else if (selectedWeek === weeks.length) {
-        setSelectedWeek(weeks.length - 1)
+        setSelectedWeek(weeks.length)
       } else {
         setSelectedWeek(0)
       }
@@ -243,7 +201,7 @@ const Dashboard = () => {
         return isMobile ? <option
           key={index}
           value={index}><center>Current Week</center></option> 
-          : <MenuItem key={index} value={weeks.length}><center>Current Week</center></MenuItem>
+          : <MenuItem key={index} value={0}><center>Current Week</center></MenuItem>
       } else {
         return isMobile 
           ? 

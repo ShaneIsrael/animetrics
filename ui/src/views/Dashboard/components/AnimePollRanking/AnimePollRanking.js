@@ -134,10 +134,11 @@ const AnimePollRanking = (props) => {
 
   let { current } = props
   
+  const avatar = `${current.show.id}_${current.asset.season}_head.png`
 
-  if (current && current.title === 'Stars Align') {
-    console.log(current.position, current.prevPosition)
-  }
+  const posChangeUp = current.previous ? current.position < current.previous.position : false
+  const posChangeDown = current.previous ? current.position > current.previous.position : false
+
   return (
     <div className={clsx(classes.root, 'grow')}>
       <Paper
@@ -156,14 +157,14 @@ const AnimePollRanking = (props) => {
             >
               <Typography 
                 align="left" 
-                className={clsx({[classes.positionChangeFont]: true, 
-                  [classes.orangeColor]: current.position < current.prevPosition, 
-                  [classes.purpleColor]: current.position > current.prevPosition})} 
+                className={clsx({[classes.positionChangeFont]: true,
+                  [classes.orangeColor]: posChangeUp, 
+                  [classes.purpleColor]: posChangeDown})} 
                 variant="subtitle2"
               >
-                {current.position === current.prevPosition && <RemoveIcon/>}
-                {current.position !== current.prevPosition && <ForwardIcon className={clsx({[classes.upIcon]:  current.position < current.prevPosition, [classes.downIcon]: current.position > current.prevPosition})}/>}
-                {current.position !== current.prevPosition && Math.abs(current.position - current.prevPosition)}
+                {!posChangeUp && !posChangeDown && <RemoveIcon/>}
+                {(posChangeUp || posChangeDown) && <ForwardIcon className={clsx({[classes.upIcon]: posChangeUp, [classes.downIcon]: posChangeDown})}/>}
+                {(posChangeUp || posChangeDown) && Math.abs(current.position - current.previous.position)}
               </Typography>
             </Paper>
             <Paper
@@ -171,10 +172,11 @@ const AnimePollRanking = (props) => {
               elevation={0}
               square
             >
-              {current.poll.score < current.prevPoll.score && <KeyboardArrowUpIcon className={classes.orangeColor}/>}
-              {current.poll.score > current.prevPoll.score && <KeyboardArrowDownIcon className={classes.purpleColor}/>}
+              {!posChangeUp && !posChangeDown && <RemoveIcon style={{color: 'white'}}/>}
+              {posChangeUp && <KeyboardArrowUpIcon className={classes.orangeColor}/>}
+              {posChangeDown && <KeyboardArrowDownIcon className={classes.purpleColor}/>}
               <Typography className={clsx(classes.scoreFont)} align="right" variant="subtitle2">
-                {current.poll.score}
+                {current.score}
               </Typography>
             </Paper>
           </Grid>
@@ -187,7 +189,7 @@ const AnimePollRanking = (props) => {
               elevation={0}
               square
             >
-              <Avatar className={classes.avatar} src={`/images/assets/banners/${current.avatar}`} variant="rounded" />
+              <Avatar className={classes.avatar} src={`/images/assets/banners/${avatar}`} />
             </Paper>
           </Grid>
           <Grid
@@ -200,7 +202,7 @@ const AnimePollRanking = (props) => {
               square
             >
               <Typography align="left" className={clsx(classes.titleFont)} variant="h5">
-                {current.title.toUpperCase()}
+                {current.show.title.toUpperCase()}
               </Typography>
             </Paper>
             <Paper
@@ -209,13 +211,13 @@ const AnimePollRanking = (props) => {
               square
             >
               <Typography className={clsx(classes.episodeFont)} align="left" component="p">
-                {`EPISODE ${current.episode}`}
+                {`EPISODE ${current.discussion.episode}`}
               </Typography>
               <Typography style={{paddingRight: 2, paddingLeft: 2, border: '0.2px solid white', background: 'white'}} display="inline" className={clsx({[classes.fontBase]:true, [classes.voteFontPrimary]: true})}>
               V
               </Typography>
               <Typography style={{paddingRight: 6, paddingLeft: 6, border: '0.2px solid white', backgroundColor: '#294e8a'}} display="inline" className={clsx({[classes.fontBase]:true, [classes.voteFont]: true})}>
-                {current.poll.votes}
+                {current.votes}
               </Typography>
             </Paper>
           </Grid>

@@ -73,10 +73,12 @@ db.EpisodeResultLink.belongsTo(db.Week)
 db.EpisodeResultLink.belongsTo(db.EpisodeDiscussion)
 db.EpisodeResultLink.belongsTo(db.EpisodeDiscussionResult)
 
-// db.EpisodeDiscussionResult.belongsTo(db.EpisodeDiscussion, {
-//   foreignKey: 'id',
-//   targetKey: 'episodeDiscussionId',
-// })
+db.Show.hasMany(db.RedditPollResult)
+db.Week.hasMany(db.RedditPollResult)
+db.EpisodeDiscussion.hasOne(db.RedditPollResult)
+db.RedditPollResult.belongsTo(db.Show)
+db.RedditPollResult.belongsTo(db.Week)
+db.RedditPollResult.belongsTo(db.EpisodeDiscussion)
 
 
 module.exports = db;

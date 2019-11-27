@@ -38,16 +38,16 @@ module.exports = {
           total -= value
         }
       }
-      if (total >= 50) return [((weighted / total) * 10).toFixed(2), total, 'weighted']
+      return [((weighted / total) * 10).toFixed(2), total, 'weighted']
     }
     if (_.difference(keys, ['Dislike', 'Like']).length === 0) {
       for (const key of keys) {
         const value = poll[key]
         total += Number(value)
       }
-      if (total >= 50) return [((poll.Like / total) * 10).toFixed(2), total, 'simple']
+      return [((poll.Like / total) * 10).toFixed(2), total, 'simple']
     }
-    return [0, 0, 'no-result']
+    return null
   },
   /**
    * Calculates a MAL rating using only MAL Scores done by Reddit Users. Must have at least 10 Reddit User scores.
