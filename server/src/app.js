@@ -36,7 +36,7 @@ require('./cron')
 
 // Error Handler Middleware
 app.use((err, req, res, next) => {
-  logger.error(err.message)
+  console.log(err)
   // This will get passed back to the user as a generic server error
   // message for caught errors.
   res.status(500).send('Unexpected server error occurred.')

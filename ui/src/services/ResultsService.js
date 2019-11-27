@@ -6,4 +6,9 @@ export default {
       params: {id}
     })
   },
+  getRedditPollResultsByWeek(id) {
+    return Api().get('/api/v1/results/poll/week', {
+      params: {id}
+    })
+  }
 }

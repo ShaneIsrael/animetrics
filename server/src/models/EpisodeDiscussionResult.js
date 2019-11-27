@@ -34,9 +34,6 @@ module.exports = (connection, Sequelize) => connection.define(
       type: Sequelize.INTEGER,
       allowNull: false,
     },
-    poll_results: {
-      type: Sequelize.JSON,
-    },
     ralScore: {
       type: Sequelize.STRING,
     },
