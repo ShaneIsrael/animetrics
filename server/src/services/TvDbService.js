@@ -158,16 +158,16 @@ service.updateTvDbIds = async () => {
           break
         }
       }
+      if (match.id) {
+        logger.info(`Found tvdb match: ${match.result.seriesName} --> ${show.title}`)
+        show.tvdb_id = match.id
+      } else {
+        logger.info(`NO TVDB MATCH, using first found: ${result.data.data[0].seriesName}`)
+        show.tvdb_id = result.data.data[0].id
+      }
+      show.save();
+      await updateSeriesInformation(show.id)
     }
-    if (match.id) {
-      logger.info(`Found tvdb match: ${match.result.seriesName} --> ${show.title}`)
-      show.tvdb_id = match.id
-    } else {
-      logger.info(`NO TVDB MATCH, using first found: ${result.data.data[0].seriesName}`)
-      show.tvdb_id = result.data.data[0].id
-    }
-    show.save();
-    await updateSeriesInformation(show.id)
   }
 }
 
