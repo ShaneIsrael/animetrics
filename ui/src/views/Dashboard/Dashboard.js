@@ -109,11 +109,12 @@ function createPollResults(results) {
       const aScore = a.previous.poll ? a.previous.poll.score : 0
       return bScore - aScore
     })
+
     const prevPollResults = results.map((res, index) => {
       return {
         id: res.result.id,
         poll: res.previous.poll ? res.previous.poll : {score: 0},
-        position: index,
+        position: index + 1,
       }
     })
     // sort again based off not previous poll so we can set the position
@@ -140,14 +141,14 @@ function createPollResults(results) {
         episode: res.discussion.episode,
         avatar: `${res.show.id}_${res.asset.season}_head.png`,
         poll: res.poll,
-        position: index,
+        position: index + 1,
         prevPoll,
         prevPosition,
         prevTitle
       }
     })
     const render = pollResults.map((poll, index) => {
-      if (poll.poll.score === 0) return false
+      // if (poll.poll.score === 0) return false
       return <AnimePollRanking key={index} current={poll}></AnimePollRanking>
     })
     return render
@@ -242,7 +243,7 @@ const Dashboard = () => {
         return isMobile ? <option
           key={index}
           value={index}><center>Current Week</center></option> 
-          : <MenuItem key={index} value={index}><center>Current Week</center></MenuItem>
+          : <MenuItem key={index} value={weeks.length}><center>Current Week</center></MenuItem>
       } else {
         return isMobile 
           ? 
