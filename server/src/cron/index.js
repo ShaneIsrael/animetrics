@@ -105,8 +105,10 @@ async function init() {
     logger.info('beginning cron jobs')
     await authTvDb()
     await fetchAssets.fetch()
+    await generateDiscussionResults()
     logger.info('tvdb auth successful')
   } catch (err) {
+    console.log(err)
     logger.error(err.message)
   }
 }
