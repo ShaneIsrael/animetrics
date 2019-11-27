@@ -135,6 +135,9 @@ const AnimePollRanking = (props) => {
   let { current } = props
   
 
+  if (current && current.title === 'Stars Align') {
+    console.log(current.position, current.prevPosition)
+  }
   return (
     <div className={clsx(classes.root, 'grow')}>
       <Paper
