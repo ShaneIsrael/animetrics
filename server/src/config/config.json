@@ -1,5 +1,5 @@
 {
-  "development": {
+  "dev": {
     "dialect": "sqlite",
     "storage": "/mnt/c/git/animetrics/server/src/databases/dev.db",
     "logging": false

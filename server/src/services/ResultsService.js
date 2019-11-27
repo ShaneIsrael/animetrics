@@ -104,6 +104,7 @@ service.getResultsByWeek = async (id) => {
   // Sort by karma
   resultsArray.sort((a, b) => b.result.ups - a.result.ups)
 
+  console.log(resultsArray.length)
   return resultsArray
 }
 
