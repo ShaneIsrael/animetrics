@@ -22,6 +22,18 @@ module.exports = (connection, Sequelize) => connection.define(
     poster_art: {
       type: Sequelize.STRING,
     },
+    s3_avatar: {
+      type: Sequelize.STRING,
+    },
+    s3_banner: {
+      type: Sequelize.STRING,
+    },
+    s3_poster: {
+      type: Sequelize.STRING,
+    },
+    s3_bucket: {
+      type: Sequelize.STRING,
+    },
     createdAt: {
       allowNull: false,
       type: Sequelize.DATE,

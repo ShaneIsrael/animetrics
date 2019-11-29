@@ -110,7 +110,7 @@ const ResultDetails = (props) => {
 
   return (
     <Grid item xs={8}>
-      <Paper elevation={0} square={true} style={{height: '80px', background: `linear-gradient(to left, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 30%), linear-gradient(to right, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 30%), url(/images/assets/banners/${banner})`, backgroundSize: 'cover'}}>
+      <Paper elevation={0} square={true} style={{height: '80px', background: `linear-gradient(to left, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 30%), linear-gradient(to right, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 30%), url(${banner})`, backgroundSize: 'cover'}}>
         <Grid className={classes.root} container>
           <Grid item xs={2}>
             <Paper className={classes.scoreChangePaper} elevation={0} square={true}>

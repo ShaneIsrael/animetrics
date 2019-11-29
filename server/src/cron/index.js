@@ -3,6 +3,7 @@ const moment = require('moment')
 const logger = require('../logger')
 const {
   digestDiscussionPost, authTvDb, refreshTvDb, updateTvDbIds, getSeriesPoster, createDiscussionResult,
+  uploadFileToS3,
 } = require('../services')
 const {
   Asset, Show, EpisodeResultLink, EpisodeDiscussion, Week, Op,
