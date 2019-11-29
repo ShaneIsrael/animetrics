@@ -45,7 +45,7 @@ service.getRedditPollResultsByWeek = async (id) => {
   const week = await Week.findOne({ where: { id } })
   const prevWeekDt = moment(new Date(week.start_dt)).subtract(3, 'days').format('YYYY-MM-DD HH:mm:ss')
   const prevWeek = await Week.findOne({ where: { [Op.and]: { start_dt: { [Op.lte]: prevWeekDt }, end_dt: { [Op.gte]: prevWeekDt } } } })
-  const pollResults = await RedditPollResult.findAll({ where: { weekId: id, votes: { [Op.gte]: 50 } }, order: [['score', 'DESC']], include: [{ model: Show, include: [Asset] }, EpisodeDiscussion] })
+  const pollResults = await RedditPollResult.findAll({ where: { weekId: id, votes: { [Op.gte]: 50 } }, order: [['score', 'DESC']], include: [{ model: Show, include: [{ model: Asset, raw: true }] }, EpisodeDiscussion] })
   let prevPollResults
   if (prevWeek) {
     prevPollResults = await RedditPollResult.findAll({ where: { weekId: prevWeek.id, votes: { [Op.gte]: 50 } }, order: [['score', 'DESC']], raw: true })
@@ -71,7 +71,7 @@ service.getRedditPollResultsByWeek = async (id) => {
     results.push({
       show: cr.Show.dataValues,
       discussion: cr.EpisodeDiscussion.dataValues,
-      asset: cr.Show.Assets[0].dataValues,
+      assets: cr.Show.Assets,
       score: cr.score,
       votes: cr.votes,
       poll: cr.poll,
@@ -92,19 +92,17 @@ service.getResultsByWeek = async (id) => {
   // order: [[EpisodeDiscussionResult, 'ups', 'DESC']], include: [{ model: EpisodeDiscussionResult, include: [MALSnapshot, { model: Show, include: [Asset] }, EpisodeDiscussion] }]
   const week = await Week.findOne({ where: { id } })
   const prevWeekDt = moment(new Date(week.start_dt)).subtract(7, 'days').format('YYYY-MM-DD HH:mm:ss')
-  const resultLinks = await EpisodeResultLink.findAll({ where: { weekId: week.id, episodeDiscussionResultId: { [Op.ne]: null } }, include: [{ model: Show, include: [Asset] }, { model: EpisodeDiscussion, include: [RedditPollResult] }, { model: EpisodeDiscussionResult, include: [MALSnapshot] }] })
+  const resultLinks = await EpisodeResultLink.findAll({ where: { weekId: week.id, episodeDiscussionResultId: { [Op.ne]: null } }, include: [{ model: Show, include: [{ model: Asset, raw: true }] }, { model: EpisodeDiscussion, include: [RedditPollResult] }, { model: EpisodeDiscussionResult, include: [MALSnapshot] }] })
 
   const prevWeek = await Week.findOne({ where: { [Op.and]: { start_dt: { [Op.lte]: prevWeekDt }, end_dt: { [Op.gte]: prevWeekDt } } } })
   let previousResultLinks
-  if (prevWeek) { previousResultLinks = await EpisodeResultLink.findAll({ where: { weekId: prevWeek.id }, include: [{ model: Show, include: [Asset] }, EpisodeDiscussion, { model: EpisodeDiscussionResult, include: [MALSnapshot] }] }) }
-  
+  if (prevWeek) { previousResultLinks = await EpisodeResultLink.findAll({ where: { weekId: prevWeek.id }, include: [{ model: Show, include: [{ model: Asset, raw: true }] }, EpisodeDiscussion, { model: EpisodeDiscussionResult, include: [MALSnapshot] }] }) }
+
   const resultObjects = {}
   for (const rl of resultLinks) {
     resultObjects[rl.showId] = {
       show: rl.Show.dataValues,
-      asset: {
-        season: rl.Show.Assets[0].season,
-      },
+      assets: rl.Show.Assets,
       result: rl.EpisodeDiscussionResult.dataValues,
       discussion: rl.EpisodeDiscussion.dataValues,
       mal: rl.EpisodeDiscussionResult.MALSnapshot.dataValues,
@@ -121,8 +119,8 @@ service.getResultsByWeek = async (id) => {
         if (rl.showId === prl.showId) {
           resultObjects[rl.showId].previous = {
             show: prl.Show.dataValues,
-            asset: {
-              season: prl.Show.Assets[0].season,
+            assets: {
+              season: prl.Show.Assets,
             },
             result: prl.EpisodeDiscussionResult.dataValues,
             discussion: prl.EpisodeDiscussion.dataValues,

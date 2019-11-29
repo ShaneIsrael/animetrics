@@ -16,6 +16,7 @@ import moment from 'moment'
 import { AnimeRankingResult, DetailsCard, AnimePollRanking } from './components'
 import { WeekService, ResultsService } from '../../services'
 import clsx from 'clsx'
+import { Alert } from 'components'
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -76,7 +77,7 @@ function createResults(results, setHandler) {
     const render = results.map((res, index) => {
       const posPrevious = res.previous ? res.previous.position : null
       return <AnimeRankingResult 
-        banner={`${res.show.id}_${res.asset.season}.png`}
+        banner={`https://animetrics.sfo2.cdn.digitaloceanspaces.com/${res.assets[0].s3_banner}`}
         commentCount={res.result.comment_count}
         episode={res.discussion.episode}
         key={5000+index} 
@@ -284,11 +285,11 @@ const Dashboard = () => {
             >
               <Tab
                 icon={<ScoreIcon />}
-                label="Karma Rankings"
+                label="Reddit Karma Ranks"
               />
               <Tab
                 icon={<PollIcon />}
-                label="Poll Rankings"
+                label="Reddit Poll Ranks"
               />
             </Tabs>
           </Grid>
@@ -313,6 +314,12 @@ const Dashboard = () => {
                   justify="center"
                 >
                   {renderedResults}
+                  {renderedResults.length === 0 &&
+                    <Alert
+                      variant="info"
+                      message="There are currently 0 results for this week. The first results should appear 48 hours after the week beginds. Please check back later."
+                    />
+                  }
                 </Grid>
               </Paper>
             </Grid>
@@ -337,6 +344,12 @@ const Dashboard = () => {
                   justify="center"
                 >
                   {renderedPollResults}
+                  {renderedPollResults.length === 0 &&
+                    <Alert
+                      variant="info"
+                      message="There are currently 0 results for this week. The first results should appear 48 hours after the week beginds. Please check back later."
+                    />
+                  }
                 </Grid>
               </Paper>
             </Grid>

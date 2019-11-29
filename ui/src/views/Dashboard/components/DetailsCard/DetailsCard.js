@@ -81,7 +81,7 @@ export default function DetailsCard(props) {
           component="img"
           alt="Selected Anime Details"
           height="500"
-          image={`/images/assets/posters/${selectedAnime.banner.split('.png')[0]}.jpg`}
+          image={`${selectedAnime.banner.replace('banner.png', 'poster.jpg')}`}
           title={title}
         />
         <CardContent>

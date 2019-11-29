@@ -14,6 +14,11 @@ module.exports = {
       detectFacePath: '/mnt/c/git/animetrics/server/src/tools/detectFace.py',
       detectFaceConfPath: '/mnt/c/git/animetrics/server/src/config/libcascade_animeface.xml',
     },
+    aws: {
+      endpoint: 'sfo2.digitaloceanspaces.com',
+      access_key_id: 'SHW64UJLEICUJPDMHTSP',
+      access_key_secret: '54ORrWz/8A/FKA3z9lTVYAXUaJ8xb8q4tQz73TvS070',
+    },
   },
   mac: {
     reddit: {
@@ -28,6 +33,11 @@ module.exports = {
       imagesRootPath: '/Users/sisrael/git/anime-episode-ranking/ui/public/images',
       detectFacePath: '/Users/sisrael/git/anime-episode-ranking/server/src/tools/detectFace.py',
       detectFaceConfPath: '/Users/sisrael/git/anime-episode-ranking/server/src/config/libcascade_animeface.xml',
+    },
+    aws: {
+      endpoint: 'sfo2.digitaloceanspaces.com',
+      access_key_id: 'SHW64UJLEICUJPDMHTSP',
+      access_key_secret: '54ORrWz/8A/FKA3z9lTVYAXUaJ8xb8q4tQz73TvS070',
     },
   },
 }
