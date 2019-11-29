@@ -49,7 +49,7 @@ const AnimeRankingResult = (props) => {
   const scoreChange = score - scorePrevious
   // eslint-disable-next-line
   const pollScoreChange = pollScore - pollScorePrevious
-
+  
   // if (pos === 0) {
   //   setAnimeSelection({id: result.id, showId: result.showId, banner, title})
   // }

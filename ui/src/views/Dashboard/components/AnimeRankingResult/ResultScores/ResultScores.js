@@ -35,7 +35,7 @@ const useStyles = makeStyles(theme => ({
   },
   malRalFont: {
     color: 'white',
-    WebkitTextStroke: '0.5px',
+    WebkitTextStroke: '1px',
     WebkitTextStrokeColor: 'black',
     fontFamily: 'Impact, Oswald',
     fontWeight: 800,
@@ -43,7 +43,7 @@ const useStyles = makeStyles(theme => ({
   },
   malRalScoreFont: {
     color: 'white',
-    WebkitTextStroke: '0.3px',
+    WebkitTextStroke: '1px',
     WebkitTextStrokeColor: 'black',
     fontFamily: 'Arial, Helvetica, sans-serif',
     fontWeight: 800,

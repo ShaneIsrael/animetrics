@@ -13,8 +13,6 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: 'rgba(255, 0, 255, 0)',
     textAlign: 'center',
     height: '80px',
-    fontWeight: 600,
-    fontSize: 12,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -23,7 +21,7 @@ const useStyles = makeStyles(theme => ({
   commentCountFont: {
     color: '#294e8a',
     fontFamily: 'Impact, Oswald',
-    fontSize: 14,
+    fontSize: 18,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -36,7 +34,7 @@ const useStyles = makeStyles(theme => ({
   commentIcon: {
     marginTop: '5px',
     color: 'white',
-    fontSize: '50px'
+    fontSize: '60px'
   }
 }))
 

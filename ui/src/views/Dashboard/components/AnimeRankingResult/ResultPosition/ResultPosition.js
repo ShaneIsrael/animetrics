@@ -23,16 +23,16 @@ const useStyles = makeStyles(theme => ({
   },
   positionFont: {
     color: 'white',
-    WebkitTextStroke: '1px',
+    WebkitTextStroke: '2px',
     WebkitTextStrokeColor: 'black',
     fontFamily: 'Impact, Oswald',
     fontWeight: 800,
-    fontSize: 24,
+    fontSize: 26,
     fontStyle: 'bold'
   },
   positionChangeFont: {
     color: 'white',
-    WebkitTextStroke: '.5px',
+    WebkitTextStroke: '1px',
     WebkitTextStrokeColor: 'black',
     fontFamily: 'Impact, Oswald',
     fontWeight: 800,
