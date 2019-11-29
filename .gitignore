@@ -5,4 +5,3 @@ node_modules/
 
 package-lock.json
 ui/build
-server/src/databases/*

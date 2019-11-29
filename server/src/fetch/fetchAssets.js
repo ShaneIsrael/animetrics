@@ -1,19 +1,24 @@
 const download = require('image-downloader')
 const fs = require('fs')
 const gm = require('gm')
+const rimraf = require('rimraf')
+const uuidv4 = require('uuid/v4')
 const spawn = require('await-spawn')
 const {
   Show,
   Asset,
+  Op,
 } = require('../models')
 
 const config = require('../config/config')[process.env.NODE_ENV].assets
 const logger = require('../logger')
+const { uploadFileToS3 } = require('../services')
 
 async function crop(width, height, path, savePath) {
   const pyProg = await spawn('python', [config.detectFacePath, path, config.detectFaceConfPath]);
-  const avatarSavePath = `${savePath.split('.png')[0]}_head.png`
-  const jsonLoc = `${path.split('.jpg')[0]}_faces.json`
+  const bannerSavePath = `${savePath.split('.jpg')[0]}_banner.png`
+  const avatarSavePath = `${savePath.split('.jpg')[0]}_avatar.png`
+  const jsonLoc = `${path.split('.jpg')[0]}.json`
   if (fs.existsSync(jsonLoc)) {
     const facedata = fs.readFileSync(jsonLoc);
     const faces = JSON.parse(facedata);
@@ -66,7 +71,7 @@ async function crop(width, height, path, savePath) {
     gm(path)
       .gravity('NorthWest')
       .crop(width, height, (680 - 454) / 2, avgY - (height / 2))
-      .write(savePath, (err) => {
+      .write(bannerSavePath, (err) => {
         if (err) {
           logger.err(err);
         }
@@ -88,7 +93,7 @@ async function crop(width, height, path, savePath) {
     gm(path)
       .gravity('NorthWest')
       .crop(width, height, (680 - 454) / 2, 333 - (height / 2))
-      .write(savePath, (err) => {
+      .write(bannerSavePath, (err) => {
         if (err) {
           logger.info(err);
         }
@@ -101,45 +106,69 @@ async function crop(width, height, path, savePath) {
   }
 }
 
+async function createAndUpload(asset) {
+  logger.info(`downloading asset for show: ${asset.showId}`)
+  const imageName = uuidv4()
+  if (!fs.existsSync(`${config.imagesRootPath}`)) {
+    fs.mkdirSync(`${config.imagesRootPath}`);
+  }
+  if (!fs.existsSync(`${config.imagesRootPath}/${imageName}/`)) {
+    fs.mkdirSync(`${config.imagesRootPath}/${imageName}/`)
+  }
+  const imageDir = `${config.imagesRootPath}/${imageName}`
+  const posterPath = `${imageDir}/${imageName}.jpg`
+  const bannerPath = `${imageDir}/${imageName}_banner.png`
+  const avatarPath = `${imageDir}/${imageName}_avatar.png`
+
+  await download.image({
+    url: `https://www.thetvdb.com/banners/${asset.poster_art}`,
+    dest: posterPath,
+    timeout: 5000,
+  })
+  // await crop(758, 140, `${postersDir}/${show.id}.jpg`, `${bannersDir}/${show.id}.png`)
+  await crop(454, 80, posterPath, posterPath)
+  if (!asset.s3_poster) {
+    const s3PosterResp = await uploadFileToS3(posterPath, `assets/${imageName}_poster.jpg`)
+    asset.s3_poster = s3PosterResp.Key
+  }
+  if (!asset.s3_banner) {
+    const s3BannerResp = await uploadFileToS3(bannerPath, `assets/${imageName}_banner.png`)
+    asset.s3_banner = s3BannerResp.Key
+  }
+  if (!asset.s3_avatar) {
+    const s3AvatarResp = await uploadFileToS3(avatarPath, `assets/${imageName}_avatar.png`)
+    asset.s3_avatar = s3AvatarResp.Key
+  }
+  asset.s3_bucket = 'animetrics'
+  asset.save()
+
+  await rimraf.sync(imageDir)
+}
 module.exports = {
   async fetch() {
-    if (!fs.existsSync(`${config.imagesRootPath}/assets`)) {
-      fs.mkdirSync(`${config.imagesRootPath}/assets`);
-    }
-    if (!fs.existsSync(`${config.imagesRootPath}/assets/banners`)) {
-      fs.mkdirSync(`${config.imagesRootPath}/assets/banners`);
-    }
-    if (!fs.existsSync(`${config.imagesRootPath}/assets/posters`)) {
-      fs.mkdirSync(`${config.imagesRootPath}/assets/posters`);
-    }
-    const shows = await Show.findAll({ include: [{ model: Asset }] })
-    for (const show of shows) {
-      const postersDir = `${config.imagesRootPath}/assets/posters`
-      const bannersDir = `${config.imagesRootPath}/assets/banners`
-      for (const asset of show.Assets) {
-        try {
-          if (asset.poster_art) {
-            logger.info(`downloading asset for: ${show.title}`)
-            if (!fs.existsSync(`${postersDir}/${show.id}_${asset.season}.jpg`)) {
-              await download.image({
-                url: `https://www.thetvdb.com/banners/${asset.poster_art}`,
-                dest: `${postersDir}/${show.id}_${asset.season}.jpg`,
-                timeout: 5000,
-              })
-            } else {
-              logger.info('poster asset exists, skipping...')
-            }
-            if (!fs.existsSync(`${bannersDir}/${show.id}_${asset.season}.png`) || !fs.existsSync(`${bannersDir}/${show.id}_${asset.season}_head.png`)) {
-              // await crop(758, 140, `${postersDir}/${show.id}.jpg`, `${bannersDir}/${show.id}.png`)
-              await crop(454, 80, `${postersDir}/${show.id}_${asset.season}.jpg`, `${bannersDir}/${show.id}_${asset.season}.png`)
-            } else {
-              logger.info('banner asset exists, skipping...')
-            }
-          }
-        } catch (err) {
-          logger.error(err.message)
-        }
+    try {
+      const assets = await Asset.findAll({
+        where: {
+          poster_art: { [Op.ne]: null },
+          [Op.or]: [
+            {
+              s3_poster: null,
+            },
+            {
+              s3_banner: null,
+            },
+            {
+              s3_avatar: null,
+            },
+          ],
+        },
+      })
+      for (const asset of assets) {
+        await createAndUpload(asset)
       }
+    } catch (err) {
+      console.log(err)
+      logger.error(err.message)
     }
   },
 }
