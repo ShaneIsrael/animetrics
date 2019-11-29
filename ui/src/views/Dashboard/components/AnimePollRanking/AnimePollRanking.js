@@ -42,11 +42,11 @@ const useStyles = makeStyles(theme => ({
   titleFont: {
     color: 'white',
     WebkitTextStrokeColor: 'black',
-    WebkitTextStroke: '0.7px',
+    WebkitTextStroke: '1px',
     fontFamily: 'Impact',
-    fontWeight: 'lighter',
+    // fontWeight: 800,
     flexWrap: 'wrap',
-    fontSize: 14,
+    fontSize: 15,
     lineHeight: 1,
     fontStyle: 'italic'
   },
@@ -58,11 +58,11 @@ const useStyles = makeStyles(theme => ({
   },
   positionChangeFont: {
     color: 'white',
-    WebkitTextStroke: '.5px',
+    WebkitTextStroke: '1px',
     WebkitTextStrokeColor: 'black',
     fontFamily: 'Impact, Oswald',
     fontWeight: 800,
-    fontSize: 14,
+    fontSize: 16,
     fontStyle: 'bold',
     // display: 'flex',
     alignItems: 'left',
@@ -70,7 +70,7 @@ const useStyles = makeStyles(theme => ({
   },
   scoreFont: {
     color: 'white',
-    WebkitTextStroke: '.5px',
+    WebkitTextStroke: '2px',
     WebkitTextStrokeColor: 'black',
     fontFamily: 'Impact, Oswald',
     fontWeight: 800,
@@ -83,7 +83,7 @@ const useStyles = makeStyles(theme => ({
     color: 'white',
     lineHeight: 1,
     WebkitTextStrokeColor: 'black',
-    WebkitTextStroke: '0.3px',
+    WebkitTextStroke: '1px',
     fontFamily: 'Arial, Helvetica, sans-serif',
     fontWeight: 800,
     fontSize: 16,
@@ -99,13 +99,15 @@ const useStyles = makeStyles(theme => ({
   },
   episodeFont: {
     color: 'white',
-    lineHeight: 1,
+    // lineHeight: 1,
     WebkitTextStrokeColor: 'black',
-    WebkitTextStroke: '0.6px',
+    WebkitTextStroke: '1px',
     fontFamily: 'Impact, Oswald',
     fontWeight: 'lighter',
-    fontSize: 10,
-    fontStyle: 'italic'
+    fontSize: 18,
+    fontStyle: 'italic',
+    marginLeft: '4px',
+    marginTop: '4px'
   },
   upIcon: {
     transform: 'rotate(-90deg)',
@@ -210,15 +212,17 @@ const AnimePollRanking = (props) => {
               elevation={0}
               square
             >
-              <Typography className={clsx(classes.episodeFont)} align="left" component="p">
-                {`EPISODE ${current.discussion.episode}`}
-              </Typography>
-              <Typography style={{paddingRight: 2, paddingLeft: 2, border: '0.2px solid white', background: 'white'}} display="inline" className={clsx({[classes.fontBase]:true, [classes.voteFontPrimary]: true})}>
-              V
-              </Typography>
-              <Typography style={{paddingRight: 6, paddingLeft: 6, border: '0.2px solid white', backgroundColor: '#294e8a'}} display="inline" className={clsx({[classes.fontBase]:true, [classes.voteFont]: true})}>
-                {current.votes}
-              </Typography>
+              <div style={{paddingTop: '14px'}}>
+                <Typography style={{paddingRight: 2, paddingLeft: 2, border: '0.2px solid white', background: 'white'}} display="inline" className={clsx({[classes.fontBase]:true, [classes.voteFontPrimary]: true})}>
+                V
+                </Typography>
+                <Typography style={{paddingRight: 6, paddingLeft: 6, border: '0.2px solid white', backgroundColor: '#294e8a'}} display="inline" className={clsx({[classes.fontBase]:true, [classes.voteFont]: true})}>
+                  {current.votes}
+                </Typography>
+                <Typography display="inline" className={clsx(classes.episodeFont)} align="right">
+                  {`EPISODE ${current.discussion.episode}`}
+                </Typography>
+              </div>
             </Paper>
           </Grid>
         </Grid>

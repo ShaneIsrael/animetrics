@@ -36,9 +36,9 @@ const useStyles = makeStyles(theme => ({
     textAlign: 'center',
     height: '55px',
     WebkitTextStrokeColor: 'black',
-    WebkitTextStroke: '1px',
+    WebkitTextStroke: '2px',
     fontWeight: 600,
-    fontSize: 20
+    fontSize: 24
   },
   titlePaper: {
     backgroundColor: 'rgba(0, 0, 0, 0)',
@@ -61,17 +61,17 @@ const useStyles = makeStyles(theme => ({
   },
   titleFont: {
     WebkitTextStrokeColor: 'black',
-    WebkitTextStroke: '0.7px',
+    WebkitTextStroke: '1px',
     fontFamily: 'Oswald',
     fontWeight: 900,
     flexWrap: 'wrap',
-    fontSize: 18,
+    fontSize: 20,
     lineHeight: 1,
     fontStyle: 'italic'
   },
   episodeFont: {
     WebkitTextStrokeColor: 'black',
-    WebkitTextStroke: '0.6px',
+    WebkitTextStroke: '1px',
     fontFamily: 'Impact, Oswald',
     fontWeight: 'lighter',
     fontSize: 16,
@@ -79,7 +79,7 @@ const useStyles = makeStyles(theme => ({
   },
   rpFont: {
     WebkitTextStrokeColor: 'black',
-    WebkitTextStroke: '0.3px',
+    WebkitTextStroke: '1px',
     fontFamily: 'Arial, Helvetica, sans-serif',
     fontWeight: 800,
     fontSize: 16,
@@ -107,17 +107,17 @@ const ResultDetails = (props) => {
   const classes = useStyles()
 
   const {score, scoreChange, scoreChangeDirection, rpScore, title, episode, banner} = props
-
+  
   return (
     <Grid item xs={8}>
-      <Paper elevation={0} square={true} style={{height: '80px', background: `linear-gradient(to left, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 30%), linear-gradient(to right, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 30%), url(${banner})`, backgroundSize: 'cover'}}>
+      <Paper elevation={0} square={true} style={{height: '80px', background: `linear-gradient(to left, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 40%), linear-gradient(to right, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 40%), url(${banner})`, backgroundSize: 'cover'}}>
         <Grid className={classes.root} container>
           <Grid item xs={2}>
             <Paper className={classes.scoreChangePaper} elevation={0} square={true}>
               <Typography className={clsx(classes.fontBase, classes.scoreChangeFont)} align="left" variant="subtitle2">
                 {scoreChangeDirection === 'up' && <KeyboardArrowUpIcon className={classes.orangeColor}/>}
                 {scoreChangeDirection === 'down' && <KeyboardArrowDownIcon className={classes.purpleColor}/>}
-                {!Number(scoreChange) ? '' : Math.abs(scoreChange)}
+                {!Number(scoreChange) || scoreChangeDirection === 'none' ? '' : Math.abs(scoreChange)}
               </Typography>
             </Paper>
             <Paper className={classes.scorePaper} elevation={0} square={true}>

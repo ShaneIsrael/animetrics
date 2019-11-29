@@ -201,8 +201,8 @@ const Dashboard = () => {
       if (index === 0) {
         return isMobile ? <option
           key={index}
-          value={index}><center>Current Week</center></option> 
-          : <MenuItem key={index} value={0}><center>Current Week</center></MenuItem>
+          value={index}>Current Week</option> 
+          : <MenuItem key={index} value={0}>Current Week</MenuItem>
       } else {
         return isMobile 
           ? 
