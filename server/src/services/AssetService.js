@@ -1,6 +1,37 @@
-const service = {}
+const aws = require('aws-sdk')
+const fs = require('fs')
+
+const awsConfig = require('../config/config')[process.env.NODE_ENV].aws
+
+const endpoint = new aws.Endpoint(awsConfig.endpoint)
+const s3 = new aws.S3({
+  endpoint,
+  accessKeyId: awsConfig.access_key_id,
+  secretAccessKey: awsConfig.access_key_secret,
+})
+
 const { getSeriesPoster, getSeriesPosterBySeason } = require('../services')
 const { Asset, Show } = require('../models')
+
+const service = {}
+
+const uploadFile = async (filePath, name, bucket) => {
+  const fileContent = fs.readFileSync(filePath)
+  const params = {
+    Bucket: bucket,
+    Key: name,
+    Body: fileContent,
+    ACL: 'public-read',
+  }
+
+  const resp = await s3.upload(params).promise()
+  return resp
+}
+
+service.uploadFileToS3 = async (localPath, savePath) => {
+  const resp = await uploadFile(localPath, savePath, 'animetrics')
+  return resp
+}
 
 service.updateAssetSeasons = async () => {
   // const assets = await Asset.findAll({ include: [Show] })

@@ -134,7 +134,7 @@ const AnimePollRanking = (props) => {
 
   let { current } = props
   
-  const avatar = `${current.show.id}_${current.asset.season}_head.png`
+  const avatar = `https://animetrics.sfo2.cdn.digitaloceanspaces.com/${current.assets[0].s3_avatar}`
 
   const posChangeUp = current.previous ? current.position < current.previous.position : false
   const posChangeDown = current.previous ? current.position > current.previous.position : false
@@ -189,7 +189,7 @@ const AnimePollRanking = (props) => {
               elevation={0}
               square
             >
-              <Avatar className={classes.avatar} src={`/images/assets/banners/${avatar}`} />
+              <Avatar className={classes.avatar} src={avatar} />
             </Paper>
           </Grid>
           <Grid

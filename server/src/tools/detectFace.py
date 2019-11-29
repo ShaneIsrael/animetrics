@@ -22,17 +22,13 @@ def detect(filename, cascade_file = "./config/libcascade_animeface.xml"):
     if len(faces) == 0: return
     face_data = []
     for (x, y, w, h) in faces:
-        print(x, y, w, h)
-        cv2.rectangle(image, (x, y), (x + w, y + h), (0, 0, 255), 2)
         face_data.append({'x': int(x), 'y': int(y), 'width': int(w), 'height': int(h)})
-    
+
     fn, ext = os.path.splitext(filename)
-    with open(fn + '_faces.json', 'w') as f:
+    with open(fn + '.json', 'w') as f:
         print(face_data)
         f.write(json.dumps(face_data))
-    cv2.imwrite(fn + '_detected.jpg', image)
-    print(fn)
-
+        
 if len(sys.argv) != 3:
     sys.stderr.write("usage: detect.py <filename> <conf>\n")
     sys.exit(-1)
