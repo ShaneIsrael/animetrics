@@ -61,7 +61,7 @@ async function getDiscussionsAndPopulate() {
 }
 
 async function updateRalScores() {
-  const results = EpisodeDiscussionResult.findAll({ where: { ralScore: null } })
+  const results = await EpisodeDiscussionResult.findAll({ where: { ralScore: null } })
   if (results) {
     for (const result of results) {
       await updateRedditAnimeListScore(result)
