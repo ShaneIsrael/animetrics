@@ -4,6 +4,11 @@
     "storage": "/mnt/c/git/animetrics/server/src/databases/dev.db",
     "logging": false
   },
+  "prod": {
+    "dialect": "sqlite",
+    "storage": "/database/prod.db",
+    "logging": false
+  },
   "mac": {
     "dialect": "sqlite",
     "storage": "/Users/sisrael/git/anime-episode-ranking/server/src/databases/dev.db",
