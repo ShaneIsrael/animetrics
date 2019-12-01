@@ -17,7 +17,9 @@ const logger = createLogger({
   transports: [
     new transports.Console({
       handleExceptions: true,
+      json: true,
       stringify: true,
+      timestamp: true,
       level: 'info',
     }),
   ],

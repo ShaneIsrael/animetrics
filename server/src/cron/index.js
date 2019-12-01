@@ -2,11 +2,10 @@ const cron = require('node-cron')
 const moment = require('moment')
 const logger = require('../logger')
 const {
-  digestDiscussionPost, authTvDb, refreshTvDb, updateTvDbIds, getSeriesPoster, createDiscussionResult,
-  uploadFileToS3,
+  digestDiscussionPost, authTvDb, refreshTvDb, updateTvDbIds, getSeriesPoster, createDiscussionResult, updateRedditAnimeListScore,
 } = require('../services')
 const {
-  Asset, Show, EpisodeResultLink, EpisodeDiscussion, Week, Op,
+  Asset, Show, EpisodeResultLink, EpisodeDiscussion, EpisodeDiscussionResult, Week, Op,
 } = require('../models')
 const fetchDiscussions = require('../fetch/fetchDiscussions')
 const fetchAssets = require('../fetch/fetchAssets')
@@ -58,25 +57,26 @@ async function getDiscussionsAndPopulate() {
   await fetchAssets.fetch()
   await generateDiscussionResults()
 }
-async function backPopulate(days) {
-  const discussions = await fetchDiscussions.recursiveFetch(days)
-  const toDo = discussions.length
-  let at = 0
-  for (const discussion of discussions) {
-    console.log(`back populating: ${at}/${toDo}`)
-    await digestDiscussionPost(discussion)
-    at += 1
-  }
-  await updateTvDbIds()
-  await updatePosters()
-  await fetchAssets.fetch()
-  await generateDiscussionResults()
-}
 
-// Every Hour | Get Episode Discussions and populate data
+async function updateRalScores() {
+  const results = EpisodeDiscussionResult.findAll({ where: { ralScore: null } })
+  for (const result of results) {
+    await updateRedditAnimeListScore(result)
+  }
+}
+// Every 15 mins | Get Episode Discussions and populate data
+cron.schedule('0 */15 * * * *', async () => {
+  try {
+    getDiscussionsAndPopulate()
+  } catch (err) {
+    logger.error(err.message)
+  }
+})
+// Every Hour | Check for unset ral scores and update them
 cron.schedule('0 0 * * * *', async () => {
   try {
     getDiscussionsAndPopulate()
+    updateRalScores()
   } catch (err) {
     logger.error(err.message)
   }

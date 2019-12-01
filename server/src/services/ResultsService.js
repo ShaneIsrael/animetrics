@@ -188,4 +188,10 @@ service.createDiscussionResult = async (link) => {
   }
 }
 
+service.updateRedditAnimeListScore = async (result) => {
+  const [ralScore] = await cpoll.calculateRedditMalRating(result.Show.id)
+  result.ralScore = ralScore
+  return result.save()
+}
+
 module.exports = service
