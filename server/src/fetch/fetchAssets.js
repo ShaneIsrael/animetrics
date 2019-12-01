@@ -15,7 +15,7 @@ const logger = require('../logger')
 const { uploadFileToS3 } = require('../services')
 
 async function crop(width, height, path, savePath) {
-  const pyProg = await spawn('python', [config.detectFacePath, path, config.detectFaceConfPath]);
+  const pyProg = await spawn('python3', [config.detectFacePath, path, config.detectFaceConfPath]);
   const bannerSavePath = `${savePath.split('.jpg')[0]}_banner.png`
   const avatarSavePath = `${savePath.split('.jpg')[0]}_avatar.png`
   const jsonLoc = `${path.split('.jpg')[0]}.json`
