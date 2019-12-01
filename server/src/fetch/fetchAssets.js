@@ -14,6 +14,8 @@ const config = require('../config/config')[process.env.NODE_ENV].assets
 const logger = require('../logger')
 const { uploadFileToS3 } = require('../services')
 
+const sleep = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds))
+
 async function crop(width, height, path, savePath) {
   const pyProg = await spawn('python3', [config.detectFacePath, path, config.detectFaceConfPath]);
   const bannerSavePath = `${savePath.split('.jpg')[0]}_banner.png`
@@ -127,6 +129,8 @@ async function createAndUpload(asset) {
   })
   // await crop(758, 140, `${postersDir}/${show.id}.jpg`, `${bannersDir}/${show.id}.png`)
   await crop(454, 80, posterPath, posterPath)
+  // sleep 500 miliseconds so that files get closed before trying to upload
+  await sleep(500)
   if (!asset.s3_poster) {
     const s3PosterResp = await uploadFileToS3(posterPath, `assets/${imageName}_poster.jpg`)
     asset.s3_poster = s3PosterResp.Key
@@ -167,8 +171,7 @@ module.exports = {
         await createAndUpload(asset)
       }
     } catch (err) {
-      console.log(err)
-      logger.error(err.message)
+      logger.error(err)
     }
   },
 }
