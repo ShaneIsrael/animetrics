@@ -49,8 +49,10 @@ async function generateDiscussionResults() {
 }
 async function getDiscussionsAndPopulate() {
   const discussions = await fetchDiscussions.fetch()
-  for (const discussion of discussions) {
-    await digestDiscussionPost(discussion)
+  if (discussions) {
+    for (const discussion of discussions) {
+      await digestDiscussionPost(discussion)
+    }
   }
   await updateTvDbIds()
   await updatePosters()
@@ -60,8 +62,10 @@ async function getDiscussionsAndPopulate() {
 
 async function updateRalScores() {
   const results = EpisodeDiscussionResult.findAll({ where: { ralScore: null } })
-  for (const result of results) {
-    await updateRedditAnimeListScore(result)
+  if (results) {
+    for (const result of results) {
+      await updateRedditAnimeListScore(result)
+    }
   }
 }
 // Every 15 mins | Get Episode Discussions and populate data
