@@ -46,7 +46,7 @@ async function search(t, original, attempt) {
     })
     return series;
   } catch (err) {
-    if (err.response.status === 404) {
+    if (err.response && err.response.status === 404) {
       if (attempt === 0) {
         title = title.replace(/[(0-9)]/g, '')
         const r = await search(title, original, (attempt += 1));
