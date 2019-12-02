@@ -7,12 +7,14 @@ import Tabs from '@material-ui/core/Tabs'
 import Tab from '@material-ui/core/Tab'
 import Typography from '@material-ui/core/Typography'
 import Box from '@material-ui/core/Box'
-import PhoneIcon from '@material-ui/icons/Phone'
 import PollIcon from '@material-ui/icons/Poll'
 import ScoreIcon from '@material-ui/icons/Score'
 // eslint-disable-next-line
 import { Grid, Paper, InputLabel, FormControl, Select, MenuItem } from '@material-ui/core'
 import moment from 'moment'
+import ReactGA from 'react-ga'
+ReactGA.pageview(window.location.pathname + window.location.search)
+
 import { AnimeRankingResult, DetailsCard, AnimePollRanking } from './components'
 import { WeekService, ResultsService } from '../../services'
 import clsx from 'clsx'
