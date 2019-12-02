@@ -3,6 +3,8 @@ import { Router } from 'react-router-dom'
 import { createBrowserHistory } from 'history'
 import { ThemeProvider } from '@material-ui/styles'
 import validate from 'validate.js'
+import ReactGA from 'react-ga'
+ReactGA.initialize('UA-153678038-1')
 
 import theme from './theme'
 import 'react-perfect-scrollbar/dist/css/styles.css'
