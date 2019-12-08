@@ -41,7 +41,7 @@ async function upload(type, overrideAssetUrl) {
     timeout: 5000,
   })
   await sleep(500)
-  const resp = await AssetService.uploadFileToS3(filename, `assets/${name}`)
+  const resp = await AssetService.uploadFileToS3(filename, `anime_assets/${name}`)
   await rimraf.sync(imageDir)
   return resp
 }
