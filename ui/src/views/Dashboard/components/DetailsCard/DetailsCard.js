@@ -81,7 +81,7 @@ export default function DetailsCard(props) {
           component="img"
           alt="Selected Anime Details"
           height="500"
-          image={`${selectedAnime.assets[0].s3_poster}`}
+          image={`https://animetrics.sfo2.cdn.digitaloceanspaces.com/${selectedAnime.assets[0].s3_poster}`}
           title={title}
         />
         <CardContent>
