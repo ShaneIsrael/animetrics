@@ -81,7 +81,7 @@ export default function DetailsCard(props) {
           component="img"
           alt="Selected Anime Details"
           height="500"
-          image={`${selectedAnime.show.s3_poster)}`}
+          image={`${selectedAnime.show.s3_poster}`}
           title={title}
         />
         <CardContent>
