@@ -39,7 +39,7 @@ async function generateDiscussionResults() {
   )
   for (const link of links) {
     const createDt = moment(link.EpisodeDiscussion.post_created_dt, 'YYYY-MM-DD HH:mm:ss')
-    const dt48hoursAgo = moment().subtract(48, 'hours')
+    const dt48hoursAgo = moment().utc().subtract(48, 'hours')
 
     if (createDt.isSameOrBefore(dt48hoursAgo)) {
       logger.info(`Creating discussion result for: ${link.EpisodeDiscussion.post_title}`)
