@@ -122,7 +122,7 @@ service.digestDiscussionPost = async (post) => {
     })
   }
   if (!discussion) {
-    console.log(showTitle, seasonNumber, episodeNumber)
+    logger.info(`creating discussion for Show: ${showTitle} Season: ${seasonNumber} Episode: ${episodeNumber}`)
     discussion = await EpisodeDiscussion.create({
       showId: showRow.id,
       weekId: weekRow.id,
