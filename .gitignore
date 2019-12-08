@@ -3,6 +3,8 @@ ui/.vscode
 
 node_modules/
 
-package-lock.json
+server/package-lock.json
+ui/package-lock.json
+
 ui/build
 server/src/databases/*.db

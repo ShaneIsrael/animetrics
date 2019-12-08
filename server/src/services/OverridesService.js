@@ -3,6 +3,7 @@ const fs = require('fs')
 const gm = require('gm')
 const rimraf = require('rimraf')
 const uuidv4 = require('uuid/v4')
+const imageType = require('image-type')
 
 const service = {}
 const {
@@ -26,23 +27,22 @@ async function upload(type, overrideAssetUrl) {
   let name
   switch (type) {
   case 'banner':
-    name = `${imageName}_banner.png`
+    name = `${imageName}_banner.jpg`
     break
   case 'avatar':
-    name = `${imageName}_avatar.png`
+    name = `${imageName}_avatar.jpg`
     break
   default:
-    name = `${imageName}.jpg`
+    name = `${imageName}_poster.jpg`
   }
-  const dlPath = `${imageDir}/${name}`
 
-  await download.image({
+  const { filename } = await download.image({
     url: overrideAssetUrl,
-    dest: dlPath,
+    dest: imageDir,
     timeout: 5000,
   })
   await sleep(500)
-  const resp = await AssetService.uploadFileToS3(dlPath, `assets/${name}`)
+  const resp = await AssetService.uploadFileToS3(filename, `assets/${name}`)
   await rimraf.sync(imageDir)
   return resp
 }
@@ -128,7 +128,7 @@ service.overrideTvdbId = async (showId, tvdbId, token) => {
   show.tvdb_id = tvdbId
   show.save()
   const updatedShow = await TvDbService.updateSeriesInformation(show.id)
-  return show
+  return updatedShow
 }
 
 module.exports = service

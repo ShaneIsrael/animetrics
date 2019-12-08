@@ -68,42 +68,42 @@ async function updateRalScores() {
     }
   }
 }
-// // Every 1 hour | Get Episode Discussions and populate data
-// cron.schedule('0 0 * * * *', async () => {
-//   try {
-//     getDiscussionsAndPopulate()
-//   } catch (err) {
-//     logger.error(err.message)
-//   }
-// })
-// // Every Hour | Check for unset ral scores and update them
-// cron.schedule('0 0 * * * *', async () => {
-//   try {
-//     getDiscussionsAndPopulate()
-//     updateRalScores()
-//   } catch (err) {
-//     logger.error(err.message)
-//   }
-// })
+// Every 1 hour | Get Episode Discussions and populate data
+cron.schedule('0 0 * * * *', async () => {
+  try {
+    getDiscussionsAndPopulate()
+  } catch (err) {
+    logger.error(err.message)
+  }
+})
+// Every Hour | Check for unset ral scores and update them
+cron.schedule('0 0 * * * *', async () => {
+  try {
+    getDiscussionsAndPopulate()
+    updateRalScores()
+  } catch (err) {
+    logger.error(err.message)
+  }
+})
 
-// // Every Monday at 12:00am update users scores
-// cron.schedule('0 0 0 * * 1', async () => {
-//   try {
-//     await fetchUsers.fetch()
-//     fetchUsers.fetchScores()
-//   } catch (err) {
-//     logger.error(err.message)
-//   }
-// })
+// Every Monday at 12:00am update users scores
+cron.schedule('0 0 0 * * 1', async () => {
+  try {
+    await fetchUsers.fetch()
+    fetchUsers.fetchScores()
+  } catch (err) {
+    logger.error(err.message)
+  }
+})
 
-// // Every 6 Hours | Refresh with TvDb
-// cron.schedule('0 0 */6 * * *', async () => {
-//   try {
-//     await refreshTvDb()
-//   } catch (err) {
-//     logger.error(err)
-//   }
-// })
+// Every 6 Hours | Refresh with TvDb
+cron.schedule('0 0 */6 * * *', async () => {
+  try {
+    await refreshTvDb()
+  } catch (err) {
+    logger.error(err)
+  }
+})
 
 async function init() {
   try {
