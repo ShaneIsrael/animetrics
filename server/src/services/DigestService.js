@@ -111,11 +111,11 @@ service.digestDiscussionPost = async (post) => {
   console.log(postDt, post.created_utc)
   const postWeekStartDt = moment(post.created_utc * 1000)
     .utc()
-    .startOf('week').isoWeekday(5) // Friday
+    .startOf('isoWeek').isoWeekday(5) // Friday
     .format('YYYY-MM-DD 00:00:00')
   const postWeekEndDt = moment(post.created_utc * 1000)
     .utc()
-    .endOf('week').isoWeekday(4) // Thursday
+    .endOf('isoWeek').isoWeekday(4) // Thursday
     .format('YYYY-MM-DD 23:59:59')
   let weekRow = await Week.findOne({ where: { start_dt: postWeekStartDt } })
   if (!weekRow) {
