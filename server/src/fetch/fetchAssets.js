@@ -125,7 +125,7 @@ async function createAndUpload(asset) {
     timeout: 5000,
   })
   const filenameSplit = filename.split('/')
-  const filenameUID = filename.split('.jpg')[0].split('/')[filenameSplit.length]
+  const filenameUID = filename.split('.jpg')[0].split('/')[filenameSplit.length - 1]
 
   // await crop(758, 140, `${postersDir}/${show.id}.jpg`, `${bannersDir}/${show.id}.png`)
   await crop(454, 80, filename, filename)
