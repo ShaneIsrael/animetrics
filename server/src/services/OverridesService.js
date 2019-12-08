@@ -3,7 +3,6 @@ const fs = require('fs')
 const gm = require('gm')
 const rimraf = require('rimraf')
 const uuidv4 = require('uuid/v4')
-const imageType = require('image-type')
 
 const service = {}
 const {
