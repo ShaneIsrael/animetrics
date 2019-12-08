@@ -124,6 +124,9 @@ async function createAndUpload(asset) {
     dest: imageDir,
     timeout: 5000,
   })
+  const filenameSplit = filename.split('/')
+  const filenameUID = filename.split('.jpg')[0].split('/')[filenameSplit.length]
+
   // await crop(758, 140, `${postersDir}/${show.id}.jpg`, `${bannersDir}/${show.id}.png`)
   await crop(454, 80, filename, filename)
   // sleep 500 miliseconds so that files get closed before trying to upload
@@ -133,11 +136,11 @@ async function createAndUpload(asset) {
     asset.s3_poster = s3PosterResp.Key
   }
   if (!asset.s3_banner) {
-    const s3BannerResp = await uploadFileToS3(`${imageDir}/image_banner.jpg`, `assets/${imageName}_banner.png`)
+    const s3BannerResp = await uploadFileToS3(`${imageDir}/${filenameUID}_banner.jpg`, `assets/${imageName}_banner.png`)
     asset.s3_banner = s3BannerResp.Key
   }
   if (!asset.s3_avatar) {
-    const s3AvatarResp = await uploadFileToS3(`${imageDir}/image_avatar.jpg`, `assets/${imageName}_avatar.png`)
+    const s3AvatarResp = await uploadFileToS3(`${imageDir}/${filenameUID}_avatar.jpg`, `assets/${imageName}_avatar.png`)
     asset.s3_avatar = s3AvatarResp.Key
   }
   asset.s3_bucket = 'animetrics'
