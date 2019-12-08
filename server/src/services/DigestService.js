@@ -108,6 +108,7 @@ service.digestDiscussionPost = async (post) => {
     where: { post_id: post.id },
   })
   const postDt = moment.utc(post.created_utc * 1000).format('YYYY-MM-DD HH:mm:ss')
+  console.log(postDt, post.created_utc)
   const postWeekStartDt = moment(post.created_utc * 1000)
     .utc()
     .startOf('week').isoWeekday(5) // Friday
