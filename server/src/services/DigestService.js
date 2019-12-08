@@ -8,6 +8,7 @@ const {
   Show,
   EpisodeDiscussion,
   EpisodeResultLink,
+  Op,
 } = require('../models')
 
 const logger = require('../logger')
@@ -106,6 +107,7 @@ service.digestDiscussionPost = async (post) => {
   let discussion = await EpisodeDiscussion.findOne({
     where: { post_id: post.id },
   })
+  const postDt = moment.utc(post.created_utc * 1000).format('YYYY-MM-DD HH:mm:ss')
   const postWeekStartDt = moment(post.created_utc * 1000)
     .utc()
     .startOf('week').isoWeekday(5) // Friday
@@ -121,11 +123,25 @@ service.digestDiscussionPost = async (post) => {
       end_dt: postWeekEndDt,
     })
   }
+  const postWeek = await Week.findOne({
+    where: {
+      [Op.and]: [
+        {
+          start_dt: {
+            [Op.lte]: postDt,
+          },
+          end_dt: {
+            [Op.gte]: postDt,
+          },
+        },
+      ],
+    },
+  })
   if (!discussion) {
     logger.info(`creating discussion for Show: ${showTitle} Season: ${seasonNumber} Episode: ${episodeNumber}`)
     discussion = await EpisodeDiscussion.create({
       showId: showRow.id,
-      weekId: weekRow.id,
+      weekId: postWeek.id,
       post_id: post.id,
       season: Number(seasonNumber) ? Number(seasonNumber) : 1,
       episode: Number(episodeNumber),
