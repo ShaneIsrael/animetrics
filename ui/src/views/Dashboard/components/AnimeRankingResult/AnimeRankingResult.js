@@ -53,12 +53,12 @@ const AnimeRankingResult = (props) => {
   // if (pos === 0) {
   //   setAnimeSelection({id: result.id, showId: result.showId, banner, title})
   // }
-  const handleSelection = (id, showId, show, title) => {
-    setAnimeSelection({id, showId, show, title})
+  const handleSelection = (id, showId, assets, title) => {
+    setAnimeSelection({id, showId, assets, title})
   }
   return (
     <div
-      onClick={() => handleSelection(result.result.id, result.show.id, result.show, title)}
+      onClick={() => handleSelection(result.result.id, result.show.id, result.assets, title)}
       style={{margin: 2, flexGrow: 0, cursor: 'pointer'}}
     >
       <div className={clsx(classes.root, 'grow')}>
