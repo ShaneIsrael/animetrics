@@ -18,8 +18,8 @@ const sleep = (milliseconds) => new Promise((resolve) => setTimeout(resolve, mil
 
 async function crop(width, height, path, savePath) {
   const pyProg = await spawn('python3', [config.detectFacePath, path, config.detectFaceConfPath]);
-  const bannerSavePath = `${savePath.split('.jpg')[0]}_banner.png`
-  const avatarSavePath = `${savePath.split('.jpg')[0]}_avatar.png`
+  const bannerSavePath = `${savePath.split('.jpg')[0]}_banner.jpg`
+  const avatarSavePath = `${savePath.split('.jpg')[0]}_avatar.jpg`
   const jsonLoc = `${path.split('.jpg')[0]}.json`
   if (fs.existsSync(jsonLoc)) {
     const facedata = fs.readFileSync(jsonLoc);
@@ -132,15 +132,15 @@ async function createAndUpload(asset) {
   // sleep 500 miliseconds so that files get closed before trying to upload
   await sleep(500)
   if (!asset.s3_poster) {
-    const s3PosterResp = await uploadFileToS3(posterPath, `assets/${imageName}_poster.jpg`)
+    const s3PosterResp = await uploadFileToS3(filename, `assets/${imageName}_poster.jpg`)
     asset.s3_poster = s3PosterResp.Key
   }
   if (!asset.s3_banner) {
-    const s3BannerResp = await uploadFileToS3(bannerPath, `assets/${imageName}_banner.png`)
+    const s3BannerResp = await uploadFileToS3(`${imageDir}/image_banner.jpg`, `assets/${imageName}_banner.png`)
     asset.s3_banner = s3BannerResp.Key
   }
   if (!asset.s3_avatar) {
-    const s3AvatarResp = await uploadFileToS3(avatarPath, `assets/${imageName}_avatar.png`)
+    const s3AvatarResp = await uploadFileToS3(`${imageDir}/image_avatar.jpg`, `assets/${imageName}_avatar.png`)
     asset.s3_avatar = s3AvatarResp.Key
   }
   asset.s3_bucket = 'animetrics'

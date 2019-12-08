@@ -111,7 +111,7 @@ async function init() {
     await authTvDb()
     logger.info('tvdb auth successful')
   } catch (err) {
-    console.log(err)
+    // console.log(err)
     logger.error(err.message)
   }
 }
