@@ -107,8 +107,8 @@ service.digestDiscussionPost = async (post) => {
   let discussion = await EpisodeDiscussion.findOne({
     where: { post_id: post.id },
   })
-  const postDt = moment.utc(post.created_utc * 1000).format('YYYY-MM-DD HH:mm:ss')
-  console.log(postDt, post.created_utc)
+  // const postDt = moment.utc(post.created_utc * 1000).format('YYYY-MM-DD HH:mm:ss')
+  // console.log(postDt, post.created_utc)
   const postWeekStartDt = moment(post.created_utc * 1000)
     .utc()
     .startOf('isoWeek').isoWeekday(5) // Friday
@@ -124,25 +124,25 @@ service.digestDiscussionPost = async (post) => {
       end_dt: postWeekEndDt,
     })
   }
-  const postWeek = await Week.findOne({
-    where: {
-      [Op.and]: [
-        {
-          start_dt: {
-            [Op.lte]: postDt,
-          },
-          end_dt: {
-            [Op.gte]: postDt,
-          },
-        },
-      ],
-    },
-  })
+  // const postWeek = await Week.findOne({
+  //   where: {
+  //     [Op.and]: [
+  //       {
+  //         start_dt: {
+  //           [Op.lte]: postDt,
+  //         },
+  //         end_dt: {
+  //           [Op.gte]: postDt,
+  //         },
+  //       },
+  //     ],
+  //   },
+  // })
   if (!discussion) {
     logger.info(`creating discussion for Show: ${showTitle} Season: ${seasonNumber} Episode: ${episodeNumber}`)
     discussion = await EpisodeDiscussion.create({
       showId: showRow.id,
-      weekId: postWeek.id,
+      weekId: weekRow.id,
       post_id: post.id,
       season: Number(seasonNumber) ? Number(seasonNumber) : 1,
       episode: Number(episodeNumber),
