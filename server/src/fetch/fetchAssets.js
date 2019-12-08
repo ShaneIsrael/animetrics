@@ -118,9 +118,6 @@ async function createAndUpload(asset) {
     fs.mkdirSync(`${config.imagesRootPath}/${imageName}/`)
   }
   const imageDir = `${config.imagesRootPath}/${imageName}`
-  const posterPath = `${imageDir}/${imageName}.jpg`
-  const bannerPath = `${imageDir}/${imageName}_banner.png`
-  const avatarPath = `${imageDir}/${imageName}_avatar.png`
 
   const { filename } = await download.image({
     url: `https://www.thetvdb.com/banners/${asset.poster_art}`,
