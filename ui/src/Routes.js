@@ -6,6 +6,7 @@ import { Main as MainLayout, Minimal as MinimalLayout } from './layouts'
 
 import {
   Dashboard as DashboardView,
+  Overrides as OverridesView,
   NotFound as NotFoundView
 } from './views'
 
@@ -22,6 +23,12 @@ const Routes = () => {
         exact
         layout={MainLayout}
         path="/dashboard"
+      />
+      <RouteWithLayout
+        component={OverridesView}
+        exact
+        layout={MainLayout}
+        path="/overrides"
       />
       <RouteWithLayout
         component={NotFoundView}

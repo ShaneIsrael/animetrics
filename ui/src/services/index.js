@@ -1,3 +1,6 @@
 export { default as WeekService } from './WeekService'
 export { default as ResultsService } from './ResultsService'
 export { default as AnimeDetailsService } from './AnimeDetailsService'
+export { default as ShowService } from './ShowService'
+export { default as AssetService } from './AssetService'
+export { default as OverridesService } from './OverridesService'

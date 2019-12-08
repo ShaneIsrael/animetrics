@@ -1,32 +1,29 @@
+const uuid = require('uuid/v4')
+
 module.exports = (connection, Sequelize) => connection.define(
-  'RedditPollResult',
+  'Token',
   {
     id: {
       type: Sequelize.INTEGER,
       primaryKey: true,
       autoIncrement: true,
     },
-    showId: {
+    token: {
+      type: Sequelize.UUID,
+      allowNull: false,
+      defaultValue: uuid(),
+    },
+    name: {
+      type: Sequelize.STRING,
+    },
+    level: {
       type: Sequelize.INTEGER,
-      foreignKey: true,
+      allowNull: false,
     },
-    weekId: {
-      type: Sequelize.INTEGER,
-      foreignKey: true,
-    },
-    episodeDiscussionId: {
-      type: Sequelize.INTEGER,
-      foreignKey: true,
-      unique: true,
-    },
-    score: {
-      type: Sequelize.DOUBLE,
-    },
-    votes: {
-      type: Sequelize.INTEGER,
-    },
-    poll: {
-      type: Sequelize.JSON,
+    active: {
+      type: Sequelize.BOOLEAN,
+      allowNull: false,
+      defaultValue: true,
     },
     createdAt: {
       allowNull: false,
@@ -39,6 +36,6 @@ module.exports = (connection, Sequelize) => connection.define(
   },
   {
     freezeTableName: true,
-    tableName: 'redditPollResult',
+    tableName: 'token',
   },
-);
+)

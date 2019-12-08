@@ -80,5 +80,7 @@ db.RedditPollResult.belongsTo(db.Show)
 db.RedditPollResult.belongsTo(db.Week)
 db.RedditPollResult.belongsTo(db.EpisodeDiscussion)
 
+db.OverrideHistory.belongsTo(db.Token)
+
 
 module.exports = db;
