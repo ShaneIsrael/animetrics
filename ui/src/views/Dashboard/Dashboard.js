@@ -185,7 +185,6 @@ const Dashboard = () => {
       }
     }
     if (weeks) {
-      console.log(weeks.length, selectedWeek)
       if (selectedWeek < weeks.length && selectedWeek >= 0) {
         fetchData()
       } else if (selectedWeek === weeks.length) {
