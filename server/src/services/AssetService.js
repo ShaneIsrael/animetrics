@@ -28,6 +28,11 @@ const uploadFile = async (filePath, name, bucket) => {
   return resp
 }
 
+service.getAssetById = async (id) => {
+  const asset = await Asset.findByPk(id)
+  return asset
+}
+
 service.uploadFileToS3 = async (localPath, savePath) => {
   const resp = await uploadFile(localPath, savePath, 'animetrics')
   return resp

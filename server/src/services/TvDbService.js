@@ -34,6 +34,7 @@ async function updateSeriesInformation(id) {
   show.airsDayOfWeek = info.airsDayOfWeek
   show.genre = info.genre.join(',')
   show.save()
+  return show
 }
 
 async function search(t, original, attempt) {
@@ -198,5 +199,7 @@ service.getSeriesPosterBySeason = async (id, season) => {
   const poster = await getSeasonPoster(id, season)
   return poster
 }
+
+service.updateSeriesInformation = (id) => updateSeriesInformation(id)
 
 module.exports = service

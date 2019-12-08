@@ -4,7 +4,6 @@ import { createBrowserHistory } from 'history'
 import { ThemeProvider } from '@material-ui/styles'
 import validate from 'validate.js'
 import ReactGA from 'react-ga'
-ReactGA.initialize('UA-153678038-1')
 
 import theme from './theme'
 import 'react-perfect-scrollbar/dist/css/styles.css'
@@ -12,6 +11,7 @@ import './assets/scss/index.scss'
 import validators from './common/validators'
 import Routes from './Routes'
 
+ReactGA.initialize('UA-153678038-1')
 const browserHistory = createBrowserHistory()
 
 validate.validators = {

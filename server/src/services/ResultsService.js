@@ -146,6 +146,7 @@ service.createDiscussionResult = async (link) => {
   const discussion = link.EpisodeDiscussion
   const malDetails = await findAnime(link.Show.mal_id)
   const [ralScore] = await cpoll.calculateRedditMalRating(link.Show.id)
+
   if (malDetails) {
     const malSnapshot = await MALSnapshot.create({
       showId: link.Show.id,
@@ -175,14 +176,21 @@ service.createDiscussionResult = async (link) => {
     link.episodeDiscussionResultId = edr.id
     link.save()
     const pollResult = cpoll.calculateRating(pollDetails)
-    await RedditPollResult.create({
-      showId: link.Show.id,
-      weekId: link.Week.id,
-      episodeDiscussionId: discussion.id,
-      poll: pollDetails,
-      score: pollResult[1] === 0 ? 0 : pollResult[0],
-      votes: pollResult[1],
+    const hasPollResult = await RedditPollResult.findOne({
+      where: {
+        episodeDiscussionId: discussion.id,
+      },
     })
+    if (!hasPollResult) {
+      await RedditPollResult.create({
+        showId: link.Show.id,
+        weekId: link.Week.id,
+        episodeDiscussionId: discussion.id,
+        poll: pollDetails,
+        score: pollResult[1] === 0 ? 0 : pollResult[0],
+        votes: pollResult[1],
+      })
+    }
   } else {
     logger.info(`could not get MAL Details for Show ID: ${link.Show.id}`)
   }

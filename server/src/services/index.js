@@ -5,6 +5,9 @@ const DigestService = require('./DigestService')
 const MALService = require('./MALService')
 const AssetService = require('./AssetService')
 const TvDbService = require('./TvDbService')
+const TokenService = require('./TokenService')
+const OverridesService = require('./OverridesService')
+const ShowService = require('./ShowService')
 
 module.exports = {
   ...WeekService,
@@ -14,4 +17,7 @@ module.exports = {
   ...MALService,
   ...AssetService,
   ...TvDbService,
+  ...TokenService,
+  ...OverridesService,
+  ...ShowService,
 }

@@ -13,12 +13,12 @@ import ScoreIcon from '@material-ui/icons/Score'
 import { Grid, Paper, InputLabel, FormControl, Select, MenuItem } from '@material-ui/core'
 import moment from 'moment'
 import ReactGA from 'react-ga'
-ReactGA.pageview(window.location.pathname + window.location.search)
-
 import { AnimeRankingResult, DetailsCard, AnimePollRanking } from './components'
 import { WeekService, ResultsService } from '../../services'
 import clsx from 'clsx'
 import { Alert } from 'components'
+
+ReactGA.pageview(window.location.pathname + window.location.search)
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;

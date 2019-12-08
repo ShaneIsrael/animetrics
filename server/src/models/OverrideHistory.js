@@ -1,32 +1,26 @@
 module.exports = (connection, Sequelize) => connection.define(
-  'RedditPollResult',
+  'OverrideHistory',
   {
     id: {
       type: Sequelize.INTEGER,
       primaryKey: true,
       autoIncrement: true,
     },
-    showId: {
+    tokenId: {
       type: Sequelize.INTEGER,
       foreignKey: true,
     },
-    weekId: {
-      type: Sequelize.INTEGER,
-      foreignKey: true,
+    table: {
+      type: Sequelize.STRING,
+      allowNull: false,
     },
-    episodeDiscussionId: {
-      type: Sequelize.INTEGER,
-      foreignKey: true,
-      unique: true,
+    table_id: {
+      type: Sequelize.STRING,
+      allowNull: false,
     },
-    score: {
-      type: Sequelize.DOUBLE,
-    },
-    votes: {
-      type: Sequelize.INTEGER,
-    },
-    poll: {
+    previous_values: {
       type: Sequelize.JSON,
+      allowNull: false,
     },
     createdAt: {
       allowNull: false,
@@ -39,6 +33,6 @@ module.exports = (connection, Sequelize) => connection.define(
   },
   {
     freezeTableName: true,
-    tableName: 'redditPollResult',
+    tableName: 'overrideHistory',
   },
-);
+)
