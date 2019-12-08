@@ -122,13 +122,13 @@ async function createAndUpload(asset) {
   const bannerPath = `${imageDir}/${imageName}_banner.png`
   const avatarPath = `${imageDir}/${imageName}_avatar.png`
 
-  await download.image({
+  const { filename } = await download.image({
     url: `https://www.thetvdb.com/banners/${asset.poster_art}`,
-    dest: posterPath,
+    dest: imageDir,
     timeout: 5000,
   })
   // await crop(758, 140, `${postersDir}/${show.id}.jpg`, `${bannersDir}/${show.id}.png`)
-  await crop(454, 80, posterPath, posterPath)
+  await crop(454, 80, filename, filename)
   // sleep 500 miliseconds so that files get closed before trying to upload
   await sleep(500)
   if (!asset.s3_poster) {

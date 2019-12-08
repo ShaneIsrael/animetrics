@@ -13,6 +13,7 @@
     "express": "^4.17.1",
     "gm": "^1.23.1",
     "image-downloader": "^3.5.0",
+    "image-type": "^4.1.0",
     "jikan-node": "^1.2.0",
     "lodash": "^4.17.15",
     "moment": "^2.24.0",
