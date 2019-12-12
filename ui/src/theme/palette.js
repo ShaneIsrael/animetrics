@@ -6,17 +6,18 @@ const black = '#000000'
 export default {
   black,
   white,
+  type: 'dark',
   primary: {
     contrastText: white,
-    dark: colors.indigo[900],
-    main: colors.indigo[500],
-    light: colors.indigo[100]
+    dark: colors.blue[900],
+    main: colors.blue[500],
+    light: colors.blue[100]
   },
   secondary: {
     contrastText: white,
-    dark: colors.blue[900],
-    main: colors.blue['A400'],
-    light: colors.blue['A400']
+    dark: colors.cyan[900],
+    main: colors.cyan['A400'],
+    light: colors.cyan['A400']
   },
   success: {
     contrastText: white,
@@ -49,7 +50,7 @@ export default {
   },
   background: {
     default: '#F4F6F8',
-    paper: white
+    // paper: white
   },
   icon: colors.blueGrey[600],
   divider: colors.grey[200]
