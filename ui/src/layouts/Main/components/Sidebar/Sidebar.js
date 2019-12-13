@@ -1,75 +1,149 @@
 import React from 'react'
-import clsx from 'clsx'
 import PropTypes from 'prop-types'
-import { makeStyles } from '@material-ui/styles'
-import { Drawer } from '@material-ui/core'
+import clsx from 'clsx'
+import { withStyles } from '@material-ui/core/styles'
+import { Link as RouterLink } from 'react-router-dom'
+import Divider from '@material-ui/core/Divider'
+import Drawer from '@material-ui/core/Drawer'
+import List from '@material-ui/core/List'
+import ListItem from '@material-ui/core/ListItem'
+import ListItemIcon from '@material-ui/core/ListItemIcon'
+import ListItemText from '@material-ui/core/ListItemText'
+import HomeIcon from '@material-ui/icons/Home'
 import ScoreIcon from '@material-ui/icons/Score'
+import PollIcon from '@material-ui/icons/Poll'
+import ForumIcon from '@material-ui/icons/Forum'
 
-import { SidebarNav } from './components'
-
-const useStyles = makeStyles(theme => ({
-  drawer: {
-    width: 240,
-    [theme.breakpoints.up('lg')]: {
-      marginTop: 64,
-      height: 'calc(100% - 64px)'
-    }
+const categories = [
+  {
+    id: '/r/Anime',
+    children: [
+      { id: 'Karma Rankings', path: '/karma-rankings', icon: <ScoreIcon />},
+      { id: 'Poll Rankings', path: '/poll-rankings', icon: <PollIcon /> },
+      { id: 'Recent Discussions', path: '/discussions', icon: <ForumIcon /> },
+    ],
   },
-  root: {
-    backgroundColor: theme.palette.white,
-    display: 'flex',
-    flexDirection: 'column',
-    height: '100%',
-    padding: theme.spacing(2)
+  {
+    id: '/r/Manga',
+    children: [
+      { id: 'Karma Rankings', icon: <ScoreIcon /> },
+      { id: 'Poll Rankings', icon: <PollIcon /> },
+      { id: 'Recent Discussions', icon: <ForumIcon /> },
+    ],
+  },
+];
+
+const styles = theme => ({
+  categoryHeader: {
+    paddingTop: theme.spacing(2),
+    paddingBottom: theme.spacing(2),
+  },
+  categoryHeaderPrimary: {
+    color: theme.palette.common.white,
+  },
+  item: {
+    paddingTop: 1,
+    paddingBottom: 1,
+    color: 'rgba(255, 255, 255, 0.7)',
+    '&:hover,&:focus': {
+      backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    },
+  },
+  itemCategory: {
+    backgroundColor: '#232f3e',
+    boxShadow: '0 -1px 0 #404854 inset',
+    paddingTop: theme.spacing(2),
+    paddingBottom: theme.spacing(2),
+  },
+  firebase: {
+    fontFamily: 'Oswald',
+    fontSize: 24,
+    color: theme.palette.common.white,
+  },
+  itemActiveItem: {
+    color: '#4fc3f7',
+  },
+  itemPrimary: {
+    fontSize: 'inherit',
+  },
+  itemIcon: {
+    minWidth: 'auto',
+    marginRight: theme.spacing(2),
   },
   divider: {
-    margin: theme.spacing(2, 0)
+    marginTop: theme.spacing(2),
   },
-  nav: {
-    marginBottom: theme.spacing(2)
-  }
-}))
+});
 
-const Sidebar = props => {
-  const { open, variant, onClose, className, ...rest } = props
-
-  const classes = useStyles()
-
-  const pages = [
-    {
-      title: 'Weekly Rankings',
-      href: '/dashboard',
-      icon: <ScoreIcon />
-    }
-  ]
+function Sidebar(props) {
+  const { classes, ...other } = props;
 
   return (
-    <Drawer
-      anchor="left"
-      classes={{ paper: classes.drawer }}
-      onClose={onClose}
-      open={open}
-      variant={variant}
-    >
-      <div
-        {...rest}
-        className={clsx(classes.root, className)}
-      >
-        {/* <Divider className={classes.divider} /> */}
-        <SidebarNav
-          className={classes.nav}
-          pages={pages}
-        />
-      </div>
+    <Drawer variant="permanent" {...other}>
+      <List disablePadding>
+        <ListItem className={clsx(classes.firebase, classes.item, classes.itemCategory)}>
+          <RouterLink to="/">
+            <img
+              alt="ANIRANKS Logo"
+              src="/images/logos/logo_full_light_blue_wlb_stroke.png"
+              height={48}
+            />
+          </RouterLink>
+        </ListItem>
+        <RouterLink style={{cursor: 'pointer'}} to='/dashboard'>
+          <ListItem className={clsx(classes.item, classes.itemCategory)}>
+            <ListItemIcon className={classes.itemIcon}>
+              <HomeIcon />
+            </ListItemIcon>
+            <ListItemText
+              classes={{
+                primary: classes.itemPrimary,
+              }}
+            >
+              Dashboard
+            </ListItemText>
+          </ListItem>
+        </RouterLink>
+        {categories.map(({ id, children }) => (
+          <React.Fragment key={id}>
+            <ListItem className={classes.categoryHeader}>
+              <ListItemText
+                classes={{
+                  primary: classes.categoryHeaderPrimary,
+                }}
+              >
+                {id}
+              </ListItemText>
+            </ListItem>
+            {children.map(({ id: childId, path, icon }) => (
+              <RouterLink to={path}>
+                <ListItem
+                  key={childId}
+                  button
+                  className={clsx(classes.item, (window.location.pathname === path) && classes.itemActiveItem)}
+                >
+                  <ListItemIcon className={classes.itemIcon}>{icon}</ListItemIcon>
+                  <ListItemText
+                    classes={{
+                      primary: classes.itemPrimary,
+                    }}
+                  >
+                    {childId}
+                  </ListItemText>
+                </ListItem>
+              </RouterLink>
+            ))}
+
+            <Divider className={classes.divider} />
+          </React.Fragment>
+        ))}
+      </List>
     </Drawer>
-  )
+  );
 }
 
 Sidebar.propTypes = {
-  className: PropTypes.string,
-  onClose: PropTypes.func,
-  open: PropTypes.bool.isRequired,
-  variant: PropTypes.string.isRequired
-}
+  classes: PropTypes.object.isRequired,
+};
 
-export default Sidebar
+export default withStyles(styles)(Sidebar);

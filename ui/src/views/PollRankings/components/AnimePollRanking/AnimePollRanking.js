@@ -74,9 +74,9 @@ const useStyles = makeStyles(theme => ({
     WebkitTextStrokeColor: 'black',
     fontFamily: 'Impact, Oswald',
     fontWeight: 800,
-    fontSize: 28,
+    fontSize: 24,
     fontStyle: 'italic',
-    paddingLeft: '10px',
+    paddingLeft: theme.spacing(0.5),
     position: 'absolute',
   },
   voteFont: {
@@ -177,7 +177,7 @@ const AnimePollRanking = (props) => {
               {!posChangeUp && !posChangeDown && <RemoveIcon style={{color: 'white'}}/>}
               {posChangeUp && <KeyboardArrowUpIcon className={classes.orangeColor}/>}
               {posChangeDown && <KeyboardArrowDownIcon className={classes.purpleColor}/>}
-              <Typography className={clsx(classes.scoreFont)} align="right" variant="subtitle2">
+              <Typography className={clsx(classes.scoreFont)} align="left" variant="subtitle2">
                 {current.score}
               </Typography>
             </Paper>

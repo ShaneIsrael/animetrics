@@ -43,7 +43,7 @@ const useStyles = makeStyles(theme => ({
   titlePaper: {
     backgroundColor: 'rgba(0, 0, 0, 0)',
     textAlign: 'center',
-    height: '55px',
+    height: '52px',
     paddingRight: 5
   },
   malScorePaper: {
@@ -58,6 +58,9 @@ const useStyles = makeStyles(theme => ({
     fontFamily: 'Impact, Oswald',
     fontWeight: 400,
     fontStyle: 'italic'
+  },
+  scoreFont: {
+    fontSize: 38,
   },
   titleFont: {
     WebkitTextStrokeColor: 'black',
@@ -121,7 +124,7 @@ const ResultDetails = (props) => {
               </Typography>
             </Paper>
             <Paper className={classes.scorePaper} elevation={0} square={true}>
-              <Typography className={classes.fontBase} align="left" variant="h1">
+              <Typography className={clsx(classes.fontBase, classes.scoreFont)} align="left" variant="h1">
                 {score}
               </Typography>
             </Paper>
