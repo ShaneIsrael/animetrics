@@ -3,17 +3,13 @@ import React, {useEffect} from 'react'
 import PropTypes from 'prop-types'
 import {isMobile} from 'react-device-detect'
 import { makeStyles } from '@material-ui/styles'
-import Tabs from '@material-ui/core/Tabs'
-import Tab from '@material-ui/core/Tab'
 import Typography from '@material-ui/core/Typography'
 import Box from '@material-ui/core/Box'
-import PollIcon from '@material-ui/icons/Poll'
-import ScoreIcon from '@material-ui/icons/Score'
 // eslint-disable-next-line
 import { Grid, Paper, InputLabel, FormControl, Select, MenuItem } from '@material-ui/core'
 import moment from 'moment'
 import ReactGA from 'react-ga'
-import { AnimeRankingResult, DetailsCard, AnimePollRanking } from './components'
+import { AnimePollRanking } from './components'
 import { WeekService, ResultsService } from '../../services'
 import clsx from 'clsx'
 import { Alert } from 'components'
@@ -47,6 +43,7 @@ TabPanel.propTypes = {
 const useStyles = makeStyles(theme => ({
   root: {
     padding: theme.spacing(1),
+    margin: 'auto',
   },
   formControl: {
     margin: theme.spacing(1),
@@ -56,58 +53,23 @@ const useStyles = makeStyles(theme => ({
   selectEmpty: {
     marginTop: theme.spacing(2),
   },
-  karmaRankingPaper: {
-    padding: 10,
-    width: 700
-  },
   pollRankingPaper: {
     padding: 10,
-    width: 430
+    maxWidth: 430
   },
-  scrolling: {
-    // overflowX: 'scroll',
-  },
-  selectedAnimeCard: {
-    maxHeight: '100vh'
+  centerGridItem: {
+    margin: '0 auto'
   }
 
 }))
 
-function createResults(results, setHandler) {
-  try {
-    if (Object.keys(results).length === 0) return []
-    const render = results.map((res, index) => {
-      const posPrevious = res.previous ? res.previous.position : null
-      return <AnimeRankingResult 
-        banner={`https://animetrics.sfo2.cdn.digitaloceanspaces.com/${res.assets[0].s3_banner}`}
-        commentCount={res.result.comment_count}
-        episode={res.discussion.episode}
-        key={5000+index} 
-        malScore={res.mal.score.toFixed(2)} 
-        malScorePrevious={res.previous.result ? res.previous.mal.score : null}
-        pollScore={res.poll.score}
-        pollScorePrevious={res.previous.poll ? res.previous.poll.score : 0}
-        pos={index}
-        posPrevious={posPrevious}
-        ralScore={res.result.ralScore}
-        ralScorePrevious={res.previous.result ? res.previous.result.ralScore : null}
-        result={res}
-        score={res.result.ups}
-        scorePrevious={res.previous.result ? res.previous.result.ups : null}
-        setAnimeSelection={setHandler}
-        title={res.show.title}
-      />
-    })
-    return render
-  } catch (err) {
-    console.log(err)
-  }    
-}
-
 function createPollResults(results) {
   try {
     const render = results.map((poll, index) => {
-      return <AnimePollRanking key={index} current={poll}></AnimePollRanking>
+      return <AnimePollRanking
+        current={poll}
+        key={index}
+      />
     })
     return render
   } catch (err) {
@@ -134,36 +96,23 @@ function useKey(key, handler) {
   }, [key])
 }
 
-const Dashboard = () => {
+const PollRankings = () => {
   const classes = useStyles()
   // eslint-disable-next-line
   const inputLabel = React.useRef(null);
   const [weeks, setWeeks] = React.useState(null)
   const [selectedWeek, setSelectedWeek] = React.useState(1);
   const [weekSelectOptions, setWeekSelectOptions] = React.useState([])
-  const [selectedAnime, setSelectedAnime] = React.useState(null)
-  const [renderedResults, setRenderedResults] = React.useState([])
   const [renderedPollResults, setRenderedPollResults] = React.useState([])
-  const [tab, setTab] = React.useState(0)
-
-  const handleTabChange = (event, newValue) => {
-    setTab(newValue);
-  };
-
-  const setAnimeSelection = (selection) => {
-    setSelectedAnime(selection)
-  }
 
   useEffect(() => {
     async function fetchData() {
       try {
         const wks = (await WeekService.getWeeks()).data
-        const results = (await ResultsService.getResultsByWeek(wks[1].id)).data
         const pollResults = (await ResultsService.getRedditPollResultsByWeek(wks[1].id)).data
         setWeeks(wks)
         setSelectedWeek(1)
         createWeekSelectOptions(wks)
-        setRenderedResults(createResults(results, setAnimeSelection))
         setRenderedPollResults(createPollResults(pollResults))
       } catch (err) {
         console.log(err)
@@ -176,9 +125,7 @@ const Dashboard = () => {
     
     async function fetchData() {
       try {
-        const results = (await ResultsService.getResultsByWeek(weeks[selectedWeek].id)).data
         const pollResults = (await ResultsService.getRedditPollResultsByWeek(weeks[selectedWeek].id)).data
-        setRenderedResults(createResults(results, setAnimeSelection))
         setRenderedPollResults(createPollResults(pollResults))
       } catch (err) {
         console.log(err)
@@ -202,8 +149,12 @@ const Dashboard = () => {
       if (index === 0) {
         return isMobile ? <option
           key={index}
-          value={index}>Current Week</option> 
-          : <MenuItem key={index} value={0}>Current Week</MenuItem>
+          value={index}
+        >Current Week</option> 
+          : <MenuItem
+            key={index}
+            value={0}
+          >Current Week</MenuItem>
       } else {
         return isMobile 
           ? 
@@ -235,12 +186,6 @@ const Dashboard = () => {
 
   return (
     <div className={clsx({[classes.root]: true})}>
-      {selectedAnime && 
-        <DetailsCard
-          className={classes.selectedAnimeCard}
-          selectedAnime={selectedAnime}
-        />
-      }
       <Grid
         container
         justify="center"
@@ -276,64 +221,14 @@ const Dashboard = () => {
                 </Select>
               </FormControl>
             </div>
-            <Tabs
-              aria-label="icon label tabs example"
-              indicatorColor="secondary"
-              onChange={handleTabChange}
-              textColor="secondary"
-              value={tab}
-              variant="fullWidth"
-            >
-              <Tab
-                icon={<ScoreIcon />}
-                label="Reddit Karma Ranks"
-              />
-              <Tab
-                icon={<PollIcon />}
-                label="Reddit Poll Ranks"
-              />
-            </Tabs>
           </Grid>
-
-        </Grid>
-        <TabPanel
-          index={0}
-          value={tab}
-        >
-          <Grid container direction="column" justify="center">
+          <Grid
+            container
+            justify="center"
+          >
             <Grid
               item
-              // xs={12}
-            >
-              <Paper
-                className={clsx({[classes.karmaRankingPaper]: true})}
-                elevation={10}
-                square
-              >
-                <Grid
-                  container
-                  justify="center"
-                >
-                  {renderedResults}
-                  {renderedResults.length === 0 &&
-                    <Alert
-                      variant="info"
-                      message="There are currently 0 results for this week. The first results should appear 48 hours after the week beginds. Please check back later."
-                    />
-                  }
-                </Grid>
-              </Paper>
-            </Grid>
-          </Grid>
-        </TabPanel>
-        <TabPanel
-          index={1}
-          value={tab}
-        >
-          <Grid container justify="center">
-            <Grid
-              item
-              xs={12}
+              className={classes.centerGridItem}
             >
               <Paper
                 className={clsx({[classes.pollRankingPaper]: true})}
@@ -346,19 +241,19 @@ const Dashboard = () => {
                 >
                   {renderedPollResults}
                   {renderedPollResults.length === 0 &&
-                    <Alert
-                      variant="info"
-                      message="There are currently 0 results for this week. The first results should appear 48 hours after the week beginds. Please check back later."
-                    />
+                  <Alert
+                    message="There are currently 0 results for this week. The first results should appear 48 hours after the week beginds. Please check back later."
+                    variant="info"
+                  />
                   }
                 </Grid>
               </Paper>
             </Grid>
           </Grid>
-        </TabPanel>
+        </Grid>
       </Grid>
     </div>
   )
 }
 
-export default Dashboard
+export default PollRankings
