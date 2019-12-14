@@ -22,11 +22,15 @@ validate.validators = {
 
 let theme = createMuiTheme({
   palette: {
+    type: 'dark',
     primary: {
       light: '#63ccff',
       main: '#009be5',
-      dark: '#006db3',
+      dark: '#232f3e',
     },
+    background: {
+      paper: '#232f3e'
+    }
   },
   typography: {
     h5: {

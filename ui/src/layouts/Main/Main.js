@@ -27,7 +27,7 @@ const useStyles = makeStyles(theme => ({
   main: {
     flex: 1,
     padding: theme.spacing(2),
-    background: '#eaeff1',
+    background: '#111b29',
   },
   footer: {
     padding: theme.spacing(2),
@@ -80,7 +80,12 @@ const Main = props => {
         </Hidden>
       </nav>
       <div className={classes.app}>
-        <Header onDrawerToggle={handleSidebarOpen} />
+        <Hidden
+          implementation="js"
+          smUp
+        >
+          <Header onDrawerToggle={handleSidebarOpen} />
+        </Hidden>
         <main className={classes.main}>
           {children}
         </main>
