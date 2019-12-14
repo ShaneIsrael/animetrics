@@ -91,7 +91,7 @@ function Sidebar(props) {
           </RouterLink>
         </ListItem>
         <RouterLink style={{cursor: 'pointer'}} to='/dashboard'>
-          <ListItem className={clsx(classes.item, classes.itemCategory)}>
+          <ListItem className={clsx(classes.item, classes.itemCategory, (window.location.pathname === '/dashboard') && classes.itemActiveItem)}>
             <ListItemIcon className={classes.itemIcon}>
               <HomeIcon />
             </ListItemIcon>

@@ -5,6 +5,7 @@ import { RouteWithLayout } from './components'
 import { Main as MainLayout, Minimal as MinimalLayout } from './layouts'
 
 import {
+  Dashboard as DashboardView,
   PollRankings as PollRankingsView,
   KarmaRankings as KarmaRankingsView,
   Overrides as OverridesView,
@@ -18,6 +19,12 @@ const Routes = () => {
         exact
         from="/"
         to="/karma-rankings"
+      />
+      <RouteWithLayout
+        component={DashboardView}
+        exact
+        layout={MinimalLayout}
+        path="/dashboard"
       />
       <RouteWithLayout
         component={KarmaRankingsView}
