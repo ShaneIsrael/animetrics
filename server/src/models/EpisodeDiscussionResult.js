@@ -10,7 +10,6 @@ module.exports = (connection, Sequelize) => connection.define(
       type: Sequelize.INTEGER,
       foreignKey: true,
       allowNull: false,
-      unique: true,
     },
     malSnapshotId: {
       type: Sequelize.INTEGER,

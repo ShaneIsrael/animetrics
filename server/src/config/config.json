@@ -1,7 +1,7 @@
 {
   "dev": {
     "dialect": "sqlite",
-    "storage": "/mnt/c/git/animetrics/server/src/databases/dev.db",
+    "storage": "/mnt/c/database/dev.db",
     "logging": false
   },
   "prod": {

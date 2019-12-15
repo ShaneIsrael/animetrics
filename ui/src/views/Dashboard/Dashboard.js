@@ -1,362 +1,226 @@
 /* eslint-disable react/no-multi-comp */
 import React, {useEffect} from 'react'
-import PropTypes from 'prop-types'
-import {isMobile} from 'react-device-detect'
 import { makeStyles } from '@material-ui/styles'
-import Tabs from '@material-ui/core/Tabs'
-import Tab from '@material-ui/core/Tab'
-import Typography from '@material-ui/core/Typography'
-import Box from '@material-ui/core/Box'
-import PollIcon from '@material-ui/icons/Poll'
-import ScoreIcon from '@material-ui/icons/Score'
-// eslint-disable-next-line
-import { Grid, Paper, InputLabel, FormControl, Select, MenuItem } from '@material-ui/core'
-import moment from 'moment'
-import ReactGA from 'react-ga'
-import { AnimeRankingResult, DetailsCard, AnimePollRanking } from './components'
-import { WeekService, ResultsService } from '../../services'
+import { Link as RouterLink } from 'react-router-dom'
 import clsx from 'clsx'
-import { Alert } from 'components'
+import { AppBar, Toolbar, Grid, Link, Typography, Hidden } from '@material-ui/core'
 
-ReactGA.pageview(window.location.pathname + window.location.search)
+import { DiscussionCard } from 'components'
+import { DiscussionService } from 'services'
 
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <Typography
-      aria-labelledby={`nav-tab-${index}`}
-      component="div"
-      hidden={value !== index}
-      id={`nav-tabpanel-${index}`}
-      role="tabpanel"
-      {...other}
-    >
-      <Box p={3}>{children}</Box>
-    </Typography>
-  )
-}
-
-TabPanel.propTypes = {
-  children: PropTypes.node,
-  index: PropTypes.any.isRequired,
-  value: PropTypes.any.isRequired,
-}
+const lightColor = 'rgba(255, 255, 255, 0.4)';
 
 
 const useStyles = makeStyles(theme => ({
   root: {
-    padding: theme.spacing(1),
+    // padding: theme.spacing(0.5),
+    margin: 'auto',
+    fontFamily: 'Roboto',
+    backgroundColor: '#111b29'
   },
-  formControl: {
-    margin: theme.spacing(1),
-    minWidth: 200,
-    width: '100%'
+  header: {
+    padding: 48,
+    height: 112,
+    backgroundColor: 'rgba(0,0,0,0)',
+    boxShadow: 'none'
   },
-  selectEmpty: {
-    marginTop: theme.spacing(2),
+  headerMobile: {
+    padding: 32,
+    height: 200 ,
+    backgroundColor: 'rgba(0,0,0,0)',
+    boxShadow: 'none'
   },
-  karmaRankingPaper: {
-    padding: 10,
-    width: 700
+  logo: {
+    // marginTop: theme.spacing(4)
   },
-  pollRankingPaper: {
-    padding: 10,
-    width: 430
+  link: {
+    textDecoration: 'none',
+    fontSize: 20,
+    color: lightColor,
+    '&:hover': {
+      color: theme.palette.primary.light,
+      textDecoration: 'none'
+    },
   },
-  scrolling: {
-    // overflowX: 'scroll',
+  linkMobile: {
+    textDecoration: 'none',
+    padding: 0,
+    fontSize: 20,
+    color: lightColor,
+    '&:hover': {
+      color: theme.palette.primary.light,
+      textDecoration: 'none'
+    },
   },
-  selectedAnimeCard: {
-    maxHeight: '100vh'
-  }
-
+  subheader: {
+    color: theme.palette.primary.main,
+    marginLeft: 72,
+    fontSize: 32,
+    fontWeight: 100
+  },
+  subheaderMobile: {
+    color: theme.palette.primary.main,
+    marginLeft: 48,
+    fontSize: 24,
+    fontWeight: 100
+  },
+  recentAiredSection: {
+    marginTop: 50,
+    marginLeft: 32,
+    marginRight: 32
+  },
+  recentAiredFont: {
+    color: theme.palette.secondary.dark,
+    fontWeight: 300,
+    fontSize: 24
+  },
 }))
-
-function createResults(results, setHandler) {
-  try {
-    if (Object.keys(results).length === 0) return []
-    const render = results.map((res, index) => {
-      const posPrevious = res.previous ? res.previous.position : null
-      return <AnimeRankingResult 
-        banner={`https://animetrics.sfo2.cdn.digitaloceanspaces.com/${res.assets[0].s3_banner}`}
-        commentCount={res.result.comment_count}
-        episode={res.discussion.episode}
-        key={5000+index} 
-        malScore={res.mal.score.toFixed(2)} 
-        malScorePrevious={res.previous.result ? res.previous.mal.score : null}
-        pollScore={res.poll.score}
-        pollScorePrevious={res.previous.poll ? res.previous.poll.score : 0}
-        pos={index}
-        posPrevious={posPrevious}
-        ralScore={res.result.ralScore}
-        ralScorePrevious={res.previous.result ? res.previous.result.ralScore : null}
-        result={res}
-        score={res.result.ups}
-        scorePrevious={res.previous.result ? res.previous.result.ups : null}
-        setAnimeSelection={setHandler}
-        title={res.show.title}
-      />
-    })
-    return render
-  } catch (err) {
-    console.log(err)
-  }    
-}
-
-function createPollResults(results) {
-  try {
-    const render = results.map((poll, index) => {
-      return <AnimePollRanking key={index} current={poll}></AnimePollRanking>
-    })
-    return render
-  } catch (err) {
-    console.log(err)
-  }    
-}
-
-function useKey(key, handler) {
-  // Does an event match the key we're watching?
-  const match = event => key.toLowerCase() == event.key.toLowerCase()
-
-  const onUp = event => {
-    if (match(event)) handler()
-  }
-
-  // Bind and unbind events
-  useEffect(() => {
-    // window.addEventListener('keydown', onDown)
-    window.addEventListener('keyup', onUp)
-    return () => {
-      // window.removeEventListener('keydown', onDown)
-      window.removeEventListener('keyup', onUp)
-    }
-  }, [key])
-}
 
 const Dashboard = () => {
   const classes = useStyles()
-  // eslint-disable-next-line
-  const inputLabel = React.useRef(null);
-  const [weeks, setWeeks] = React.useState(null)
-  const [selectedWeek, setSelectedWeek] = React.useState(1);
-  const [weekSelectOptions, setWeekSelectOptions] = React.useState([])
-  const [selectedAnime, setSelectedAnime] = React.useState(null)
-  const [renderedResults, setRenderedResults] = React.useState([])
-  const [renderedPollResults, setRenderedPollResults] = React.useState([])
-  const [tab, setTab] = React.useState(0)
 
-  const handleTabChange = (event, newValue) => {
-    setTab(newValue);
-  };
-
-  const setAnimeSelection = (selection) => {
-    setSelectedAnime(selection)
-  }
+  const [recentDiscussions, setRecentDiscussions] = React.useState(null)
 
   useEffect(() => {
-    async function fetchData() {
+    async function fetch() {
       try {
-        const wks = (await WeekService.getWeeks()).data
-        const results = (await ResultsService.getResultsByWeek(wks[1].id)).data
-        const pollResults = (await ResultsService.getRedditPollResultsByWeek(wks[1].id)).data
-        setWeeks(wks)
-        setSelectedWeek(1)
-        createWeekSelectOptions(wks)
-        setRenderedResults(createResults(results, setAnimeSelection))
-        setRenderedPollResults(createPollResults(pollResults))
+        const discussions = (await DiscussionService.getTodaysDiscussions()).data
+        setRecentDiscussions(discussions)
       } catch (err) {
         console.log(err)
       }
     }
-    fetchData()
+    fetch()
   }, [])
-
-  useEffect(() => {
-    
-    async function fetchData() {
-      try {
-        const results = (await ResultsService.getResultsByWeek(weeks[selectedWeek].id)).data
-        const pollResults = (await ResultsService.getRedditPollResultsByWeek(weeks[selectedWeek].id)).data
-        setRenderedResults(createResults(results, setAnimeSelection))
-        setRenderedPollResults(createPollResults(pollResults))
-      } catch (err) {
-        console.log(err)
-      }
-    }
-    if (weeks) {
-      if (selectedWeek < weeks.length && selectedWeek >= 0) {
-        fetchData()
-      } else if (selectedWeek === weeks.length) {
-        setSelectedWeek(weeks.length)
-      } else {
-        setSelectedWeek(0)
-      }
-    }
-  }, [selectedWeek, setSelectedWeek])
-
-  const createWeekSelectOptions = async (weeks) => {
-    const weekSelectOptions = weeks.map((week, index) => {
-      const start = moment(week.start_dt, 'YYYY-MM-DD HH:mm:ss').format('MMM Do, YYYY')
-      const end = moment(week.end_dt, 'YYYY-MM-DD HH:mm:ss').format('MMM Do, YYYY')
-      if (index === 0) {
-        return isMobile ? <option
-          key={index}
-          value={index}>Current Week</option> 
-          : <MenuItem key={index} value={0}>Current Week</MenuItem>
-      } else {
-        return isMobile 
-          ? 
-          <option
-            key={index}
-            value={index}
-          ><center>{start} &rarr; {end}</center></option>
-          :
-          <MenuItem
-            key={index}
-            value={index}
-          ><center>{start} &rarr; {end}</center></MenuItem>
-      }
-    })
-    setWeekSelectOptions(weekSelectOptions)
-  }
-
-
-  useKey('ArrowRight', () => {
-    setSelectedWeek(prevState => prevState + 1)
-  })
-  useKey('ArrowLeft', () => {
-    setSelectedWeek(prevState => prevState - 1)
-  })
-
-  const handleChange = async event => {
-    setSelectedWeek(event.target.value)
-  }
-
+ 
   return (
     <div className={clsx({[classes.root]: true})}>
-      {selectedAnime && 
-        <DetailsCard
-          className={classes.selectedAnimeCard}
-          selectedAnime={selectedAnime}
-        />
-      }
-      <Grid
-        container
-        justify="center"
-        spacing={4}
-      >
-
-        <Grid
-          container
-          item
-          justify="center"
-          xs={12}
+      <div>
+        <Hidden
+          implementation="js"
+          smDown
         >
-          <Grid
-            item
-            xs={4}
+          <AppBar
+            className={clsx(classes.header)}
+            position="static"
           >
-            <div>
-              <FormControl 
-                className={classes.formControl}
-                // variant="outlined"
-              >
-                {/* <InputLabel 
-                  id="select-week-label"
-                  ref={inputLabel}
-                >Week Of</InputLabel> */}
-                <Select 
-                  className={classes.selectEmpty} 
-                  native={isMobile} 
-                  onChange={handleChange}
-                  value={selectedWeek}
-                >
-                  {weekSelectOptions}
-                </Select>
-              </FormControl>
-            </div>
-            <Tabs
-              aria-label="icon label tabs example"
-              indicatorColor="secondary"
-              onChange={handleTabChange}
-              textColor="secondary"
-              value={tab}
-              variant="fullWidth"
-            >
-              <Tab
-                icon={<ScoreIcon />}
-                label="Reddit Karma Ranks"
-              />
-              <Tab
-                icon={<PollIcon />}
-                label="Reddit Poll Ranks"
-              />
-            </Tabs>
-          </Grid>
+            <Toolbar>
 
+              <Grid
+                alignItems="center"
+                container
+                spacing={6}
+              >
+                <Grid item>
+                  <RouterLink to="/dashboard">
+                    <img
+                      alt="ANIRANKS Logo"
+                      className={classes.logo}
+                      height={96}
+                      src="/images/logos/logo_full_light_blue_wlb_stroke.png"
+                    />
+                  </RouterLink>
+                </Grid>
+                <Grid
+                  item
+                  xs
+                />
+                <Grid item>
+                  <Link
+                    className={classes.link}
+                    href="/karma-rankings"
+                    variant="body2"
+                  >
+                    Anime Metrics
+                  </Link>
+                </Grid>
+                <Grid item>
+                  <Link
+                    className={classes.link}
+                    href="#"
+                    variant="body2"
+                  >
+                    Manga Metrics
+                  </Link>
+                </Grid>
+                <Grid
+                  item
+                  xs
+                />
+              </Grid>
+            </Toolbar>
+          </AppBar>
+        </Hidden>
+        <Hidden
+          implementation="css"
+          mdUp
+        >
+          <AppBar
+            className={clsx(classes.headerMobile)}
+            position="static"
+          >
+            <Toolbar>
+              <Grid
+                alignItems="center"
+                container
+                spacing={3}
+              >
+                <Grid
+                  item
+                  xs={12}
+                >
+                  <RouterLink to="/dashboard">
+                    <img
+                      alt="ANIRANKS Logo"
+                      className={classes.logo}
+                      height={96}
+                      src="/images/logos/logo_full_light_blue_wlb_stroke.png"
+                    />
+                  </RouterLink>
+                </Grid>
+                <Grid item>
+                  <Link
+                    className={classes.linkMobile}
+                    href="/karma-rankings"
+                    variant="body2"
+                  >
+                          Anime Metrics
+                  </Link>
+                </Grid>
+                <Grid item>
+                  <Link
+                    className={classes.linkMobile}
+                    href="#"
+                    variant="body2"
+                  >
+                          Manga Metrics
+                  </Link>
+                </Grid>
+              </Grid>
+            </Toolbar>
+          </AppBar>
+        </Hidden>
+        <Hidden
+          implementation="js"
+          smDown
+        >
+          <Typography className={classes.subheader}>Visualizing Anime metrics through the Reddit community.</Typography>
+        </Hidden>
+        <Hidden
+          implementation="js"
+          mdUp
+        >
+          <Typography className={classes.subheaderMobile}>Visualizing Anime metrics through the Reddit community.</Typography>
+        </Hidden>
+      </div>
+      <div className={classes.recentAiredSection}>
+        <Typography className={classes.recentAiredFont}>Recently Aired Discussions (24hrs)</Typography>
+        <Grid container>
+          {recentDiscussions && recentDiscussions.map((elem, index) => {
+            return <DiscussionCard title={elem.Show.title} episode={elem.episode} poster={elem.Show.Assets[0].s3_poster} href={elem.post_url} key={index}/>
+          })}
         </Grid>
-        <TabPanel
-          index={0}
-          value={tab}
-        >
-          <Grid container direction="column" justify="center">
-            <Grid
-              item
-              // xs={12}
-            >
-              <Paper
-                className={clsx({[classes.karmaRankingPaper]: true})}
-                elevation={10}
-                square
-              >
-                <Grid
-                  container
-                  justify="center"
-                >
-                  {renderedResults}
-                  {renderedResults.length === 0 &&
-                    <Alert
-                      variant="info"
-                      message="There are currently 0 results for this week. The first results should appear 48 hours after the week beginds. Please check back later."
-                    />
-                  }
-                </Grid>
-              </Paper>
-            </Grid>
-          </Grid>
-        </TabPanel>
-        <TabPanel
-          index={1}
-          value={tab}
-        >
-          <Grid container justify="center">
-            <Grid
-              item
-              xs={12}
-            >
-              <Paper
-                className={clsx({[classes.pollRankingPaper]: true})}
-                elevation={10}
-                square
-              >
-                <Grid
-                  container
-                  justify="center"
-                >
-                  {renderedPollResults}
-                  {renderedPollResults.length === 0 &&
-                    <Alert
-                      variant="info"
-                      message="There are currently 0 results for this week. The first results should appear 48 hours after the week beginds. Please check back later."
-                    />
-                  }
-                </Grid>
-              </Paper>
-            </Grid>
-          </Grid>
-        </TabPanel>
-      </Grid>
+      </div>
     </div>
   )
 }

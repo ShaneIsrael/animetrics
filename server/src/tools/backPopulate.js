@@ -66,7 +66,7 @@ async function init() {
     await authTvDb()
     await backPopulate(args[0])
   } catch (err) {
-    logger.error(err.message)
+    console.log(err)
   }
 }
 init()

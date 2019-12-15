@@ -1,6 +1,7 @@
 const cron = require('node-cron')
 const moment = require('moment')
 const logger = require('../logger')
+const environment = require('../config').environment
 const {
   digestDiscussionPost, authTvDb, refreshTvDb, updateTvDbIds, getSeriesPoster, createDiscussionResult, updateRedditAnimeListScore,
 } = require('../services')
@@ -10,7 +11,6 @@ const {
 const fetchDiscussions = require('../fetch/fetchDiscussions')
 const fetchAssets = require('../fetch/fetchAssets')
 const fetchUsers = require('../fetch/fetchRedditMalUsers')
-// const { Show } = require('../models')
 
 async function updatePosters() {
   const assets = await Asset.findAll({
@@ -27,6 +27,7 @@ async function updatePosters() {
 }
 
 async function generateDiscussionResults() {
+  const [epResults, pollResults] = []
   const links = await EpisodeResultLink.findAll(
     {
       where: {
@@ -68,48 +69,55 @@ async function updateRalScores() {
     }
   }
 }
-// Every 1 hour | Get Episode Discussions and populate data
-cron.schedule('0 0 * * * *', async () => {
-  try {
-    getDiscussionsAndPopulate()
-  } catch (err) {
-    logger.error(err.message)
-  }
-})
-// Every Hour | Check for unset ral scores and update them
-cron.schedule('0 0 * * * *', async () => {
-  try {
-    getDiscussionsAndPopulate()
-    updateRalScores()
-  } catch (err) {
-    logger.error(err.message)
-  }
-})
 
-// Every Monday at 12:00am update users scores
-cron.schedule('0 0 0 * * 1', async () => {
-  try {
-    await fetchUsers.fetch()
-    fetchUsers.fetchScores()
-  } catch (err) {
-    logger.error(err.message)
-  }
-})
-
-// Every 6 Hours | Refresh with TvDb
-cron.schedule('0 0 */6 * * *', async () => {
-  try {
-    await refreshTvDb()
-  } catch (err) {
-    logger.error(err)
-  }
-})
 
 async function init() {
   try {
-    logger.info('beginning cron jobs')
-    await authTvDb()
-    logger.info('tvdb auth successful')
+    if (environment === 'prod') {
+      logger.info('beginning cron jobs')
+      await authTvDb()
+      logger.info('tvdb auth successful')
+      if (config)
+      logger.info('starting cron jobs...')
+      // Every 1 hour | Get Episode Discussions and populate data
+      cron.schedule('0 0 * * * *', async () => {
+        try {
+          getDiscussionsAndPopulate()
+        } catch (err) {
+          logger.error(err.message)
+        }
+      })
+      // Every Hour | Check for unset ral scores and update them
+      cron.schedule('0 0 * * * *', async () => {
+        try {
+          getDiscussionsAndPopulate()
+          updateRalScores()
+        } catch (err) {
+          logger.error(err.message)
+        }
+      })
+
+      // Every Monday at 12:00am update users scores
+      cron.schedule('0 0 0 * * 1', async () => {
+        try {
+          await fetchUsers.fetch()
+          fetchUsers.fetchScores()
+        } catch (err) {
+          logger.error(err.message)
+        }
+      })
+
+      // Every 6 Hours | Refresh with TvDb
+      cron.schedule('0 0 */6 * * *', async () => {
+        try {
+          await refreshTvDb()
+        } catch (err) {
+          logger.error(err)
+        }
+      })
+    } else {
+      logger.info('Running in dev mode, cron jobs halted.')
+    }
   } catch (err) {
     // console.log(err)
     logger.error(err.message)

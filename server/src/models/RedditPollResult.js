@@ -17,7 +17,6 @@ module.exports = (connection, Sequelize) => connection.define(
     episodeDiscussionId: {
       type: Sequelize.INTEGER,
       foreignKey: true,
-      unique: true,
     },
     score: {
       type: Sequelize.DOUBLE,
