@@ -18,6 +18,8 @@ const { findAnime } = require('../services/MALService')
 const fetchDiscussions = require('../fetch/fetchDiscussions')
 const cpoll = require('../tools/calculatePoll')
 
+const sleep = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds))
+
 async function scrapePollData(url) {
   const html = (await axios.get(`${url}/r`)).data
   const $ = cheerio.load(html)
@@ -146,7 +148,8 @@ service.createDiscussionResult = async (link) => {
   const discussion = link.EpisodeDiscussion
   const malDetails = await findAnime(link.Show.mal_id)
   const [ralScore] = await cpoll.calculateRedditMalRating(link.Show.id)
-
+  // Sleep to make sure the db updates.
+  await sleep(1000)
   if (malDetails) {
     const malSnapshot = await MALSnapshot.create({
       showId: link.Show.id,
@@ -181,8 +184,9 @@ service.createDiscussionResult = async (link) => {
         episodeDiscussionId: discussion.id,
       },
     })
+    let rpr
     if (!hasPollResult) {
-      await RedditPollResult.create({
+      rpr = await RedditPollResult.create({
         showId: link.Show.id,
         weekId: link.Week.id,
         episodeDiscussionId: discussion.id,
@@ -191,8 +195,10 @@ service.createDiscussionResult = async (link) => {
         votes: pollResult[1],
       })
     }
+    return {edr, rpr}
   } else {
     logger.info(`could not get MAL Details for Show ID: ${link.Show.id}`)
+    return null
   }
 }
 
