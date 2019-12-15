@@ -2,14 +2,11 @@
 import React, {useEffect} from 'react'
 import { makeStyles } from '@material-ui/styles'
 import { Link as RouterLink } from 'react-router-dom'
-import ReactGA from 'react-ga'
 import clsx from 'clsx'
 import { AppBar, Toolbar, Grid, Link, Typography, Hidden } from '@material-ui/core'
 
 import { DiscussionCard } from 'components'
 import { DiscussionService } from 'services'
-
-ReactGA.pageview(window.location.pathname + window.location.search)
 
 const lightColor = 'rgba(255, 255, 255, 0.4)';
 

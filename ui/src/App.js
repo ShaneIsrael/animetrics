@@ -14,6 +14,10 @@ import { MuiThemeProvider } from '@material-ui/core'
 
 ReactGA.initialize('UA-153678038-1')
 const browserHistory = createBrowserHistory()
+browserHistory.listen(location => {
+  ReactGA.set({ page: location.pathname })
+  ReactGA.pageview(location.pathname)
+})
 
 validate.validators = {
   ...validate.validators,

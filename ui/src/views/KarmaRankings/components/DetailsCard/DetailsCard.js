@@ -15,6 +15,9 @@ import Fade from '@material-ui/core/Fade';
 import { AnimeDetailsService } from '../../../../services'
 
 const useStyles = makeStyles(theme => ({
+  link: {
+    color: theme.palette.primary.main
+  },
   card: {
     maxWidth: 345,
     maxHeight: '100vh',
@@ -100,10 +103,10 @@ export default function DetailsCard(props) {
         { details &&
           <div>
             <Button size="small" color="primary">
-              <a href={`${details.discussion.post_url}`} target="_blank" rel="noopener noreferrer">View Episode Discussion</a>
+              <a className={classes.link} href={`${details.discussion.post_url}`} target="_blank" rel="noopener noreferrer">View Episode Discussion</a>
             </Button>
             <Button size="small" color="primary">
-              <a href={`https://myanimelist.net/anime/${details.show.mal_id}`} target="_blank" rel="noopener noreferrer">Learn More</a>
+              <a className={classes.link} href={`https://myanimelist.net/anime/${details.show.mal_id}`} target="_blank" rel="noopener noreferrer">Learn More</a>
             </Button>
           </div>
         }
@@ -128,9 +131,7 @@ export default function DetailsCard(props) {
             }}
           >
             <Fade in={open}>
-              <div className={classes.paper}>
-                {cardRender}
-              </div>
+              {cardRender}
             </Fade>
           </Modal>
         </div>
