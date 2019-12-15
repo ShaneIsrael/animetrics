@@ -11,6 +11,7 @@ import Typography from '@material-ui/core/Typography';
 const useStyles = makeStyles(theme => ({
   card: {
     maxHeight: '95vh',
+    maxWidth: '325px',
     margin: 10,
   },
   // paper: {
@@ -34,7 +35,6 @@ export default function DiscussionCard(props) {
         <CardMedia
           component="img"
           alt="Discussion Card"
-          width="680"
           image={`https://animetrics.sfo2.cdn.digitaloceanspaces.com/${poster}`}
           title={title}
         />
