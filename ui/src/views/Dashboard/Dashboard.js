@@ -217,7 +217,7 @@ const Dashboard = () => {
         </Hidden>
       </div>
       <div className={classes.recentAiredSection}>
-        <Typography className={classes.recentAiredFont}>Recently Aired Discussions</Typography>
+        <Typography className={classes.recentAiredFont}>Recently Aired Discussions (24hrs)</Typography>
         <Grid container>
           {recentDiscussions && recentDiscussions.map((elem, index) => {
             return <DiscussionCard title={elem.Show.title} episode={elem.episode} poster={elem.Show.Assets[0].s3_poster} href={elem.post_url} key={index}/>
