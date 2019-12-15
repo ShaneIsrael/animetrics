@@ -73,7 +73,7 @@ const Main = props => {
           />
         </Hidden>
         <Hidden
-          implementation="css"
+          implementation="js"
           xsDown
         >
           <Sidebar PaperProps={{ style: { width: drawerWidth } }} />

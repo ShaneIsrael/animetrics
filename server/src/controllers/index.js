@@ -5,6 +5,7 @@ const TokenController = require('./TokenController')
 const OverridesController = require('./OverridesController')
 const ShowController = require('./ShowController')
 const AssetController = require('./AssetController')
+const DiscussionController = require('./DiscussionController')
 
 module.exports = {
   ...WeekController,
@@ -14,4 +15,5 @@ module.exports = {
   ...OverridesController,
   ...ShowController,
   ...AssetController,
+  ...DiscussionController,
 }
