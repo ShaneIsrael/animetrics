@@ -13,6 +13,8 @@ const useStyles = makeStyles(theme => ({
     maxHeight: '95vh',
     maxWidth: '325px',
     margin: 10,
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+
   },
   // paper: {
   //   backgroundColor: theme.palette.background.paper,
@@ -23,6 +25,18 @@ const useStyles = makeStyles(theme => ({
     fontSize: 12,
     fontStyle: 'italic',
   },
+  cardContent: {
+    // position: 'absolute',
+    // bottom: 0,
+    // backgroundColor: 'rgba(0, 0, 0, 0.9)',
+    // width: '100%',
+    // height: '120px',
+    // maxHeight: '120px'
+  },
+  cardContentTitle: {
+    // WebkitTextStrokeColor: 'black',
+    // WebkitTextStroke: '1px',
+  }
 }))
 
 export default function DiscussionCard(props) {
@@ -38,11 +52,11 @@ export default function DiscussionCard(props) {
           image={`https://animetrics.sfo2.cdn.digitaloceanspaces.com/${poster}`}
           title={title}
         />
-        <CardContent>
-          <Typography gutterBottom variant="h5" component="h2">
+        <CardContent className={classes.cardContent}>
+          <Typography className={classes.cardContentTitle} gutterBottom variant="h6">
             {title}
           </Typography>
-          <Typography variant="body2" color="textSecondary" component="p">
+          <Typography variant="body1" color="textSecondary" component="p">
             {`Episode ${episode}`}
           </Typography>
         </CardContent>
