@@ -26,9 +26,9 @@ const categories = [
   {
     id: '/r/Manga',
     children: [
-      { id: 'Karma Rankings', icon: <ScoreIcon /> },
-      { id: 'Poll Rankings', icon: <PollIcon /> },
-      { id: 'Recent Discussions', icon: <ForumIcon /> },
+      { id: 'Karma Rankings', path: '', icon: <ScoreIcon /> },
+      { id: 'Poll Rankings', path: '', icon: <PollIcon /> },
+      { id: 'Recent Discussions', path: '', icon: <ForumIcon /> },
     ],
   },
 ];
@@ -115,8 +115,8 @@ function Sidebar(props) {
                 {id}
               </ListItemText>
             </ListItem>
-            {children.map(({ id: childId, path, icon }) => (
-              <RouterLink to={path}>
+            {children.map(({ id: childId, path, icon }, index) => (
+              <RouterLink key={index} to={path}>
                 <ListItem
                   key={childId}
                   button

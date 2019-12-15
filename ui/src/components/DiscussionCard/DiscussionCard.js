@@ -28,7 +28,6 @@ export default function DiscussionCard(props) {
   const classes = useStyles();
 
   const { title, episode, poster, href } = props
-  console.log(`https://animetrics.sfo2.cdn.digitaloceanspaces.com/${poster}`)
   return (
     <Card className={classes.card}>
       <CardActionArea onClick={() => window.open(href, '_blank')}>
