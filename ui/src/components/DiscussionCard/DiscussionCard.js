@@ -10,7 +10,6 @@ import Typography from '@material-ui/core/Typography';
 
 const useStyles = makeStyles(theme => ({
   card: {
-    maxWidth: 345,
     maxHeight: '95vh',
     margin: 10,
   },
@@ -36,9 +35,9 @@ export default function DiscussionCard(props) {
         <CardMedia
           component="img"
           alt="Discussion Card"
-          // height="500"
+          width="680"
           image={`https://animetrics.sfo2.cdn.digitaloceanspaces.com/${poster}`}
-          title="Title"
+          title={title}
         />
         <CardContent>
           <Typography gutterBottom variant="h5" component="h2">
@@ -49,13 +48,6 @@ export default function DiscussionCard(props) {
           </Typography>
         </CardContent>
       </CardActionArea>
-      {/* <CardActions>
-        <div>
-          <Button size="small" color="primary">
-            <a href={`the url`} target="_blank" rel="noopener noreferrer">View Episode Discussion</a>
-          </Button>
-        </div>
-      </CardActions> */}
     </Card>
   )
 }
