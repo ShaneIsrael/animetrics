@@ -1,35 +1,47 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import clsx from 'clsx'
-import { makeStyles, useTheme } from '@material-ui/styles'
-import { useMediaQuery, Paper } from '@material-ui/core'
+import CssBaseline from '@material-ui/core/CssBaseline';
+import Hidden from '@material-ui/core/Hidden';
+import { makeStyles } from '@material-ui/styles'
 
-import { Sidebar, Topbar, Footer } from './components'
+import { Sidebar, Header } from './components'
 
+const drawerWidth = 200
 const useStyles = makeStyles(theme => ({
   root: {
-    paddingTop: 56,
-    height: '100%',
+    display: 'flex',
+    minHeight: '100vh',
+  },
+  drawer: {
     [theme.breakpoints.up('sm')]: {
-      paddingTop: 64
-    }
+      width: drawerWidth,
+      flexShrink: 0,
+    },
   },
-  shiftContent: {
-    paddingLeft: 240
+  app: {
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
   },
-  content: {
-    height: '100%'
-  }
+  main: {
+    flex: 1,
+    padding: theme.spacing(2),
+    background: '#111b29',
+  },
+  footer: {
+    padding: theme.spacing(2),
+    background: '#eaeff1',
+  },
 }))
 
 const Main = props => {
   const { children } = props
 
   const classes = useStyles()
-  const theme = useTheme()
-  const isDesktop = useMediaQuery(theme.breakpoints.up('lg'), {
-    defaultMatches: true
-  })
+  // const isDesktop = useMediaQuery(theme.breakpoints.up('lg'), {
+  //   defaultMatches: true
+  // })
 
   const [openSidebar, setOpenSidebar] = useState(false)
 
@@ -37,27 +49,47 @@ const Main = props => {
     setOpenSidebar(!openSidebar)
   }
 
-  const handleSidebarClose = () => {
-    setOpenSidebar(false)
-  }
+  // const handleSidebarClose = () => {
+  //   setOpenSidebar(false)
+  // }
 
   return (
     <div
       className={clsx({
-        [classes.root]: true,
-        [classes.shiftContent]: false
+        [classes.root]: true
       })}
     >
-      <Topbar onSidebarOpen={handleSidebarOpen} />
-      <Sidebar
-        onClose={handleSidebarClose}
-        open={openSidebar}
-        variant="temporary"
-      />
-      <Paper square={true} className={classes.content}>
-        {children}
-        <Footer />
-      </Paper>
+      <CssBaseline />
+      <nav className={classes.drawer}>
+        <Hidden
+          implementation="js"
+          smUp
+        >
+          <Sidebar
+            onClose={handleSidebarOpen}
+            open={openSidebar}
+            PaperProps={{ style: { width: drawerWidth } }}
+            variant="temporary"
+          />
+        </Hidden>
+        <Hidden
+          implementation="js"
+          xsDown
+        >
+          <Sidebar PaperProps={{ style: { width: drawerWidth } }} />
+        </Hidden>
+      </nav>
+      <div className={classes.app}>
+        <Hidden
+          implementation="js"
+          smUp
+        >
+          <Header onDrawerToggle={handleSidebarOpen} />
+        </Hidden>
+        <main className={classes.main}>
+          {children}
+        </main>
+      </div>
     </div>
   )
 }

@@ -8,6 +8,7 @@ const TvDbService = require('./TvDbService')
 const TokenService = require('./TokenService')
 const OverridesService = require('./OverridesService')
 const ShowService = require('./ShowService')
+const DiscussionService = require('./DiscussionService')
 
 module.exports = {
   ...WeekService,
@@ -20,4 +21,5 @@ module.exports = {
   ...TokenService,
   ...OverridesService,
   ...ShowService,
+  ...DiscussionService,
 }

@@ -39,7 +39,7 @@ const useStyles = makeStyles(theme => ({
     WebkitTextStrokeColor: 'black',
     fontFamily: 'Impact, Oswald',
     fontWeight: 800,
-    fontSize: 20,
+    fontSize: 17,
   },
   malRalScoreFont: {
     color: 'white',
