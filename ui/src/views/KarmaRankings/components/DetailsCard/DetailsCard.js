@@ -1,6 +1,5 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import {isMobile} from 'react-device-detect'
 import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import CardActions from '@material-ui/core/CardActions';
@@ -91,10 +90,6 @@ export default function DetailsCard(props) {
   const { selectedAnime } = props
 
   const [open, setOpen] = React.useState(false);
-
-  const handleOpen = () => {
-    setOpen(true)
-  }
 
   const handleClose = () => {
     setOpen(false)

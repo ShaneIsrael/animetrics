@@ -179,26 +179,28 @@ const AnimePollRanking = (props) => {
             subheader={`Episode ${current.discussion.episode}`}
           />
           <CardContent className={classes.cardContent}>
-            <Chip
-              className={clsx({[classes.squareChip]: true})}
-              avatar={<PollIcon />}
-              label={current.score}
-            />
-            {posChangeUp || posChangeDown &&
+            <React.Fragment>
               <Chip
-                className={clsx({[classes.squareChip]: true, [classes.orangeColor]: posChangeUp, 
-                  [classes.purpleColor]: posChangeDown})}
-                avatar={<ForwardIcon className={clsx({[classes.upIcon]: posChangeUp, [classes.downIcon]: posChangeDown})}/>}
-                label={Math.abs(current.position - current.previous.position)}
+                className={clsx({[classes.squareChip]: true})}
+                avatar={<PollIcon />}
+                label={current.score}
+              />
+              {(posChangeUp || posChangeDown) &&
+                <Chip
+                  className={clsx({[classes.squareChip]: true, [classes.orangeColor]: posChangeUp, 
+                    [classes.purpleColor]: posChangeDown})}
+                  avatar={<ForwardIcon className={clsx({[classes.upIcon]: posChangeUp, [classes.downIcon]: posChangeDown})}/>}
+                  label={Math.abs(current.position - current.previous.position)}
+                  variant="outlined"
+                />
+              }
+              <Chip
+                className={clsx({[classes.squareChip]: true})}
+                avatar={<ThumbsUpDownIcon/>}
+                label={current.votes}
                 variant="outlined"
               />
-            }
-            <Chip
-              className={clsx({[classes.squareChip]: true})}
-              avatar={<ThumbsUpDownIcon/>}
-              label={current.votes}
-              variant="outlined"
-            />
+            </React.Fragment>
           </CardContent>
         </Card>
       </Hidden>

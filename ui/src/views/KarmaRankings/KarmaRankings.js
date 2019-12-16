@@ -95,22 +95,21 @@ function createResults(results, setHandler) {
 }
 
 function useKey(key, handler) {
-  // Does an event match the key we're watching?
-  const match = event => key.toLowerCase() === event.key.toLowerCase()
-
-  const onUp = event => {
-    if (match(event)) handler()
-  }
-
   // Bind and unbind events
   useEffect(() => {
+    // Does an event match the key we're watching?\
+    const match = event => key.toLowerCase() === event.key.toLowerCase()
+
+    const onUp = event => {
+      if (match(event)) handler()
+    }  
     // window.addEventListener('keydown', onDown)
     window.addEventListener('keyup', onUp)
     return () => {
       // window.removeEventListener('keydown', onDown)
       window.removeEventListener('keyup', onUp)
     }
-  }, [key, onUp])
+  }, [key, handler])
 }
 
 const KarmaRankings = () => {
@@ -162,7 +161,7 @@ const KarmaRankings = () => {
         setSelectedWeek(0)
       }
     }
-  }, [selectedWeek, setSelectedWeek])
+  }, [weeks, selectedWeek, setSelectedWeek])
 
   const createWeekSelectOptions = async (weeks) => {
     const weekSelectOptions = weeks.map((week, index) => {

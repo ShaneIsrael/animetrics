@@ -1,8 +1,7 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/styles'
-import { Grid, Typography } from '@material-ui/core'
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   root: {
     backgroundColor: '#2e2f34',
     height: '100%'
