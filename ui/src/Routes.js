@@ -48,9 +48,9 @@ const Routes = () => {
         component={NotFoundView}
         exact
         layout={MinimalLayout}
-        path="/not-found"
+        path="/404"
       />
-      <Redirect to="/not-found" />
+      <Redirect to="/404" />
     </Switch>
   )
 }
