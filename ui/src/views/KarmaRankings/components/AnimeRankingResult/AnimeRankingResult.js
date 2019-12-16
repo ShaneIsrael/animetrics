@@ -110,7 +110,6 @@ const AnimeRankingResult = (props) => {
   const malScoreDirection = !malScorePrevious || malScore === malScorePrevious ? 'none' : malScore < malScorePrevious ? 'down' : 'up'
   const ralScoreDirection = !ralScorePrevious || ralScore === ralScorePrevious ? 'none' : ralScore < ralScorePrevious ? 'down' : 'up'
   
-  console.log(ralScoreDirection, malScoreDirection, redditPollScoreDirection)
   return (
     <div
       onClick={() => handleSelection(result.result.id, result.show.id, result.assets, title)}
@@ -141,7 +140,7 @@ const AnimeRankingResult = (props) => {
               <div className={classes.chips}>
                 <Chip
                   className={clsx({[classes.squareChip]: true})}
-                  avatar={<ScoreIcon/>}
+                  avatar={<ScoreIcon />}
                   label={score}
                   size="small"
                 />

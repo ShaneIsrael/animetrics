@@ -30,6 +30,9 @@ const styles = theme => ({
   button: {
     borderColor: lightColor,
   },
+  background: {
+    backgroundColor: theme.palette.primary.dark
+  }
 });
 
 function Header(props) {
@@ -37,7 +40,7 @@ function Header(props) {
 
   return (
     <React.Fragment>
-      <AppBar color="primary.dark" position="sticky" elevation={0}>
+      <AppBar className={classes.background} position="sticky" elevation={0}>
         <Toolbar>
           <Grid container spacing={1} alignItems="center">
             <Hidden smUp>

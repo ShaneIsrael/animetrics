@@ -13,15 +13,56 @@ import Backdrop from '@material-ui/core/Backdrop';
 import Fade from '@material-ui/core/Fade';
 
 import { AnimeDetailsService } from '../../../../services'
+import { Hidden } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
   link: {
     color: theme.palette.primary.main
   },
+  cardMobile: {
+    display: 'flex',
+    borderRadius: 0,
+    width: 500,
+    height: 300,
+  },
   card: {
-    maxWidth: 345,
-    maxHeight: '100vh',
-    margin: 10,
+    maxWidth: 305,
+    // maxHeight: '100vh',
+  },
+  details: {
+    display: 'flex',
+    flexDirection: 'column',
+    width: '100%',
+    height: '100%',
+  },
+  content: {
+    flex: '1 0 auto',
+    width: 300,
+    overflow: 'hidden',
+    paddingBottom: 0
+  },
+  contentMobile: {
+    flex: '1 0 auto',
+    overflow: 'hidden',
+    paddingBottom: 0
+  },
+  cover: {
+    width: 350,
+    cursor: 'pointer'
+  },
+  synopsis: {
+    maxHeight: 160,
+    overflowY: 'auto',
+    paddingRight: 10,
+    boxSizing: 'content-box'
+  },
+  synopsisMobile: {
+    maxHeight: 200,
+    overflowY: 'auto',
+    boxSizing: 'content-box'
+  },
+  actions: {
+    padding: 0,
   },
   modal: {
     display: 'flex',
@@ -37,6 +78,10 @@ const useStyles = makeStyles(theme => ({
     fontSize: 12,
     fontStyle: 'italic',
   },
+  titleFont: {
+    fontSize: 16,
+    lineHeight: 1.25,
+  }
 }))
 
 export default function DetailsCard(props) {
@@ -78,40 +123,89 @@ export default function DetailsCard(props) {
 
   const title = details && details.show.seriesName
   const cardRender = (
-    <Card className={classes.card}>
-      <CardActionArea onClick={() => hideHandler(true)}>
-        <CardMedia
-          component="img"
-          alt="Selected Anime Details"
-          height="500"
-          image={`https://animetrics.sfo2.cdn.digitaloceanspaces.com/${selectedAnime.assets[0].s3_poster}`}
-          title={title}
-        />
-        <CardContent>
-          <Typography gutterBottom variant="h5" component="h2">
-            {title}
-          </Typography>
-          <Typography className={classes.subtitleFont} gutterBottom variant="subtitle2" component="h6">
-            {details && details.show.genre && details.show.genre.split(',').join(' / ')}
-          </Typography>
-          <Typography variant="body2" color="textSecondary" component="p">
-            {details && details.show.synopsis}
-          </Typography>
-        </CardContent>
-      </CardActionArea>
-      <CardActions>
-        { details &&
-          <div>
-            <Button size="small" color="primary">
-              <a className={classes.link} href={`${details.discussion.post_url}`} target="_blank" rel="noopener noreferrer">View Episode Discussion</a>
-            </Button>
-            <Button size="small" color="primary">
-              <a className={classes.link} href={`https://myanimelist.net/anime/${details.show.mal_id}`} target="_blank" rel="noopener noreferrer">Learn More</a>
-            </Button>
+    <div>
+      <Hidden
+        implementation="js"
+        smDown
+      >
+        <Card className={classes.cardMobile}>
+          <CardMedia
+            onClick={() => hideHandler(true)}
+            className={classes.cover}
+            alt="Selected Anime Details"
+            // height="500"
+            image={`https://animetrics.sfo2.cdn.digitaloceanspaces.com/${selectedAnime.assets[0].s3_poster}`}
+            title={title}
+          />
+          <div className={classes.details}>
+            <CardContent className={classes.contentMobile}>
+              <Typography className={classes.titleFont} gutterBottom variant="h6" component="h6">
+                {title}
+              </Typography>
+              <Typography className={classes.subtitleFont} gutterBottom variant="subtitle2" component="h6">
+                {details && details.show.genre && details.show.genre.split(',').join(' / ')}
+              </Typography>
+              <div style={{width: '100%', height: '100%', overflow: 'hidden'}}>
+                <Typography className={classes.synopsisMobile} variant="body2" color="textSecondary" component="p">
+                  {details && details.show.synopsis}
+                </Typography>
+              </div>
+            </CardContent>
+            <CardActions className={classes.actions}>
+              { details &&
+                <div>
+                  <Button size="small" color="primary">
+                    <a className={classes.link} href={`${details.discussion.post_url}`} target="_blank" rel="noopener noreferrer">View Episode Discussion</a>
+                  </Button>
+                  <Button size="small" color="primary">
+                    <a className={classes.link} href={`https://myanimelist.net/anime/${details.show.mal_id}`} target="_blank" rel="noopener noreferrer">Learn More</a>
+                  </Button>
+                </div>
+              }
+            </CardActions>
           </div>
-        }
-      </CardActions>
-    </Card>
+        </Card>
+      </Hidden>
+      <Hidden
+        implementation="js"
+        mdUp
+      >
+        <Card className={classes.card}>
+          <CardActionArea onClick={() => hideHandler(true)}>
+            <CardMedia
+              component="img"
+              alt="Selected Anime Details"
+              height="500"
+              image={`https://animetrics.sfo2.cdn.digitaloceanspaces.com/${selectedAnime.assets[0].s3_poster}`}
+              title={title}
+            />
+            <CardContent className={classes.content}>
+              <Typography className={classes.titleFont} gutterBottom variant="h5" component="h2">
+                {title}
+              </Typography>
+              <Typography className={classes.subtitleFont} gutterBottom variant="subtitle2" component="h6">
+                {details && details.show.genre && details.show.genre.split(',').join(' / ')}
+              </Typography>
+              <Typography className={classes.synopsis} variant="body2" color="textSecondary" component="p">
+                {details && details.show.synopsis}
+              </Typography>
+            </CardContent>
+          </CardActionArea>
+          <CardActions>
+            { details &&
+              <div>
+                <Button size="small" color="primary">
+                  <a className={classes.link} href={`${details.discussion.post_url}`} target="_blank" rel="noopener noreferrer">View Episode Discussion</a>
+                </Button>
+                <Button size="small" color="primary">
+                  <a className={classes.link} href={`https://myanimelist.net/anime/${details.show.mal_id}`} target="_blank" rel="noopener noreferrer">Learn More</a>
+                </Button>
+              </div>
+            }
+          </CardActions>
+        </Card>
+      </Hidden>
+    </div>
   )
   return (
     <div>
