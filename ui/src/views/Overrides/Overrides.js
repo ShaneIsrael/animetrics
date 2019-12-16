@@ -1,11 +1,9 @@
 /* eslint-disable react/no-multi-comp */
 import React, {useEffect} from 'react'
-import {isMobile} from 'react-device-detect'
 import { makeStyles } from '@material-ui/styles'
 // eslint-disable-next-line
 import { Grid, Paper, InputLabel, FormControl, Select, MenuItem } from '@material-ui/core'
 import clsx from 'clsx'
-import { Alert } from 'components'
 import { ShowService, AssetService } from 'services'
 import { AssetSelect, AssetOverrideCard, DetailsOverrideCard } from './components'
 
