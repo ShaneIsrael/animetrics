@@ -224,7 +224,6 @@ const KarmaRankings = () => {
         >
           <Grid
             item
-            xs={4}
           >
             <div>
               <FormControl 

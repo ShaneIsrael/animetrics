@@ -198,7 +198,6 @@ const PollRankings = () => {
         >
           <Grid
             item
-            xs={4}
           >
             <div>
               <FormControl 
