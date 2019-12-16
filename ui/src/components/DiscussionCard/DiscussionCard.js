@@ -10,8 +10,8 @@ import Typography from '@material-ui/core/Typography';
 
 const useStyles = makeStyles(theme => ({
   card: {
-    maxHeight: '95vh',
-    maxWidth: '325px',
+    // maxHeight: '85vh',
+    maxWidth: '250px',
     margin: 10,
     backgroundColor: 'rgba(0, 0, 0, 0.4)',
 
