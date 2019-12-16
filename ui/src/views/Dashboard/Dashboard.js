@@ -84,7 +84,7 @@ const Dashboard = () => {
   useEffect(() => {
     async function fetch() {
       try {
-        const discussions = (await DiscussionService.getTodaysDiscussions()).data
+        const discussions = (await DiscussionService.getRecentDiscussions()).data
         setRecentDiscussions(discussions)
       } catch (err) {
         console.log(err)
@@ -114,7 +114,7 @@ const Dashboard = () => {
                 <Grid item>
                   <RouterLink to="/dashboard">
                     <img
-                      alt="ANIRANKS Logo"
+                      alt="Animetrics Logo"
                       className={classes.logo}
                       height={96}
                       src="/images/logos/logo_full_light_blue_wlb_stroke.png"
@@ -214,7 +214,7 @@ const Dashboard = () => {
         </Hidden>
       </div>
       <div className={classes.recentAiredSection}>
-        <Typography className={classes.recentAiredFont}>Recently Aired Discussions (24hrs)</Typography>
+        <Typography className={classes.recentAiredFont}>Recently Aired Discussions</Typography>
         <Grid container>
           {recentDiscussions && recentDiscussions.map((elem, index) => {
             return <DiscussionCard title={elem.Show.title} episode={elem.episode} poster={elem.Show.Assets[0].s3_poster} href={elem.post_url} key={index}/>
