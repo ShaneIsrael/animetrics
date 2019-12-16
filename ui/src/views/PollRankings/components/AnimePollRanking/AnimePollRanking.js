@@ -1,14 +1,19 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/styles'
-import { Grid, Paper, Typography } from '@material-ui/core'
-import { isMobile } from 'react-device-detect'
+import { Grid, Paper, Typography, Hidden } from '@material-ui/core'
 import clsx from 'clsx'
-import { red, green, blue, deepOrange, deepPurple } from '@material-ui/core/colors'
+import { deepOrange, deepPurple } from '@material-ui/core/colors'
+import Chip from '@material-ui/core/Chip'
 import Avatar from '@material-ui/core/Avatar'
 import RemoveIcon from '@material-ui/icons/Remove'
 import ForwardIcon from '@material-ui/icons/Forward'
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp'
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown'
+import PollIcon from '@material-ui/icons/Poll'
+import ThumbsUpDownIcon from '@material-ui/icons/ThumbsUpDown'
+import Card from '@material-ui/core/Card'
+import CardHeader from '@material-ui/core/CardHeader'
+import CardContent from '@material-ui/core/CardContent'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -28,10 +33,8 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: 'rgba(0, 0, 0, 0)',
     textAlign: 'right',
     height: '60px'
-    // paddingRight: '10px',
   },
   avatarPaper: {
-    // backgroundColor: green[400],
     paddingTop: '3px',
     height: '80px'
   },
@@ -44,7 +47,6 @@ const useStyles = makeStyles(theme => ({
     WebkitTextStrokeColor: 'black',
     WebkitTextStroke: '1px',
     fontFamily: 'Impact',
-    // fontWeight: 800,
     flexWrap: 'wrap',
     fontSize: 15,
     lineHeight: 1,
@@ -64,7 +66,6 @@ const useStyles = makeStyles(theme => ({
     fontWeight: 800,
     fontSize: 16,
     fontStyle: 'bold',
-    // display: 'flex',
     alignItems: 'left',
     justifyContent: 'center',
   },
@@ -99,7 +100,6 @@ const useStyles = makeStyles(theme => ({
   },
   episodeFont: {
     color: 'white',
-    // lineHeight: 1,
     WebkitTextStrokeColor: 'black',
     WebkitTextStroke: '1px',
     fontFamily: 'Impact, Oswald',
@@ -119,16 +119,38 @@ const useStyles = makeStyles(theme => ({
   },
   orangeColor: {
     color: deepOrange[500],
+    borderColor: deepOrange[500]
   },
   purpleColor: {
-    color: deepPurple[300]
+    color: deepPurple[300],
+    borderColor: deepPurple[300]
   },
   avatar: {
     width: 74,
     height: 74,
     margin: 'auto',
-  }
-
+  },
+  avatarMobile: {
+    width: 50,
+    height: 50,
+  },
+  card: {
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    borderRadius: 0,
+    width: 300,
+    height: 125,
+    margin: 2,
+  },
+  cardHeader: {
+    padding: 8
+  },
+  cardContent: {
+    padding: 8,
+  },
+  squareChip: {
+    borderRadius: 0,
+    margin: theme.spacing(0.5)
+  },
 }))
 //eslint-disable-next-line react/jsx-max-props-per-line
 const AnimePollRanking = (props) => {
@@ -142,92 +164,136 @@ const AnimePollRanking = (props) => {
   const posChangeDown = current.previous ? current.position > current.previous.position : false
 
   return (
-    <div className={clsx(classes.root, 'grow')}>
-      <Paper
-        className={classes.paper}
-        square
+    <React.Fragment>
+      <Hidden
+        implementation="js"
+        mdUp
       >
-        <Grid container className={classes.backgroundPrimary}>
-          <Grid
-            item
-            xs={2}
+        <Card className={classes.card}>
+          <CardHeader
+            className={classes.cardHeader}
+            avatar={
+              <Avatar className={classes.avatarMobile} src={avatar} />
+            }
+            title={current.show.title}
+            subheader={`Episode ${current.discussion.episode}`}
+          />
+          <CardContent className={classes.cardContent}>
+            <Chip
+              className={clsx({[classes.squareChip]: true})}
+              avatar={<PollIcon />}
+              label={current.score}
+            />
+            {posChangeUp || posChangeDown &&
+              <Chip
+                className={clsx({[classes.squareChip]: true, [classes.orangeColor]: posChangeUp, 
+                  [classes.purpleColor]: posChangeDown})}
+                avatar={<ForwardIcon className={clsx({[classes.upIcon]: posChangeUp, [classes.downIcon]: posChangeDown})}/>}
+                label={Math.abs(current.position - current.previous.position)}
+                variant="outlined"
+              />
+            }
+            <Chip
+              className={clsx({[classes.squareChip]: true})}
+              avatar={<ThumbsUpDownIcon/>}
+              label={current.votes}
+              variant="outlined"
+            />
+          </CardContent>
+        </Card>
+      </Hidden>
+      <Hidden
+        implementation="js"
+        smDown
+      >
+        <div className={clsx(classes.root, 'grow')}>
+          <Paper
+            className={classes.paper}
+            square
           >
-            <Paper
-              className={clsx(classes.positionChangePaper, classes.backgroundPrimary)}
-              elevation={0}
-              square
-            >
-              <Typography 
-                align="left" 
-                className={clsx({[classes.positionChangeFont]: true,
-                  [classes.orangeColor]: posChangeUp, 
-                  [classes.purpleColor]: posChangeDown})} 
-                variant="subtitle2"
+            <Grid container className={classes.backgroundPrimary}>
+              <Grid
+                item
+                xs={2}
               >
-                {!posChangeUp && !posChangeDown && <RemoveIcon/>}
-                {(posChangeUp || posChangeDown) && <ForwardIcon className={clsx({[classes.upIcon]: posChangeUp, [classes.downIcon]: posChangeDown})}/>}
-                {(posChangeUp || posChangeDown) && Math.abs(current.position - current.previous.position)}
-              </Typography>
-            </Paper>
-            <Paper
-              className={clsx(classes.backgroundPrimary, classes.scorePaper)}
-              elevation={0}
-              square
-            >
-              {!posChangeUp && !posChangeDown && <RemoveIcon style={{color: 'white'}}/>}
-              {posChangeUp && <KeyboardArrowUpIcon className={classes.orangeColor}/>}
-              {posChangeDown && <KeyboardArrowDownIcon className={classes.purpleColor}/>}
-              <Typography className={clsx(classes.scoreFont)} align="left" variant="subtitle2">
-                {current.score}
-              </Typography>
-            </Paper>
-          </Grid>
-          <Grid
-            item
-            xs={3}
-          >
-            <Paper
-              className={clsx(classes.backgroundPrimary, classes.avatarPaper)}
-              elevation={0}
-              square
-            >
-              <Avatar className={classes.avatar} src={avatar} />
-            </Paper>
-          </Grid>
-          <Grid
-            item
-            xs={7}
-          >
-            <Paper
-              className={clsx(classes.backgroundPrimary, classes.titlePaper)}
-              elevation={0}
-              square
-            >
-              <Typography align="left" className={clsx(classes.titleFont)} variant="h5">
-                {current.show.title.toUpperCase()}
-              </Typography>
-            </Paper>
-            <Paper
-              className={clsx(classes.backgroundPrimary, classes.detailsPaper)}
-              elevation={0}
-              square
-            >
-              <div style={{paddingTop: '14px'}}>
-                <Typography style={{paddingRight: 2, paddingLeft: 2, border: '0.2px solid white', background: 'white'}} display="inline" className={clsx({[classes.fontBase]:true, [classes.voteFontPrimary]: true})}>
-                V
-                </Typography>
-                <Typography style={{paddingRight: 6, paddingLeft: 6, border: '0.2px solid white', backgroundColor: '#294e8a'}} display="inline" className={clsx({[classes.fontBase]:true, [classes.voteFont]: true})}>
-                  {current.votes}
-                </Typography>
-                <Typography display="inline" className={clsx(classes.episodeFont)} align="right">
-                  {`EPISODE ${current.discussion.episode}`}
-                </Typography>
-              </div>
-            </Paper>
-          </Grid>
-        </Grid>
-      </Paper>
-    </div>
+                <Paper
+                  className={clsx(classes.positionChangePaper, classes.backgroundPrimary)}
+                  elevation={0}
+                  square
+                >
+                  <Typography 
+                    align="left" 
+                    className={clsx({[classes.positionChangeFont]: true,
+                      [classes.orangeColor]: posChangeUp, 
+                      [classes.purpleColor]: posChangeDown})} 
+                    variant="subtitle2"
+                  >
+                    {!posChangeUp && !posChangeDown && <RemoveIcon/>}
+                    {(posChangeUp || posChangeDown) && <ForwardIcon className={clsx({[classes.upIcon]: posChangeUp, [classes.downIcon]: posChangeDown})}/>}
+                    {(posChangeUp || posChangeDown) && Math.abs(current.position - current.previous.position)}
+                  </Typography>
+                </Paper>
+                <Paper
+                  className={clsx(classes.backgroundPrimary, classes.scorePaper)}
+                  elevation={0}
+                  square
+                >
+                  {!posChangeUp && !posChangeDown && <RemoveIcon style={{color: 'white'}}/>}
+                  {posChangeUp && <KeyboardArrowUpIcon className={classes.orangeColor}/>}
+                  {posChangeDown && <KeyboardArrowDownIcon className={classes.purpleColor}/>}
+                  <Typography className={clsx(classes.scoreFont)} align="left" variant="subtitle2">
+                    {current.score}
+                  </Typography>
+                </Paper>
+              </Grid>
+              <Grid
+                item
+                xs={3}
+              >
+                <Paper
+                  className={clsx(classes.backgroundPrimary, classes.avatarPaper)}
+                  elevation={0}
+                  square
+                >
+                  <Avatar className={classes.avatar} src={avatar} />
+                </Paper>
+              </Grid>
+              <Grid
+                item
+                xs={7}
+              >
+                <Paper
+                  className={clsx(classes.backgroundPrimary, classes.titlePaper)}
+                  elevation={0}
+                  square
+                >
+                  <Typography align="left" className={clsx(classes.titleFont)} variant="h5">
+                    {current.show.title.toUpperCase()}
+                  </Typography>
+                </Paper>
+                <Paper
+                  className={clsx(classes.backgroundPrimary, classes.detailsPaper)}
+                  elevation={0}
+                  square
+                >
+                  <div style={{paddingTop: '14px'}}>
+                    <Typography style={{paddingRight: 2, paddingLeft: 2, border: '0.2px solid white', background: 'white'}} display="inline" className={clsx({[classes.fontBase]:true, [classes.voteFontPrimary]: true})}>
+                    V
+                    </Typography>
+                    <Typography style={{paddingRight: 6, paddingLeft: 6, border: '0.2px solid white', backgroundColor: '#294e8a'}} display="inline" className={clsx({[classes.fontBase]:true, [classes.voteFont]: true})}>
+                      {current.votes}
+                    </Typography>
+                    <Typography display="inline" className={clsx(classes.episodeFont)} align="right">
+                      {`EPISODE ${current.discussion.episode}`}
+                    </Typography>
+                  </div>
+                </Paper>
+              </Grid>
+            </Grid>
+          </Paper>
+        </div>
+      </Hidden>
+    </React.Fragment>
   )
 }
 

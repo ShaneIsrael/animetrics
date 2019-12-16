@@ -1,16 +1,14 @@
 import React from 'react'
 import { makeStyles, useTheme } from '@material-ui/styles'
-import { Grid, Paper, Hidden, Card, CardContent, Typography, IconButton, CardMedia, Avatar } from '@material-ui/core'
-import { isMobile } from 'react-device-detect'
+import { Grid, Paper, Hidden, Card, CardContent, Typography, CardMedia, Avatar } from '@material-ui/core'
 import Chip from '@material-ui/core/Chip'
 import ResultPosition from './ResultPosition/ResultPosition'
 import ResultDetails from './ResultDetails/ResultDetails'
 import ResultComments from './ResultComments/ResultComments'
 import ResultScores from './ResultScores/ResultScores'
 import ScoreIcon from '@material-ui/icons/Score'
-import FormatListNumberedIcon from '@material-ui/icons/FormatListNumbered';
-import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp'
-import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown'
+import ChatBubbleIcon from '@material-ui/icons/ChatBubble'
+import PollIcon from '@material-ui/icons/Poll'
 
 import clsx from 'clsx'
 import { deepOrange, deepPurple } from '@material-ui/core/colors'
@@ -32,35 +30,23 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     backgroundColor: 'rgba(0, 0, 0, 0.4)',
     borderRadius: 0,
-    width: 400,
+    width: 320,
     height: 150,
   },
   details: {
     display: 'flex',
     flexDirection: 'column',
-    width: '100%'
+    width: '100%',
   },
   content: {
     flex: '1 0 auto',
+    padding: 8,
   },
   cover: {
     width: 125,
   },
-  controls: {
-    display: 'flex',
-    alignItems: 'center',
-    paddingLeft: theme.spacing(1),
-    paddingBottom: theme.spacing(1),
-  },
-  playIcon: {
-    height: 38,
-    width: 38,
-  },
   mobileTitleFont: {
     fontSize: 14,
-  },
-  chips: {
-    // marginTop: theme.spacing(0.5)
   },
   squareChip: {
     borderRadius: 0,
@@ -118,13 +104,13 @@ const AnimeRankingResult = (props) => {
   }
 
   const posDirection = !posPrevious || pos === posPrevious ? 'none' : pos < posPrevious ? 'up' : 'down'
-  const scoreDirection = !scorePrevious || score === scorePrevious ? 'none' : score < scorePrevious ? 'down' : 'up'
 
   const scoreChangeDirection = !scorePrevious || score === scorePrevious ? 'none' : score < scorePrevious ? 'down' : 'up'
-
-  let scoreChangeIcon = (scoreChangeDirection === 'up' ? <KeyboardArrowUpIcon className={clsx({[classes.orangeColor]: scoreChangeDirection === 'up', [classes.purpleColor]: scoreChangeDirection === 'down'})}/> : scoreChangeDirection === 'down' ? <KeyboardArrowDownIcon className={clsx({[classes.orangeColor]: scoreChangeDirection === 'up', [classes.purpleColor]: scoreChangeDirection === 'down'})}/> : null)
+  const redditPollScoreDirection = !pollScorePrevious || pollScore === pollScorePrevious ? 'none' : pollScore < pollScorePrevious ? 'down' : 'up'
+  const malScoreDirection = !malScorePrevious || malScore === malScorePrevious ? 'none' : malScore < malScorePrevious ? 'down' : 'up'
+  const ralScoreDirection = !ralScorePrevious || ralScore === ralScorePrevious ? 'none' : ralScore < ralScorePrevious ? 'down' : 'up'
   
-
+  console.log(ralScoreDirection, malScoreDirection, redditPollScoreDirection)
   return (
     <div
       onClick={() => handleSelection(result.result.id, result.show.id, result.assets, title)}
@@ -137,18 +123,16 @@ const AnimeRankingResult = (props) => {
         <Card className={classes.card}>
           <CardMedia
             className={classes.cover}
-            image={'https://animetrics.sfo2.cdn.digitaloceanspaces.com/anime_assets/0d291ad9-5866-47b9-96b3-31fb8cd78118_poster.jpg'}
+            image={`https://animetrics.sfo2.cdn.digitaloceanspaces.com/${result.assets[0].s3_poster}`}
             title="Show poster art"
           />
           <div className={classes.details}>
             <CardContent className={classes.content}>
               <Chip
                 className={clsx({[classes.squareChip]: true, [classes.chipPositionFont]: true, [classes.orangeColor]: posDirection === 'up', [classes.purpleColor]: posDirection === 'down'})}
-                // avatar={<ScoreIcon className={clsx({[classes.orangeColor]: posDirection === 'up', [classes.purpleColor]: posDirection === 'down'})}/>}
                 label={pos}
                 variant="outlined"
                 size="small"
-                color=""
               />
               <Typography className={classes.mobileTitleFont} display={'inline'} component="h6" variant="h6">
                 {title}
@@ -156,38 +140,42 @@ const AnimeRankingResult = (props) => {
               <hr/>
               <div className={classes.chips}>
                 <Chip
-                  className={clsx({[classes.chip]: true, [classes.orangeColor]: scoreDirection === 'up', [classes.purpleColor]: scoreDirection === 'down'})}
-                  avatar={<ScoreIcon className={clsx({[classes.orangeColor]: scoreDirection === 'up', [classes.purpleColor]: scoreDirection === 'down'})}/>}
+                  className={clsx({[classes.squareChip]: true})}
+                  avatar={<ScoreIcon/>}
                   label={score}
+                  size="small"
+                />
+                <Chip
+                  className={clsx({[classes.squareChip]: true, [classes.orangeColor]: redditPollScoreDirection === 'up', [classes.purpleColor]: redditPollScoreDirection === 'down'})}
+                  avatar={<PollIcon className={clsx({[classes.orangeColor]: redditPollScoreDirection === 'up', [classes.purpleColor]: redditPollScoreDirection === 'down'})}/>}
+                  label={pollScore}
                   variant="outlined"
                   size="small"
-                  color=""
                 />
-                {scoreChangeIcon && 
-                  <Chip
-                    className={clsx({[classes.chip]: true, [classes.orangeColor]: scoreChangeDirection === 'up', [classes.purpleColor]: scoreChangeDirection === 'down'})}
-                    avatar={scoreChangeIcon}
-                    label={Math.abs(scoreChange)}
-                    variant="outlined"
-                    size="small"
-                    color=""
-                  />
-                }
+                <Chip
+                  className={clsx({[classes.squareChip]: true})}
+                  avatar={<ChatBubbleIcon/>}
+                  label={commentCount}
+                  variant="outlined"
+                  size="small"
+                />
+                <Chip
+                  className={clsx({[classes.squareChip]: true, [classes.orangeColor]: malScoreDirection === 'up', [classes.purpleColor]: malScoreDirection === 'down'})}
+                  avatar={<Avatar variant="square" className={clsx({[classes.orangeColor]: malScoreDirection === 'up', [classes.purpleColor]: malScoreDirection === 'down'})}>M</Avatar>}
+                  label={malScore > 0 ? malScore : '-----'}
+                  variant="outlined"
+                  size="small"
+                />
+                <Chip
+                  className={clsx({[classes.squareChip]: true, [classes.orangeColor]: ralScoreDirection === 'up', [classes.purpleColor]: ralScoreDirection === 'down'})}
+                  avatar={<Avatar variant="square" className={clsx({[classes.orangeColor]: ralScoreDirection === 'up', [classes.purpleColor]: ralScoreDirection === 'down'})}>R</Avatar>}
+                  label={ralScore > 0 ? ralScore : '-----'}
+                  variant="outlined"
+                  size="small"
+                />
               </div>
             </CardContent>
-            <div className={classes.controls}>
-              {/* <IconButton aria-label="previous">
-                {theme.direction === 'rtl' ? <SkipNextIcon /> : <SkipPreviousIcon />}
-              </IconButton>
-              <IconButton aria-label="play/pause">
-                <PlayArrowIcon className={classes.playIcon} />
-              </IconButton>
-              <IconButton aria-label="next">
-                {theme.direction === 'rtl' ? <SkipPreviousIcon /> : <SkipNextIcon />}
-              </IconButton> */}
-            </div>
           </div>
-
         </Card>
       </Hidden>
       <Hidden
@@ -201,7 +189,7 @@ const AnimeRankingResult = (props) => {
           >
             <Grid container>
               <ResultPosition 
-                direction={!posPrevious || pos === posPrevious ? 'none' : pos < posPrevious ? 'up' : 'down'} 
+                direction={posDirection} 
                 position={pos} 
                 positionChange={posChange}
               />
@@ -209,18 +197,18 @@ const AnimeRankingResult = (props) => {
                 banner={banner} 
                 episode={episode} 
                 rpScore={pollScore}
-                rpScoreDirection={!pollScorePrevious || pollScore === pollScorePrevious ? 'none' : pollScore < pollScorePrevious ? 'down' : 'up'}
+                rpScoreDirection={redditPollScoreDirection}
                 score={score}
                 scoreChange={scoreChange}
-                scoreChangeDirection={!scorePrevious || score === scorePrevious ? 'none' : score < scorePrevious ? 'down' : 'up'}
+                scoreChangeDirection={scoreChangeDirection}
                 title={title}
               />
               <ResultComments count={commentCount}/>
               <ResultScores 
                 malScore={malScore} 
-                malScoreDirection={!malScorePrevious || malScore === malScorePrevious ? 'none' : malScore < malScorePrevious ? 'down' : 'up'}
+                malScoreDirection={malScoreDirection}
                 ralScore={ralScore}
-                ralScoreDirection={!ralScorePrevious || ralScore === ralScorePrevious ? 'none' : ralScore < ralScorePrevious ? 'down' : 'up'}
+                ralScoreDirection={ralScoreDirection}
               />
             </Grid>
           </Paper>
