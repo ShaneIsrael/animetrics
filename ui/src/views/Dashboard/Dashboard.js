@@ -26,7 +26,7 @@ const useStyles = makeStyles(theme => ({
   },
   headerMobile: {
     padding: 32,
-    height: 200 ,
+    height: 150 ,
     backgroundColor: 'rgba(0,0,0,0)',
     boxShadow: 'none'
   },
@@ -60,19 +60,20 @@ const useStyles = makeStyles(theme => ({
   },
   subheaderMobile: {
     color: theme.palette.primary.main,
-    marginLeft: 48,
-    fontSize: 24,
+    paddingLeft: 48,
+    paddingRight: 24,
+    fontSize: 18,
     fontWeight: 100
   },
   recentAiredSection: {
-    marginTop: 50,
+    marginTop: 25,
     marginLeft: 32,
     marginRight: 32
   },
   recentAiredFont: {
     color: theme.palette.secondary.dark,
     fontWeight: 300,
-    fontSize: 24
+    fontSize: 18
   },
 }))
 
@@ -173,7 +174,7 @@ const Dashboard = () => {
                     <img
                       alt="ANIRANKS Logo"
                       className={classes.logo}
-                      height={96}
+                      height={72}
                       src="/images/logos/logo_full_light_blue_wlb_stroke.png"
                     />
                   </RouterLink>
@@ -205,21 +206,33 @@ const Dashboard = () => {
           smDown
         >
           <Typography className={classes.subheader}>Visualizing Anime metrics through the Reddit community.</Typography>
+          <div className={classes.recentAiredSection}>
+            <Grid container justify="left">
+              <Typography style={{paddingLeft: 40}} className={classes.recentAiredFont}>Recently Aired Discussions</Typography>
+            </Grid>
+            <Grid container justify="center">
+              {recentDiscussions && recentDiscussions.map((elem, index) => {
+                return <DiscussionCard title={elem.Show.title} episode={elem.episode} poster={elem.Show.Assets[0].s3_poster} href={elem.post_url} key={index}/>
+              })}
+            </Grid>
+          </div>
         </Hidden>
         <Hidden
           implementation="js"
           mdUp
         >
           <Typography className={classes.subheaderMobile}>Visualizing Anime metrics through the Reddit community.</Typography>
+          <div className={classes.recentAiredSection}>
+            <Grid container justify="center">
+              <Typography className={classes.recentAiredFont}>Recently Aired Discussions</Typography>
+            </Grid>
+            <Grid container justify="center">
+              {recentDiscussions && recentDiscussions.map((elem, index) => {
+                return <DiscussionCard title={elem.Show.title} episode={elem.episode} poster={elem.Show.Assets[0].s3_poster} href={elem.post_url} key={index}/>
+              })}
+            </Grid>
+          </div>
         </Hidden>
-      </div>
-      <div className={classes.recentAiredSection}>
-        <Typography className={classes.recentAiredFont}>Recently Aired Discussions</Typography>
-        <Grid container>
-          {recentDiscussions && recentDiscussions.map((elem, index) => {
-            return <DiscussionCard title={elem.Show.title} episode={elem.episode} poster={elem.Show.Assets[0].s3_poster} href={elem.post_url} key={index}/>
-          })}
-        </Grid>
       </div>
     </div>
   )
