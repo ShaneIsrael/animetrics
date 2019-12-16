@@ -202,12 +202,8 @@ const PollRankings = () => {
             <div>
               <FormControl 
                 className={classes.formControl}
-                // variant="outlined"
+                variant="outlined"
               >
-                {/* <InputLabel 
-                  id="select-week-label"
-                  ref={inputLabel}
-                >Week Of</InputLabel> */}
                 <Select 
                   className={classes.selectEmpty} 
                   native={isMobile} 
