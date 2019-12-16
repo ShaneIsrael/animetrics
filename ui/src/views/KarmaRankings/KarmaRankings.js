@@ -36,7 +36,6 @@ TabPanel.propTypes = {
   value: PropTypes.any.isRequired,
 }
 
-
 const useStyles = makeStyles(theme => ({
   root: {
     padding: theme.spacing(0.5),
@@ -180,7 +179,7 @@ const KarmaRankings = () => {
           <option
             key={index}
             value={index}
-          ><center>{start} &rarr; {end}</center></option>
+          >{start} &rarr; {end}</option>
           :
           <MenuItem
             key={index}
