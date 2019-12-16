@@ -18,13 +18,13 @@ const useStyles = makeStyles(theme => ({
   link: {
     color: theme.palette.primary.main
   },
-  cardMobile: {
+  card: {
     display: 'flex',
     borderRadius: 0,
     width: 500,
     height: 300,
   },
-  card: {
+  cardMobile: {
     maxWidth: 305,
     // maxHeight: '100vh',
   },
@@ -34,13 +34,13 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     height: '100%',
   },
-  content: {
+  contentMobile: {
     flex: '1 0 auto',
     width: 300,
     overflow: 'hidden',
     paddingBottom: 0
   },
-  contentMobile: {
+  content: {
     flex: '1 0 auto',
     overflow: 'hidden',
     paddingBottom: 0
@@ -49,16 +49,16 @@ const useStyles = makeStyles(theme => ({
     width: 350,
     cursor: 'pointer'
   },
-  synopsis: {
+  synopsisMobile: {
     maxHeight: 160,
     overflowY: 'auto',
     paddingRight: 10,
     boxSizing: 'content-box'
   },
-  synopsisMobile: {
-    maxHeight: 200,
+  synopsis: {
+    maxHeight: 160,
     overflowY: 'auto',
-    boxSizing: 'content-box'
+    // boxSizing: 'content-box'
   },
   actions: {
     padding: 0,
@@ -123,7 +123,7 @@ export default function DetailsCard(props) {
         implementation="js"
         smDown
       >
-        <Card className={classes.cardMobile}>
+        <Card className={classes.card}>
           <CardMedia
             onClick={() => hideHandler(true)}
             className={classes.cover}
@@ -133,7 +133,7 @@ export default function DetailsCard(props) {
             title={title}
           />
           <div className={classes.details}>
-            <CardContent className={classes.contentMobile}>
+            <CardContent className={classes.content}>
               <Typography className={classes.titleFont} gutterBottom variant="h6" component="h6">
                 {title}
               </Typography>
@@ -141,7 +141,7 @@ export default function DetailsCard(props) {
                 {details && details.show.genre && details.show.genre.split(',').join(' / ')}
               </Typography>
               <div style={{width: '100%', height: '100%', overflow: 'hidden'}}>
-                <Typography className={classes.synopsisMobile} variant="body2" color="textSecondary" component="p">
+                <Typography className={classes.synopsis} variant="body2" color="textSecondary" component="p">
                   {details && details.show.synopsis}
                 </Typography>
               </div>
@@ -165,7 +165,7 @@ export default function DetailsCard(props) {
         implementation="js"
         mdUp
       >
-        <Card className={classes.card}>
+        <Card className={classes.cardMobile}>
           <CardActionArea onClick={() => hideHandler(true)}>
             <CardMedia
               component="img"
@@ -174,14 +174,14 @@ export default function DetailsCard(props) {
               image={`https://animetrics.sfo2.cdn.digitaloceanspaces.com/${selectedAnime.assets[0].s3_poster}`}
               title={title}
             />
-            <CardContent className={classes.content}>
+            <CardContent className={classes.contentMobile}>
               <Typography className={classes.titleFont} gutterBottom variant="h5" component="h2">
                 {title}
               </Typography>
               <Typography className={classes.subtitleFont} gutterBottom variant="subtitle2" component="h6">
                 {details && details.show.genre && details.show.genre.split(',').join(' / ')}
               </Typography>
-              <Typography className={classes.synopsis} variant="body2" color="textSecondary" component="p">
+              <Typography className={classes.synopsisMobile} variant="body2" color="textSecondary" component="p">
                 {details && details.show.synopsis}
               </Typography>
             </CardContent>
