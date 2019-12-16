@@ -203,7 +203,7 @@ const KarmaRankings = () => {
   }
 
   return (
-    <div className={clsx({[classes.root]: true})}>
+    <div>
       {selectedAnime && 
         <DetailsCard
           className={classes.selectedAnimeCard}
