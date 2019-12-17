@@ -5,7 +5,6 @@ const morgan = require('morgan')
 const logger = require('./logger')
 
 const app = express()
-// const config = require('./config')
 
 app.use(
   morgan('combined', {
