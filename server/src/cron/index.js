@@ -98,7 +98,6 @@ async function init() {
       // Every Hour | Check for unset ral scores and update them
       cron.schedule('0 0 * * * *', async () => {
         try {
-          getDiscussionsAndPopulate()
           updateRalScores()
         } catch (err) {
           logger.error(err)
