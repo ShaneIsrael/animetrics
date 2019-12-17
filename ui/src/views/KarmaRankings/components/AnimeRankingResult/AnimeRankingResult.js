@@ -147,7 +147,7 @@ const AnimeRankingResult = (props) => {
               <div className={classes.episode}>
                 <Chip
                   className={clsx({[classes.episodePosChip]: true, [classes.chipPositionFont]: true, [classes.orangeColor]: posDirection === 'up', [classes.purpleColor]: posDirection === 'down'})}
-                  label={pos}
+                  label={pos + 1}
                   variant="outlined"
                   size="small"
                 />
