@@ -9,8 +9,8 @@ const {
   Asset,
   Op,
 } = require('../models')
-
-const config = require('../config/config')[process.env.NODE_ENV].assets
+const { environment } = require('../config')
+const config = require('../config')[environment].assets
 const logger = require('../logger')
 const { uploadFileToS3 } = require('../services')
 

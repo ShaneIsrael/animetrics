@@ -1,5 +1,6 @@
 const Snoowrap = require('snoowrap')
-const config = require('../config')[process.env.NODE_ENV].reddit
+const { environment } = require('../config')
+const config = require('../config')[environment].reddit
 const PushShift = require('../tools/pushshift-io.js')
 
 const ps = new PushShift('submission')
