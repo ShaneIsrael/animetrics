@@ -3,6 +3,7 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const morgan = require('morgan')
 const logger = require('./logger')
+const { environment } = require('./config')
 
 const app = express()
 
@@ -14,7 +15,7 @@ app.use(
     stream: logger.stream,
   }),
 )
-if (process.env.NODE_ENV !== 'local') {
+if (environment !== 'dev') {
   app.use(
     morgan('combined', {
       skip(req, res) {
