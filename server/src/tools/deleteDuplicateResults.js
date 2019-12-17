@@ -1,7 +1,7 @@
-const moment = require('moment')
+/* eslint-disable linebreak-style */
 const logger = require('../logger')
 const {
-  EpisodeResultLink, EpisodeDiscussionResult, RedditPollResult, Op,
+  EpisodeResultLink, EpisodeDiscussionResult, RedditPollResult,
 } = require('../models')
 
 async function init() {
@@ -10,8 +10,8 @@ async function init() {
     const epResultIds = []
     const pollResult = []
     const pollResultIds = []
-    const edrs = await EpisodeDiscussionResult.findAll({attributes: ['id', 'episodeDiscussionId']})
-    const rprs = await RedditPollResult.findAll({attributes: ['id', 'episodeDiscussionId']})
+    const edrs = await EpisodeDiscussionResult.findAll({ attributes: ['id', 'episodeDiscussionId'] })
+    const rprs = await RedditPollResult.findAll({ attributes: ['id', 'episodeDiscussionId'] })
     for (const result of edrs) {
       const dupeIndex = epResultIds.indexOf(result.episodeDiscussionId)
       if (dupeIndex === -1) {
@@ -21,13 +21,13 @@ async function init() {
         logger.info(`deleting EpisodeDiscussionResult with id:  ${result.id}`)
         await EpisodeDiscussionResult.destroy({
           where: {
-            id: result.id
-          }
+            id: result.id,
+          },
         })
         await EpisodeResultLink.destroy({
           where: {
-            episodeDiscussionResultId: result.id
-          }
+            episodeDiscussionResultId: result.id,
+          },
         })
       }
     }
@@ -40,13 +40,13 @@ async function init() {
         logger.info(`deleting RedditPollResult with id: ${result.id}`)
         await RedditPollResult.destroy({
           where: {
-            id: result.id
-          }
+            id: result.id,
+          },
         })
       }
     }
   } catch (err) {
-    console.log(err)
+    logger.error(err)
   }
 }
 init()
