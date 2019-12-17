@@ -1,5 +1,5 @@
-const appRoot = require('app-root-path');
-const winston = require('winston');
+const appRoot = require('app-root-path')
+const winston = require('winston')
 
 // define the custom settings for each transport (file, console)
 const options = {
@@ -18,16 +18,16 @@ const options = {
     json: false,
     colorize: true,
   },
-};
+}
 
 // instantiate a new Winston Logger with the settings defined above
-const logger = new winston.Logger({
+const logger = winston.createLogger({
   transports: [
     new winston.transports.File(options.file),
     new winston.transports.Console(options.console),
   ],
   exitOnError: false, // do not exit on handled exceptions
-});
+})
 
 // create a stream object with a 'write' function that will be used by `morgan`
 logger.stream = {
@@ -35,6 +35,6 @@ logger.stream = {
     // use the 'info' log level so the output will be picked up by both transports (file and console)
     logger.info(message);
   },
-};
+}
 
-module.exports = logger;
+module.exports = logger
