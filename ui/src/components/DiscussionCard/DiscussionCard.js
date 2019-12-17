@@ -5,7 +5,7 @@ import CardActionArea from '@material-ui/core/CardActionArea';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
-
+import LazyLoad from 'react-lazyload'
 
 const useStyles = makeStyles(() => ({
   card: {
@@ -32,11 +32,18 @@ export default function DiscussionCard(props) {
     <Card className={classes.card}>
       <CardActionArea onClick={() => window.open(href, '_blank')}>
         <CardMedia
-          component="img"
+          // component="img"
           alt="Discussion Card"
-          image={`https://animetrics.sfo2.cdn.digitaloceanspaces.com/${poster}`}
           title={title}
-        />
+        >
+          <LazyLoad
+            debounce={false}
+            offsetVertical={400}
+            width={250}
+          >
+            <img alt="poster art" width={250} src={`https://animetrics.sfo2.cdn.digitaloceanspaces.com/${poster}`} />
+          </LazyLoad>
+        </CardMedia>
         <CardContent className={classes.cardContent}>
           <Typography className={classes.cardContentTitle} gutterBottom variant="h6">
             {title}
