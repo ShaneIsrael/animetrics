@@ -149,7 +149,7 @@ service.createDiscussionResult = async (link) => {
   const malDetails = await findAnime(link.Show.mal_id)
   const [ralScore] = await cpoll.calculateRedditMalRating(link.Show.id)
   // Sleep to make sure the db updates.
-  await sleep(1000)
+  await sleep(2500)
   if (malDetails) {
     const malSnapshot = await MALSnapshot.create({
       showId: link.Show.id,
