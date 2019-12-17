@@ -253,7 +253,10 @@ const KarmaRankings = () => {
               >
                 <Grid
                   container
+                  direction="column"
                   justify="center"
+                  alignItems="center"
+                  spacing={1}
                 >
                   {renderedResults}
                   {renderedResults.length === 0 &&

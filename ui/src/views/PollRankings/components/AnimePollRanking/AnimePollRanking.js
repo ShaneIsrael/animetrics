@@ -19,7 +19,6 @@ const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
     minWidth: 415,
-    marginBottom: '10px'
   },
   paper: {
     margin: 'auto',
@@ -27,12 +26,12 @@ const useStyles = makeStyles(theme => ({
     height: '80px'
   },
   positionChangePaper: {
-    height: '20px'
+    height: '30px'
   },
   scorePaper: {
     backgroundColor: 'rgba(0, 0, 0, 0)',
     textAlign: 'right',
-    height: '60px'
+    height: '50px'
   },
   avatarPaper: {
     paddingTop: '3px',
@@ -79,6 +78,7 @@ const useStyles = makeStyles(theme => ({
     fontStyle: 'italic',
     paddingLeft: theme.spacing(0.5),
     position: 'absolute',
+    marginTop: -12
   },
   voteFont: {
     color: 'white',
@@ -139,7 +139,6 @@ const useStyles = makeStyles(theme => ({
     borderRadius: 0,
     width: 300,
     height: 125,
-    margin: 2,
   },
   cardHeader: {
     padding: 8
@@ -164,7 +163,7 @@ const AnimePollRanking = (props) => {
   const posChangeDown = current.previous ? current.position > current.previous.position : false
 
   return (
-    <React.Fragment>
+    <Grid item xs={12}>
       <Hidden
         implementation="js"
         mdUp
@@ -295,7 +294,7 @@ const AnimePollRanking = (props) => {
           </Paper>
         </div>
       </Hidden>
-    </React.Fragment>
+    </Grid>
   )
 }
 
