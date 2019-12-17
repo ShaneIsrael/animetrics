@@ -207,7 +207,7 @@ const Dashboard = () => {
         >
           <Typography className={classes.subheader}>Visualizing Anime metrics through the Reddit community.</Typography>
           <div className={classes.recentAiredSection}>
-            <Grid container justify="left">
+            <Grid container>
               <Typography style={{paddingLeft: 40}} className={classes.recentAiredFont}>Recently Aired Discussions</Typography>
             </Grid>
             <Grid container justify="center">

@@ -5,6 +5,7 @@ import { deepPurple, deepOrange } from '@material-ui/core/colors'
 import { Grid, Paper, Typography } from '@material-ui/core'
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp'
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown'
+import LazyLoad from 'react-lazy-load'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -113,52 +114,57 @@ const ResultDetails = (props) => {
   
   return (
     <Grid item xs={8}>
-      <Paper elevation={0} square={true} style={{height: '80px', background: `linear-gradient(to left, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 40%), linear-gradient(to right, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 40%), url(${banner})`, backgroundSize: 'cover'}}>
-        <Grid className={classes.root} container>
-          <Grid item xs={2}>
-            <Paper className={classes.scoreChangePaper} elevation={0} square={true}>
-              <Typography className={clsx(classes.fontBase, classes.scoreChangeFont)} align="left" variant="subtitle2">
-                {scoreChangeDirection === 'up' && <KeyboardArrowUpIcon className={classes.orangeColor}/>}
-                {scoreChangeDirection === 'down' && <KeyboardArrowDownIcon className={classes.purpleColor}/>}
-                {!Number(scoreChange) || scoreChangeDirection === 'none' ? '' : Math.abs(scoreChange)}
-              </Typography>
-            </Paper>
-            <Paper className={classes.scorePaper} elevation={0} square={true}>
-              <Typography className={clsx(classes.fontBase, classes.scoreFont)} align="left" variant="h1">
-                {score}
-              </Typography>
-            </Paper>
-          </Grid>
-          <Grid item xs={6}>
-            <Paper className={classes.titlePaper} elevation={0} square={true}>
-              <Typography className={clsx(classes.fontBase, classes.titleFont)} align="right" variant="h5">
-                {title.toUpperCase()}
-              </Typography>
-            </Paper>
-            <Paper className={classes.malScorePaper} elevation={0} square={true}>
-              <Grid style={{marginBottom: 0}} container>
-                <Grid item xs={9}>
-                  <Paper className={classes.transparent} elevation={0} square={true}>
-                    <Typography style={{paddingTop: 5, marginRight: 5}} className={clsx(classes.fontBase, classes.episodeFont)} align="right" variant="h5">
-                      {`EPISODE ${episode}`}
-                    </Typography>
-                  </Paper>
+      <LazyLoad
+        debounce={false}
+        offsetVertical={400}
+      >
+        <Paper elevation={0} square={true} style={{height: '80px', background: `linear-gradient(to left, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 40%), linear-gradient(to right, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 40%), url(${banner})`, backgroundSize: 'cover'}}>
+          <Grid className={classes.root} container>
+            <Grid item xs={2}>
+              <Paper className={classes.scoreChangePaper} elevation={0} square={true}>
+                <Typography className={clsx(classes.fontBase, classes.scoreChangeFont)} align="left" variant="subtitle2">
+                  {scoreChangeDirection === 'up' && <KeyboardArrowUpIcon className={classes.orangeColor}/>}
+                  {scoreChangeDirection === 'down' && <KeyboardArrowDownIcon className={classes.purpleColor}/>}
+                  {!Number(scoreChange) || scoreChangeDirection === 'none' ? '' : Math.abs(scoreChange)}
+                </Typography>
+              </Paper>
+              <Paper className={classes.scorePaper} elevation={0} square={true}>
+                <Typography className={clsx(classes.fontBase, classes.scoreFont)} align="left" variant="h1">
+                  {score}
+                </Typography>
+              </Paper>
+            </Grid>
+            <Grid item xs={6}>
+              <Paper className={classes.titlePaper} elevation={0} square={true}>
+                <Typography className={clsx(classes.fontBase, classes.titleFont)} align="right" variant="h5">
+                  {title.toUpperCase()}
+                </Typography>
+              </Paper>
+              <Paper className={classes.malScorePaper} elevation={0} square={true}>
+                <Grid style={{marginBottom: 0}} container>
+                  <Grid item xs={9}>
+                    <Paper className={classes.transparent} elevation={0} square={true}>
+                      <Typography style={{paddingTop: 5, marginRight: 5}} className={clsx(classes.fontBase, classes.episodeFont)} align="right" variant="h5">
+                        {`EPISODE ${episode}`}
+                      </Typography>
+                    </Paper>
+                  </Grid>
+                  <Grid item xs={3} className={classes.backgroundPrimary}>
+                    <Paper className={classes.backgroundPrimary} elevation={0} square={true}>
+                      <Typography style={{paddingRight: 2, paddingLeft: 2, border: '0.2px solid white', background: 'white'}} display="inline" className={clsx({[classes.fontBase]:true, [classes.rpFontPrimary]: true})}>
+                      RP
+                      </Typography>
+                      <Typography style={{paddingRight: 6, paddingLeft: 6, border: '0.2px solid white', backgroundColor: '#294e8a'}} display="inline" className={clsx({[classes.fontBase]:true, [classes.rpFont]: true})}>
+                        {!rpScore || rpScore === 0 ? '------' : rpScore}
+                      </Typography>
+                    </Paper>
+                  </Grid>
                 </Grid>
-                <Grid item xs={3} className={classes.backgroundPrimary}>
-                  <Paper className={classes.backgroundPrimary} elevation={0} square={true}>
-                    <Typography style={{paddingRight: 2, paddingLeft: 2, border: '0.2px solid white', background: 'white'}} display="inline" className={clsx({[classes.fontBase]:true, [classes.rpFontPrimary]: true})}>
-                    RP
-                    </Typography>
-                    <Typography style={{paddingRight: 6, paddingLeft: 6, border: '0.2px solid white', backgroundColor: '#294e8a'}} display="inline" className={clsx({[classes.fontBase]:true, [classes.rpFont]: true})}>
-                      {!rpScore || rpScore === 0 ? '------' : rpScore}
-                    </Typography>
-                  </Paper>
-                </Grid>
-              </Grid>
-            </Paper>
+              </Paper>
+            </Grid>
           </Grid>
-        </Grid>
-      </Paper>
+        </Paper>
+      </LazyLoad>
     </Grid>
   )
 }

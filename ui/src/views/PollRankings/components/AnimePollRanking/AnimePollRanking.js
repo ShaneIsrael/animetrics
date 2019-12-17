@@ -14,6 +14,7 @@ import ThumbsUpDownIcon from '@material-ui/icons/ThumbsUpDown'
 import Card from '@material-ui/core/Card'
 import CardHeader from '@material-ui/core/CardHeader'
 import CardContent from '@material-ui/core/CardContent'
+import LazyLoad from 'react-lazy-load'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -172,7 +173,7 @@ const AnimePollRanking = (props) => {
           <CardHeader
             className={classes.cardHeader}
             avatar={
-              <Avatar className={classes.avatarMobile} src={avatar} />
+              <LazyLoad debounce={true} offsetVertical={400} width={50}><Avatar className={classes.avatarMobile} src={avatar} /></LazyLoad>
             }
             title={current.show.title}
             subheader={`Episode ${current.discussion.episode}`}
@@ -256,7 +257,7 @@ const AnimePollRanking = (props) => {
                   elevation={0}
                   square
                 >
-                  <Avatar className={classes.avatar} src={avatar} />
+                  <LazyLoad debounce={true} offsetVertical={400} width={74}><Avatar className={classes.avatar} src={avatar} /></LazyLoad>
                 </Paper>
               </Grid>
               <Grid

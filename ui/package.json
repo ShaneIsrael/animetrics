@@ -42,6 +42,8 @@
     "react-device-detect": "^1.9.10",
     "react-dom": "^16.8.6",
     "react-ga": "^2.7.0",
+    "react-lazy-load": "^3.0.13",
+    "react-lazyload": "^2.6.5",
     "react-perfect-scrollbar": "^1.5.3",
     "react-router-dom": "^5.0.1",
     "react-scripts": "^3.0.1",

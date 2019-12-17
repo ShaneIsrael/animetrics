@@ -10,9 +10,10 @@ import ScoreIcon from '@material-ui/icons/Score'
 import ChatBubbleIcon from '@material-ui/icons/ChatBubble'
 import PollIcon from '@material-ui/icons/Poll'
 import SlideshowIcon from '@material-ui/icons/Slideshow';
+import LazyLoad from 'react-lazy-load'
 
 import clsx from 'clsx'
-import { deepOrange, deepPurple, green } from '@material-ui/core/colors'
+import { deepOrange, deepPurple } from '@material-ui/core/colors'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -152,18 +153,24 @@ const AnimeRankingResult = (props) => {
                   size="small"
                 />
               </div>
-              <CardMedia
-                className={classes.cover}
-                image={`https://animetrics.sfo2.cdn.digitaloceanspaces.com/${result.assets[0].s3_poster}`}
-                title="Show poster art"
-              />
+                <CardMedia
+                  title="Show poster art"
+                >
+                  <LazyLoad
+                    debounce={false}
+                    offsetVertical={400}
+                    width={125}
+                  >
+                    <img alt="poster art" className={classes.cover} src={`https://animetrics.sfo2.cdn.digitaloceanspaces.com/${result.assets[0].s3_poster}`}/>
+                  </LazyLoad>
+                </CardMedia>
               <div className={classes.details}>
                 <CardContent className={classes.content}>
                   <Typography className={classes.mobileTitleFont} display={'inline'} component="h6" variant="h6">
                     {title}
                   </Typography>
                   <hr/>
-                  <Grid container justify="left">
+                  <Grid container>
                     <Chip
                       className={clsx({[classes.squareChip]: true, [classes.orangeColor]: scoreChangeDirection === 'up', [classes.purpleColor]: scoreChangeDirection === 'down'})}
                       avatar={<ScoreIcon className={clsx({[classes.orangeColor]: scoreChangeDirection === 'up', [classes.purpleColor]: scoreChangeDirection === 'down'})}/>}
