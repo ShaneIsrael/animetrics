@@ -1,7 +1,7 @@
 const aws = require('aws-sdk')
 const fs = require('fs')
 
-const awsConfig = require('../config/config')[process.env.NODE_ENV].aws
+const awsConfig = require('../config')[process.env.NODE_ENV].aws
 
 const endpoint = new aws.Endpoint(awsConfig.endpoint)
 const s3 = new aws.S3({

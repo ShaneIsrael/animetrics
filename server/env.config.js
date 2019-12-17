@@ -3,7 +3,6 @@ module.exports = {
     {
       name: 'animetrics',
       script: 'src/app.js',
-      watch: true,
       env: {
         PORT: 3001,
         NODE_ENV: 'dev',
