@@ -146,6 +146,7 @@ service.getResultsByWeek = async (id) => {
 
 service.createDiscussionResult = async (link) => {
   const discussion = link.EpisodeDiscussion
+  logger.info('Getting MAL details...')
   const malDetails = await findAnime(link.Show.mal_id)
   const [ralScore] = await cpoll.calculateRedditMalRating(link.Show.id)
   // Sleep to make sure the db updates.
