@@ -60,7 +60,6 @@ async function backPopulate(days) {
   await updateTvDbIds()
   await updatePosters()
   await fetchAssets.fetch()
-  await genResults()
   await generateDiscussionResults()
 }
 
