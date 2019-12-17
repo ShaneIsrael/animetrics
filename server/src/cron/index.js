@@ -1,7 +1,7 @@
 const cron = require('node-cron')
 const moment = require('moment')
 const logger = require('../logger')
-const environment = require('../config').environment
+const { environment } = require('../config')
 const {
   digestDiscussionPost, authTvDb, refreshTvDb, updateTvDbIds, getSeriesPoster, createDiscussionResult, updateRedditAnimeListScore,
 } = require('../services')
@@ -27,7 +27,6 @@ async function updatePosters() {
 }
 
 async function generateDiscussionResults() {
-  const [epResults, pollResults] = []
   const links = await EpisodeResultLink.findAll(
     {
       where: {
@@ -47,7 +46,7 @@ async function generateDiscussionResults() {
       try {
         await createDiscussionResult(link)
       } catch (err) {
-        console.log(err)
+        logger.error(err)
       }
     }
   }
@@ -56,7 +55,13 @@ async function getDiscussionsAndPopulate() {
   const discussions = await fetchDiscussions.fetch()
   if (discussions) {
     for (const discussion of discussions) {
-      await digestDiscussionPost(discussion)
+      const createdDt = moment.utc(discussion.created_utc)
+      const dt15MinsAgo = moment.utc().subtract(15, 'minutes')
+      // don't process if the discussion isn't at least 15 minutes old. This is to help prevent getting
+      // discussions made by non-mods that get deleted.
+      if (createdDt.isSameOrBefore(dt15MinsAgo)) {
+        await digestDiscussionPost(discussion)
+      }
     }
   }
   await updateTvDbIds()
@@ -81,14 +86,13 @@ async function init() {
       logger.info('beginning cron jobs')
       await authTvDb()
       logger.info('tvdb auth successful')
-      if (config)
       logger.info('starting cron jobs...')
-      // Every 1 hour | Get Episode Discussions and populate data
-      cron.schedule('0 0 * * * *', async () => {
+      // Every 15 minutes | Get Episode Discussions and populate data
+      cron.schedule('0 */15 * * * *', async () => {
         try {
           getDiscussionsAndPopulate()
         } catch (err) {
-          logger.error(err.message)
+          logger.error(err)
         }
       })
       // Every Hour | Check for unset ral scores and update them
@@ -97,7 +101,7 @@ async function init() {
           getDiscussionsAndPopulate()
           updateRalScores()
         } catch (err) {
-          logger.error(err.message)
+          logger.error(err)
         }
       })
 
@@ -107,7 +111,7 @@ async function init() {
           await fetchUsers.fetch()
           fetchUsers.fetchScores()
         } catch (err) {
-          logger.error(err.message)
+          logger.error(err)
         }
       })
 
@@ -124,7 +128,7 @@ async function init() {
     }
   } catch (err) {
     // console.log(err)
-    logger.error(err.message)
+    logger.error(err)
   }
 }
 init()

@@ -43,7 +43,7 @@ async function generateDiscussionResults() {
       try {
         await createDiscussionResult(link)
       } catch (err) {
-        console.log(err)
+        logger.error(err)
       }
     }
   }
@@ -70,7 +70,7 @@ async function init() {
     await authTvDb()
     await backPopulate(args[0])
   } catch (err) {
-    console.log(err)
+    logger.error(err)
   }
 }
 init()

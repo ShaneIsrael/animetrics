@@ -12,7 +12,7 @@ app.use(
     skip(req, res) {
       return res.statusCode < 500
     },
-    stream: logger.errorStream,
+    stream: logger.stream,
   }),
 )
 if (process.env.NODE_ENV !== 'local') {
@@ -42,8 +42,7 @@ require('./cron')
 
 // Error Handler Middleware
 app.use((err, req, res, next) => {
-  logger.error(err)
-  console.log(err)
+  logger.error(`${err.status || 500} - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`)
   // This will get passed back to the user as a generic server error
   // message for caught errors.
   res.status(500).send('Unexpected server error occurred.')
