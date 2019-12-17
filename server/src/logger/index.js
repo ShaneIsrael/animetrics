@@ -1,5 +1,5 @@
 const appRoot = require('app-root-path')
-const { transports, createLogger, format} = require('winston')
+const { transports, createLogger, format } = require('winston')
 
 // define the custom settings for each transport (file, console)
 const options = {
