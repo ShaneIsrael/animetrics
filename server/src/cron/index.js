@@ -82,7 +82,8 @@ async function updateRalScores() {
 
 async function init() {
   try {
-    if (environment === 'prod') {
+    logger.info(`environment=${environment} process.env.NODE_ENV=${process.env.NODE_ENV}`)
+    if (process.env.NODE_ENV === 'prod') {
       logger.info('beginning cron jobs')
       await authTvDb()
       logger.info('tvdb auth successful')
