@@ -56,7 +56,16 @@ async function backPopulate(days) {
   await updateTvDbIds()
   await updatePosters()
   await fetchAssets.fetch()
-  await generateDiscussionResults()
+  await genResults()
+}
+
+async function genResults(attempt) {  
+  attempt ? attempt : 0
+  try {
+    await generateDiscussionResults()
+  } catch(err) {
+    if (attempt < 5) await genResults(attempt + 1)
+  }
 }
 
 async function init() {
