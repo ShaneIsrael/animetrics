@@ -44,7 +44,11 @@ async function generateDiscussionResults() {
 
     if (createDt.isSameOrBefore(dt48hoursAgo)) {
       logger.info(`Creating discussion result for: ${link.EpisodeDiscussion.post_title}`)
-      await createDiscussionResult(link)
+      try {
+        await createDiscussionResult(link)
+      } catch (err) {
+        console.log(err)
+      }
     }
   }
 }
