@@ -40,7 +40,11 @@ async function generateDiscussionResults() {
 
     if (createDt.isSameOrBefore(dt48hoursAgo)) {
       logger.info(`Creating discussion result for: ${link.EpisodeDiscussion.post_title}`)
-      await createDiscussionResult(link)
+      try {
+        await createDiscussionResult(link)
+      } catch (err) {
+        console.log(err)
+      }
     }
   }
 }
@@ -57,15 +61,7 @@ async function backPopulate(days) {
   await updatePosters()
   await fetchAssets.fetch()
   await genResults()
-}
-
-async function genResults(attempt) {  
-  attempt ? attempt : 0
-  try {
-    await generateDiscussionResults()
-  } catch(err) {
-    if (attempt < 5) await genResults(attempt + 1)
-  }
+  await generateDiscussionResults()
 }
 
 async function init() {
