@@ -151,6 +151,7 @@ service.createDiscussionResult = async (link) => {
   // Sleep to make sure the db updates.
   await sleep(2500)
   if (malDetails) {
+    logger.info('creating MAL Snapshot...')
     const malSnapshot = await MALSnapshot.create({
       showId: link.Show.id,
       weekId: link.Week.id,
@@ -162,11 +163,14 @@ service.createDiscussionResult = async (link) => {
       popularity: malDetails.popularity,
       members: malDetails.members,
     })
+    logger.info('scraping poll data...')
     let pollDetails = null
     if (discussion.post_poll_url) {
       pollDetails = await scrapePollData(discussion.post_poll_url);
     }
+    logger.info('getting submission data...')
     const post = await fetchDiscussions.getSubmission(discussion.post_id);
+    logger.info('creating discussion result...')
     const edr = await EpisodeDiscussionResult.create({
       episodeDiscussionId: discussion.id,
       malSnapshotId: malSnapshot.id,
@@ -186,6 +190,7 @@ service.createDiscussionResult = async (link) => {
     })
     let rpr
     if (!hasPollResult) {
+      logger.info('creating poll result...')
       rpr = await RedditPollResult.create({
         showId: link.Show.id,
         weekId: link.Week.id,
@@ -195,6 +200,7 @@ service.createDiscussionResult = async (link) => {
         votes: pollResult[1],
       })
     }
+    logger.info('-- Done.')
     return {edr, rpr}
   } else {
     logger.info(`could not get MAL Details for Show ID: ${link.Show.id}`)
