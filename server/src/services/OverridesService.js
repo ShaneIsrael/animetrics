@@ -11,7 +11,7 @@ const {
 const AssetService = require('./AssetService')
 const TvDbService = require('./TvDbService')
 
-const config = require('../config/config')[process.env.NODE_ENV].assets
+const config = require('../config')[process.env.NODE_ENV].assets
 
 const sleep = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds))
 async function upload(type, overrideAssetUrl) {
