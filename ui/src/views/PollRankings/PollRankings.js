@@ -229,7 +229,10 @@ const PollRankings = () => {
               >
                 <Grid
                   container
+                  direction="column"
                   justify="center"
+                  alignItems="center"
+                  spacing={1}
                 >
                   {renderedPollResults}
                   {renderedPollResults.length === 0 &&
