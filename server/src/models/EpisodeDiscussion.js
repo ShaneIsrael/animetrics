@@ -18,7 +18,7 @@ module.exports = (connection, Sequelize) => connection.define(
     post_id: {
       type: Sequelize.STRING,
       allowNull: false,
-      unique: true,
+      // unique: true,
     },
     season: {
       type: Sequelize.INTEGER,
