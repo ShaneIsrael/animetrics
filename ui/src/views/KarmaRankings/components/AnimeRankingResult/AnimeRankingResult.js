@@ -1,15 +1,18 @@
 import React from 'react'
-import { makeStyles } from '@material-ui/styles'
-import { Grid, Paper, Hidden, Card, CardContent, Typography, CardMedia, Avatar } from '@material-ui/core'
+import { makeStyles, withStyles } from '@material-ui/styles'
+import { Grid, Paper, Hidden, Card, CardContent, Typography, CardMedia, Avatar, Tooltip } from '@material-ui/core'
 import Chip from '@material-ui/core/Chip'
 import ResultPosition from './ResultPosition/ResultPosition'
 import ResultDetails from './ResultDetails/ResultDetails'
 import ResultComments from './ResultComments/ResultComments'
 import ResultScores from './ResultScores/ResultScores'
 import ScoreIcon from '@material-ui/icons/Score'
-import ChatBubbleIcon from '@material-ui/icons/ChatBubble'
+import ForumIcon from '@material-ui/icons/Forum';
 import PollIcon from '@material-ui/icons/Poll'
-import SlideshowIcon from '@material-ui/icons/Slideshow';
+import SlideshowIcon from '@material-ui/icons/Slideshow'
+import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp'
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown'
+import Zoom from '@material-ui/core/Zoom'
 import LazyLoad from 'react-lazy-load'
 
 import clsx from 'clsx'
@@ -25,6 +28,20 @@ const useStyles = makeStyles(theme => ({
     maxWidth: 680,
     height: '80px'
   },
+  orangeColor: {
+    color: deepOrange[500],
+    borderColor: deepOrange[500],
+  },
+  purpleColor: {
+    color: deepPurple[300],
+    borderColor: deepPurple[300]
+  },
+  backgroundColor: {
+    color: theme.palette.primary.dark
+  }
+}))
+
+const mobileStyles = makeStyles(theme => ({
   mobileWidth: {
     maxWidth: 500
   },
@@ -81,23 +98,86 @@ const useStyles = makeStyles(theme => ({
     marginBottom: 0,
     marginRight: 0,
   },
-  orangeColor: {
-    color: deepOrange[500],
-    borderColor: deepOrange[500],
-  },
-  purpleColor: {
-    color: deepPurple[300],
-    borderColor: deepPurple[300]
-  },
+
   episodeColor: {
     color: '#fff',
     borderColor: '#fff',
     backgroundColor: 'rgba(255,255,255,0.2)'
   }
 }))
+
+const desktopStyles = makeStyles(theme => ({
+  card: {
+    display: 'flex',
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    borderRadius: 0,
+    width: 650,
+    height: 220
+  },
+  details: {
+    display: 'flex',
+    flexDirection: 'column',
+    width: '100%'
+  },
+  content: {
+    flex: '1 0 auto',
+  },
+  cover: {
+    width: 150,
+  },
+  hr: {
+    borderColor: theme.palette.primary.dark
+  },
+  controls: {
+    display: 'flex',
+    alignItems: 'center',
+    paddingLeft: theme.spacing(1),
+    paddingBottom: theme.spacing(1),
+  },
+  squareChip: {
+    borderRadius: 0,
+    margin: theme.spacing(0.5),
+    width: 80,
+  },
+  titleFont: {
+    lineHeight: 1
+  },
+  positionChip: {
+    borderRadius: 0,
+    margin: theme.spacing(0.5),
+    fontSize: 72,
+    width: 113,
+    height: 113,
+  },
+  chip: {
+    borderRadius: 5,
+    margin: theme.spacing(0.5)
+  },
+  chipPositionFont: {
+    fontSize: 18,
+    fontWeight: 600
+  },
+  episode: {
+    position: 'absolute',
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+  },
+}))
+
+const LightTooltip = withStyles(theme => ({
+  tooltip: {
+    backgroundColor: theme.palette.common.white,
+    color: 'rgba(0, 0, 0, 0.87)',
+    boxShadow: theme.shadows[1],
+    fontSize: 11,
+  },
+}))(Tooltip)
+
 //eslint-disable-next-line react/jsx-max-props-per-line
 const AnimeRankingResult = (props) => {
   const classes = useStyles()
+  const mobile = mobileStyles()
+  const desktop = desktopStyles()
+
   let {
     result,
     title,
@@ -122,7 +202,6 @@ const AnimeRankingResult = (props) => {
   // eslint-disable-next-line
   const pollScoreChange = pollScore - pollScorePrevious
 
-
   const handleSelection = (id, showId, assets, title) => {
     setAnimeSelection({id, showId, assets, title})
   }
@@ -134,95 +213,224 @@ const AnimeRankingResult = (props) => {
   const malScoreDirection = !malScorePrevious || malScore === malScorePrevious ? 'none' : malScore < malScorePrevious ? 'down' : 'up'
   const ralScoreDirection = !ralScorePrevious || ralScore === ralScorePrevious ? 'none' : ralScore < ralScorePrevious ? 'down' : 'up'
   
+
+  const scoreChangeIcon = scoreChangeDirection === 'up' 
+    ? <KeyboardArrowUpIcon className={classes.orangeColor}/> 
+    : scoreChangeDirection === 'down' 
+    ? <KeyboardArrowDownIcon className={classes.purpleColor}/>
+    : null
+
+  const redditPollScoreIcon = redditPollScoreDirection === 'up' 
+    ? <KeyboardArrowUpIcon className={classes.orangeColor}/> 
+    : redditPollScoreDirection === 'down' 
+    ? <KeyboardArrowDownIcon className={classes.purpleColor}/>
+    : null
   return (
     <Grid item xs={12}>
-      <div
-        onClick={() => handleSelection(result.result.id, result.show.id, result.assets, title)}
-        style={{flexGrow: 0, cursor: 'pointer'}}
-      >
+
         <Hidden
           implementation="js"
           mdUp
         >
-          <Card style={{float: 'left'}} className={classes.card}>
-            <div className={classes.episode}>
-              <Chip
-                className={clsx({[classes.episodePosChip]: true, [classes.chipPositionFont]: true, [classes.orangeColor]: posDirection === 'up', [classes.purpleColor]: posDirection === 'down'})}
-                label={pos + 1}
-                variant="outlined"
-                size="small"
-              />
-            </div>
-            <CardMedia
-              title="Show poster art"
-            >
-              <LazyLoad
-                debounce={false}
-                offsetVertical={400}
-                width={125}
+          <div
+            onClick={() => handleSelection(result.result.id, result.show.id, result.assets, title)}
+            style={{flexGrow: 0, cursor: 'pointer'}}
+          >
+            <Card style={{float: 'left'}} className={mobile.card}>
+              <div className={mobile.episode}>
+                <Chip
+                  className={clsx({[mobile.episodePosChip]: true, [mobile.chipPositionFont]: true, [classes.orangeColor]: posDirection === 'up', [classes.purpleColor]: posDirection === 'down'})}
+                  label={pos + 1}
+                  variant="outlined"
+                  size="small"
+                />
+              </div>
+              <CardMedia
+                title="Show poster art"
               >
-                <img alt="poster art" className={classes.cover} src={`https://animetrics.sfo2.cdn.digitaloceanspaces.com/${result.assets[0].s3_poster}`}/>
-              </LazyLoad>
-            </CardMedia>
-            <div className={classes.details}>
-              <CardContent className={classes.content}>
-                <Typography className={classes.mobileTitleFont} display={'inline'} component="h6" variant="h6">
-                  {title}
-                </Typography>
-                <hr/>
-                <Grid container>
-                  <Chip
-                    className={clsx({[classes.squareChip]: true, [classes.orangeColor]: scoreChangeDirection === 'up', [classes.purpleColor]: scoreChangeDirection === 'down'})}
-                    avatar={<ScoreIcon className={clsx({[classes.orangeColor]: scoreChangeDirection === 'up', [classes.purpleColor]: scoreChangeDirection === 'down'})}/>}
-                    label={score}
-                    variant="outlined"
-                    size="small"
-                  />
-                  <Chip
-                    className={clsx({[classes.squareChip]: true, [classes.orangeColor]: redditPollScoreDirection === 'up', [classes.purpleColor]: redditPollScoreDirection === 'down'})}
-                    avatar={<PollIcon className={clsx({[classes.orangeColor]: redditPollScoreDirection === 'up', [classes.purpleColor]: redditPollScoreDirection === 'down'})}/>}
-                    label={pollScore}
-                    variant="outlined"
-                    size="small"
-                  />
-                  <Chip
-                    className={clsx({[classes.squareChip]: true})}
-                    avatar={<SlideshowIcon/>}
-                    label={episode}
-                    variant="outlined"
-                    size="small"
-                  />
-                  <Chip
-                    className={clsx({[classes.squareChip]: true})}
-                    avatar={<ChatBubbleIcon/>}
-                    label={commentCount}
-                    variant="outlined"
-                    size="small"
-                  />
-                  <Chip
-                    className={clsx({[classes.squareChip]: true, [classes.orangeColor]: malScoreDirection === 'up', [classes.purpleColor]: malScoreDirection === 'down'})}
-                    avatar={<Avatar variant="square" className={clsx({[classes.orangeColor]: malScoreDirection === 'up', [classes.purpleColor]: malScoreDirection === 'down'})}>M</Avatar>}
-                    label={malScore > 0 ? malScore : '-----'}
-                    variant="outlined"
-                    size="small"
-                  />
-                  <Chip
-                    className={clsx({[classes.squareChip]: true, [classes.orangeColor]: ralScoreDirection === 'up', [classes.purpleColor]: ralScoreDirection === 'down'})}
-                    avatar={<Avatar variant="square" className={clsx({[classes.orangeColor]: ralScoreDirection === 'up', [classes.purpleColor]: ralScoreDirection === 'down'})}>R</Avatar>}
-                    label={ralScore > 0 ? ralScore : '-----'}
-                    variant="outlined"
-                    size="small"
-                  />
-                </Grid>
-              </CardContent>
-            </div>
-          </Card>
+                <LazyLoad
+                  debounce={false}
+                  offsetVertical={400}
+                  width={125}
+                >
+                  <img alt="poster art" className={mobile.cover} src={`https://animetrics.sfo2.cdn.digitaloceanspaces.com/${result.assets[0].s3_poster}`}/>
+                </LazyLoad>
+              </CardMedia>
+              <div className={mobile.details}>
+                <CardContent className={mobile.content}>
+                  <Typography className={mobile.mobileTitleFont} display={'inline'} component="h6" variant="h6">
+                    {title}
+                  </Typography>
+                  <hr/>
+                  <Grid container>
+                    <Chip
+                      className={clsx({[mobile.squareChip]: true, [classes.orangeColor]: scoreChangeDirection === 'up', [classes.purpleColor]: scoreChangeDirection === 'down'})}
+                      avatar={<ScoreIcon className={clsx({[classes.orangeColor]: scoreChangeDirection === 'up', [classes.purpleColor]: scoreChangeDirection === 'down'})}/>}
+                      label={score}
+                      variant="outlined"
+                      size="small"
+                    />
+                    <Chip
+                      className={clsx({[mobile.squareChip]: true, [classes.orangeColor]: redditPollScoreDirection === 'up', [classes.purpleColor]: redditPollScoreDirection === 'down'})}
+                      avatar={<PollIcon className={clsx({[classes.orangeColor]: redditPollScoreDirection === 'up', [classes.purpleColor]: redditPollScoreDirection === 'down'})}/>}
+                      label={pollScore}
+                      variant="outlined"
+                      size="small"
+                    />
+                    <Chip
+                      className={clsx({[mobile.squareChip]: true})}
+                      avatar={<SlideshowIcon/>}
+                      label={episode}
+                      variant="outlined"
+                      size="small"
+                    />
+                    <Chip
+                      className={clsx({[mobile.squareChip]: true})}
+                      avatar={<ForumIcon/>}
+                      label={commentCount}
+                      variant="outlined"
+                      size="small"
+                    />
+                    <Chip
+                      className={clsx({[mobile.squareChip]: true, [classes.orangeColor]: malScoreDirection === 'up', [classes.purpleColor]: malScoreDirection === 'down'})}
+                      avatar={<Avatar variant="square" className={clsx({[classes.orangeColor]: malScoreDirection === 'up', [classes.purpleColor]: malScoreDirection === 'down'})}>M</Avatar>}
+                      label={malScore > 0 ? malScore : '-----'}
+                      variant="outlined"
+                      size="small"
+                    />
+                    <Chip
+                      className={clsx({[mobile.squareChip]: true, [classes.orangeColor]: ralScoreDirection === 'up', [classes.purpleColor]: ralScoreDirection === 'down'})}
+                      avatar={<Avatar variant="square" className={clsx({[classes.orangeColor]: ralScoreDirection === 'up', [classes.purpleColor]: ralScoreDirection === 'down'})}>R</Avatar>}
+                      label={ralScore > 0 ? ralScore : '-----'}
+                      variant="outlined"
+                      size="small"
+                    />
+                  </Grid>
+                </CardContent>
+              </div>
+            </Card>
+          </div>
         </Hidden>
         <Hidden
           implementation="js"
           smDown
         >
-          <Grid item xs={12}>
+          <Card className={clsx(desktop.card)}>
+            <div
+              onClick={() => handleSelection(result.result.id, result.show.id, result.assets, title)}
+              style={{flexGrow: 0, cursor: 'pointer'}}
+            >
+              <CardMedia
+                title="Poster Art"
+              >
+                <LazyLoad
+                  debounce={false}
+                  offsetVertical={400}
+                  width={desktop.cover}
+                >
+                  <img alt="poster art" className={desktop.cover} src={`https://animetrics.sfo2.cdn.digitaloceanspaces.com/${result.assets[0].s3_poster}`}/>
+                </LazyLoad>
+              </CardMedia>
+            </div>
+            <div className={desktop.details}>
+              <CardContent>
+                <Grid container>
+                  <Grid item xs={12}>
+                    <Typography className={desktop.titleFont} component="h6" variant="h6">
+                      {title}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Typography variant="subtitle1" color="primary">
+                      {`Episode ${episode}`}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <hr className={desktop.hr}/>
+                  </Grid>
+                  <Grid item xs={3}>
+                    <LightTooltip enterDelay={500} TransitionComponent={Zoom} title="Weekly Rank" placement="bottom">
+                    <Chip
+                      className={clsx({[desktop.positionChip]: true, [classes.orangeColor]: posDirection === 'up', [classes.purpleColor]: posDirection === 'down'})}
+                      label={pos + 1}
+                      variant="outlined"
+                    />
+                    </LightTooltip>
+                  </Grid>
+                  <Grid item xs={8}>
+                    <Grid container>
+                      <LightTooltip enterDelay={500} TransitionComponent={Zoom} title="Karma Score" placement="top">
+                        <Chip
+                          className={clsx({[desktop.squareChip]: true})}
+                          avatar={<ScoreIcon />}
+                          label={score}
+                          variant="outlined"
+                        />
+                      </LightTooltip>
+                      {scoreChangeIcon &&
+                      <LightTooltip enterDelay={500} TransitionComponent={Zoom} title="Score Change" placement="top">
+                          <Chip
+                            className={clsx({[desktop.squareChip]: true, [classes.orangeColor]: scoreChangeDirection === 'up', [classes.purpleColor]: scoreChangeDirection === 'down'})}
+                            avatar={scoreChangeIcon}
+                            label={Math.abs(scoreChange)}
+                            variant="outlined"
+                          />
+                        </LightTooltip>
+                      }
+                      <LightTooltip enterDelay={500} TransitionComponent={Zoom} title="Discussion Comment Count" placement='right'>
+                        <Chip
+                          className={clsx({[desktop.squareChip]: true})}
+                          avatar={<ForumIcon/>}
+                          label={commentCount}
+                          variant="outlined"
+                        />
+                      </LightTooltip>
+                    </Grid>
+                    <Grid container>
+                      <LightTooltip enterDelay={500} TransitionComponent={Zoom} title="Episode Poll Score" placement={redditPollScoreIcon ? 'left':'right'}>
+                        <Chip
+                          className={clsx({[desktop.squareChip]: true})}
+                          avatar={<PollIcon className={clsx({[classes.orangeColor]: redditPollScoreDirection === 'up', [classes.purpleColor]: redditPollScoreDirection === 'down'})}/>}
+                          label={pollScore > 0 ? pollScore.toFixed(2) : '-----'}
+                          variant="outlined"
+                        />
+                      </LightTooltip>
+                        {redditPollScoreIcon &&
+                          <LightTooltip enterDelay={500} TransitionComponent={Zoom} title="Poll Score Change" placement="right">
+                            <Chip
+                              className={clsx({[desktop.squareChip]: true, [classes.orangeColor]: redditPollScoreDirection === 'up', [classes.purpleColor]: redditPollScoreDirection === 'down'})}
+                              avatar={redditPollScoreIcon}
+                              label={Math.abs(pollScoreChange).toFixed(2)}
+                              variant="outlined"
+                            />
+                          </LightTooltip>
+                        }
+                    </Grid>
+                    <Grid container>
+                      <LightTooltip enterDelay={500} TransitionComponent={Zoom} title="MyAnimeList Score" placement="bottom">
+                        <Chip
+                          className={clsx({[desktop.squareChip]: true, [classes.orangeColor]: malScoreDirection === 'up', [classes.purpleColor]: malScoreDirection === 'down'})}
+                          avatar={<Avatar variant="square" className={clsx({[classes.backgroundColor]: true, [classes.orangeColor]: malScoreDirection === 'up', [classes.purpleColor]: malScoreDirection === 'down'})}>M</Avatar>}
+                          label={malScore > 0 ? malScore : '-----'}
+                          variant="outlined"
+                        />
+                      </LightTooltip>
+                      <LightTooltip enterDelay={500} TransitionComponent={Zoom} title="Reddit MyAnimeList Score" placement="bottom">
+                        <Chip
+                          className={clsx({[desktop.squareChip]: true, [classes.orangeColor]: ralScoreDirection === 'up', [classes.purpleColor]: ralScoreDirection === 'down'})}
+                          avatar={<Avatar variant="square" className={clsx({[classes.orangeColor]: ralScoreDirection === 'up', [classes.purpleColor]: ralScoreDirection === 'down'})}>R</Avatar>}
+                          label={ralScore > 0 ? ralScore : '-----'}
+                          variant="outlined"
+                        />
+                      </LightTooltip>
+                    </Grid>
+                  </Grid>
+                </Grid>
+              </CardContent>
+            </div>
+
+          </Card>
+          {/* <Grid item xs={12}>
             <div className={clsx(classes.root, 'grow')}>
               <Paper
                 className={classes.paper}
@@ -254,9 +462,8 @@ const AnimeRankingResult = (props) => {
                 </Grid>
               </Paper>
             </div>
-          </Grid>
+          </Grid> */}
         </Hidden>
-      </div>
     </Grid>
 
   )

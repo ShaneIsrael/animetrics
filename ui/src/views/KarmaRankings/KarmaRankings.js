@@ -52,13 +52,14 @@ const useStyles = makeStyles(theme => ({
   karmaRankingPaper: {
     padding: 10,
     // width: 700
+    width: '100%',
     maxWidth: 700
   },
   selectedAnimeCard: {
     maxHeight: '100vh'
   },
   centerGridItem: {
-    margin: '0 auto'
+    // margin: '0 auto'
   }
 
 }))
@@ -240,11 +241,9 @@ const KarmaRankings = () => {
               </FormControl>
             </div>
           </Grid>
-          <Grid container direction="column" justify="center">
+          <Grid container direction="column" justify="center" alignItems="center" >
             <Grid
               item
-              // xs={12}
-              className={classes.centerGridItem}
             >
               <Paper
                 className={clsx({[classes.karmaRankingPaper]: true})}
