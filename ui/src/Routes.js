@@ -18,7 +18,7 @@ const Routes = () => {
       <Redirect
         exact
         from="/"
-        to="/karma-rankings"
+        to="/dashboard"
       />
       <RouteWithLayout
         component={DashboardView}
