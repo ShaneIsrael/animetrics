@@ -72,6 +72,7 @@ function createResults(results, setHandler) {
       return <AnimeRankingResult 
         banner={`https://animetrics.sfo2.cdn.digitaloceanspaces.com/${res.assets[0].s3_banner}`}
         commentCount={res.result.comment_count}
+        commentCountPrevious={res.previous.result ? res.previous.result.comment_count : null}
         episode={res.discussion.episode}
         key={5000+index} 
         malScore={res.mal.score.toFixed(2)} 
