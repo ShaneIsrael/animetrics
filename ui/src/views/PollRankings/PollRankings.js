@@ -53,7 +53,7 @@ const useStyles = makeStyles(theme => ({
   },
   pollRankingPaper: {
     padding: 10,
-    maxWidth: 430
+    maxWidth: 500
   },
   centerGridItem: {
     margin: '0 auto'
