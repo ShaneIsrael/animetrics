@@ -7,4 +7,13 @@ export default {
   getRecentDiscussions() {
     return Api().get('/api/v1/discussion/recent')
   },
+  getPagedDiscussions(page, size, query) {
+    return Api().get('/api/v1/discussion/page', {
+      params: {
+        page,
+        size,
+        query
+      }
+    })
+  }
 }
