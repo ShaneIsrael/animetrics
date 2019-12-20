@@ -1,5 +1,6 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
+import { isMobileOnly } from 'react-device-detect'
 import Paper from '@material-ui/core/Paper'
 import Table from '@material-ui/core/Table'
 import TableBody from '@material-ui/core/TableBody'
@@ -12,7 +13,7 @@ import moment from 'moment'
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos'
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos'
 
-const columns = [
+const desktopColumns = [
   { id: 'action', label: '', align: 'left', minWidth: 50 },
   { id: 'avatar', label: '', align: 'left', minWidth: 50 },
   { id: 'title', label: 'Title', minWidth: 25 },
@@ -21,9 +22,15 @@ const columns = [
   { id: 'date', label: 'Posted', minWidth: 50},
 ]
 
+const mobileColumns = [
+  { id: 'action', label: '', align: 'left', minWidth: 25 },
+  { id: 'title', label: 'Title', minWidth: 25 },
+  { id: 'episode', label: 'Episode', minWidth: 25 },
+]
+
 const useStyles = makeStyles(theme => ({
   root: {
-    width: '100%',
+    maxWidth: '100%',
   },
   container: {
     maxHeight: '80vh',
@@ -37,7 +44,7 @@ const useStyles = makeStyles(theme => ({
   },
   tableHeadCell: {
     backgroundColor: '#18202c'
-  }
+  },
 }))
 
 
@@ -49,6 +56,8 @@ export default function DiscussionsTable(props) {
   const [page, setPage] = React.useState(0)
   const [rowsPerPage, setRowsPerPage] = React.useState(25)
   const [rows, setRows] = React.useState([])
+
+  const columns = isMobileOnly ? mobileColumns : desktopColumns
 
   const createViewButton = React.useCallback(href => {
     return (
@@ -108,11 +117,17 @@ export default function DiscussionsTable(props) {
                 <TableRow hover role="checkbox" tabIndex={-1} key={row.key}>
                   {columns.map(column => {
                     const value = row[column.id]
-                    return (
-                      <TableCell key={column.id} align={column.align}>
-                        {column.format && typeof value === 'number' ? column.format(value) : value}
+                    if (isMobileOnly && column.id === 'episode') {
+                      return <TableCell key={column.id} align={column.align}>
+                      {`S${row['season'] < 10 ? '0'+row['season']:row['season']}E${value}`}
                       </TableCell>
-                    )
+                    } else {
+                      return (
+                        <TableCell key={column.id} align={column.align}>
+                          {column.format && typeof value === 'number' ? column.format(value) : value}
+                        </TableCell>
+                      )
+                    }
                   })}
                 </TableRow>
               )
@@ -139,15 +154,6 @@ export default function DiscussionsTable(props) {
           <Grid item xs/>
         </Grid>
       </Paper>
-      {/* <TablePagination
-        rowsPerPageOptions={[10, 25, 100]}
-        component="div"
-        count={rows.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onChangePage={handleChangePage}
-        // onChangeRowsPerPage={handleChangeRowsPerPage}
-      /> */}
     </Paper>
   )
 }
