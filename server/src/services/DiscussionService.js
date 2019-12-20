@@ -35,4 +35,26 @@ service.getRecentDiscussions = async () => {
   return discussions
 }
 
+/**
+ * Gets discussions by page
+ * @returns {Array} An array of discussions by page
+ */
+service.getDiscussionsByPage = async (page, size, query) => {
+  const offset = page * size
+  const limit = size
+
+  const discussions = await EpisodeDiscussion.findAll({
+    where: {
+      post_title: {
+        [Op.like]: `%${query}%`
+      }
+    },
+    order: [['post_created_dt', 'DESC']],
+    include: [{ model: Show, include: [Asset] }],
+    offset,
+    limit
+  })
+  return discussions
+}
+
 module.exports = service

@@ -1,4 +1,4 @@
-const { getTodaysDiscussions, getRecentDiscussions } = require('../services')
+const { getTodaysDiscussions, getRecentDiscussions, getDiscussionsByPage } = require('../services')
 
 const controller = {}
 
@@ -20,6 +20,23 @@ controller.getTodaysDiscussions = async (req, res, next) => {
 controller.getRecentDiscussions = async (req, res, next) => {
   try {
     const discussions = await getRecentDiscussions()
+    res.status(200).send(discussions)
+  } catch (err) {
+    next(err)
+  }
+}
+
+/**
+ * Gets discussions by page
+ */
+controller.getDiscussionsByPage = async (req, res, next) => {
+  try {
+    const { page, size, query } = req.query
+    if (isNaN(page)) throw new Error('page must be a number')
+    if (isNaN(size)) throw new Error('size must be a number')
+    if (typeof query !== 'string') throw new Error('query must be a string')
+    
+    const discussions = await getDiscussionsByPage(page, size, query)
     res.status(200).send(discussions)
   } catch (err) {
     next(err)

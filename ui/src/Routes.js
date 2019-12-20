@@ -8,6 +8,7 @@ import {
   Dashboard as DashboardView,
   PollRankings as PollRankingsView,
   KarmaRankings as KarmaRankingsView,
+  RecentDiscussions as RecentDiscussionsView,
   Overrides as OverridesView,
   NotFound as NotFoundView
 } from './views'
@@ -37,6 +38,12 @@ const Routes = () => {
         exact
         layout={MainLayout}
         path="/poll-rankings"
+      />
+      <RouteWithLayout
+        component={RecentDiscussionsView}
+        exact
+        layout={MainLayout}
+        path="/discussions"
       />
       <RouteWithLayout
         component={OverridesView}
