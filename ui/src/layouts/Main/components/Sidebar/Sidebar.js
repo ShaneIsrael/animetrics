@@ -20,7 +20,7 @@ const categories = [
     children: [
       { id: 'Karma Rankings', path: '/karma-rankings', icon: <ScoreIcon />},
       { id: 'Poll Rankings', path: '/poll-rankings', icon: <PollIcon /> },
-      { id: 'Recent Discussions', path: '/discussions', icon: <ForumIcon /> },
+      { id: 'Discussion Finder', path: '/discussions', icon: <ForumIcon /> },
     ],
   },
   {
@@ -28,7 +28,7 @@ const categories = [
     children: [
       { id: 'Karma Rankings', path: '', icon: <ScoreIcon /> },
       { id: 'Poll Rankings', path: '', icon: <PollIcon /> },
-      { id: 'Recent Discussions', path: '', icon: <ForumIcon /> },
+      { id: 'Discussion Finder', path: '', icon: <ForumIcon /> },
     ],
   },
 ];
