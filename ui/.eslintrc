@@ -11,10 +11,7 @@
         }
       ],
       "jsx-quotes": 1,
-      "linebreak-style": [
-        2,
-        "unix"
-      ],
+
       "quotes": [
         2,
         "single"

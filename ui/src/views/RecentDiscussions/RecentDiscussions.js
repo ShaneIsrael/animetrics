@@ -63,11 +63,30 @@ const RecentDiscussions = () => {
         justify="center"
         spacing={4}
       >
-        <Grid item xs={12}>
-          <form className={classes.root} noValidate autoComplete="off" onSubmit={onSubmit}>
-            <TextField id="outlined-basic" label="Series Title" variant="outlined" placeholder={'No Game No Life'} autoFocus={true} onChange={(event) => setDiscussionQuery(event.target.value)} />
+        <Grid
+                    item
+          xs={12}
+        >
+          <form
+                        autoComplete="off"
+                        className={classes.root}
+                        noValidate
+                        onSubmit={onSubmit}
+          >
+            <TextField
+                            autoFocus
+                            id="outlined-basic"
+                            label="Series Title"
+                            onChange={(event) => setDiscussionQuery(event.target.value)}
+                            placeholder={'No Game No Life'}
+                            variant="outlined"
+            />
           </form>
-          <DiscussionsTable discussions={discussions} query={discussionQuery} fetchHandler={getPagedDiscussions} />
+          <DiscussionsTable
+                        discussions={discussions}
+                        fetchHandler={getPagedDiscussions}
+                        query={discussionQuery}
+          />
         </Grid>
       </Grid>
     </div>
