@@ -89,6 +89,7 @@ export default function DiscussionsTable(props) {
   }, [createViewButton, createAvatar])
 
   React.useEffect(() => {
+    setPage(0)
     setRows(createRows(discussions))
   }, [discussions, createRows])
 
