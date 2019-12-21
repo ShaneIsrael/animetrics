@@ -1,5 +1,9 @@
 module.exports = {
   environment: process.env.NODE_ENV || 'dev',
+  spaces: {
+    edge: 'https://animetrics.sfo2.cdn.digitaloceanspaces.com',
+    origin: 'https://animetrics.sfo2.digitaloceanspaces.com'
+  },
   dev: {
     reddit: {
       CLIENT_ID: 'o1P2JRGCX5FQlA',
