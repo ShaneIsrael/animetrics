@@ -9,6 +9,7 @@ const {
  EpisodeDiscussion, RedditPollResult, Op,
 } = require('../models')
 
+const sleep = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds))
 
 async function init() {
   try {
@@ -29,6 +30,8 @@ async function init() {
     })
     for (const poll of polls) {
       logger.info(`Attempting to fix poll with id: ${poll.id}`)
+      // rate limit prevention
+      await sleep(200)
       let post_poll_url = poll.EpisodeDiscussion.post_pull_url
       if (!post_poll_url) {
         logger.info(`no pull url, attempting to retrieve...`)
