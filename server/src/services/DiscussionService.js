@@ -3,7 +3,9 @@ const sequelize = require('sequelize')
 
 const service = {}
 
-const { EpisodeDiscussion, Show, Asset, Op } = require('../models')
+const {
+  EpisodeDiscussion, Show, Asset, Op,
+} = require('../models')
 
 /**
  * Get todays episode discussions
@@ -30,7 +32,7 @@ service.getRecentDiscussions = async () => {
   const discussions = await EpisodeDiscussion.findAll({
     order: [['post_created_dt', 'DESC']],
     include: [{ model: Show, include: [Asset] }],
-    limit: 15
+    limit: 15,
   })
   return discussions
 }
@@ -46,13 +48,13 @@ service.getDiscussionsByPage = async (page, size, query) => {
   const discussions = await EpisodeDiscussion.findAll({
     where: {
       post_title: {
-        [Op.like]: `%${query}%`
-      }
+        [Op.like]: `%${query}%`,
+      },
     },
     order: [['post_created_dt', 'DESC']],
     include: [{ model: Show, include: [Asset] }],
     offset,
-    limit
+    limit,
   })
   return discussions
 }
