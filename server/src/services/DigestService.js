@@ -80,7 +80,7 @@ service.digestDiscussionPost = async (post) => {
   // logger.info(`Digesting: ${post.title}`)
   const seasonSplit = post.title.split(/ Season /)[1];
   const seasonNumber = seasonSplit ? seasonSplit.split(' ')[0] : 1
-  const showTitle = post.title.split(' - Episode')[0].split(' Season')[0]
+  const showTitle = post.title.replace('[Spoilers] ').split(' - Episode')[0].split(' Season')[0]
   const episodeNumber = post.title.split('- Episode ')[1].split(' ')[0]
   let pollUrl = null
   if (post.selftext && post.selftext.indexOf('Rate this episode here.') >= 0) {
