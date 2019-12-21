@@ -17,139 +17,6 @@ const { uploadFileToS3 } = require('../services')
 
 const sleep = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds))
 
-async function crop(width, height, path, savePath) {
-  const pyProg = await spawn('python3', [config.detectFacePath, path, config.detectFaceConfPath]);
-  const bannerSavePath = `${savePath.split('.jpg')[0]}_banner.jpg`
-  const avatarSavePath = `${savePath.split('.jpg')[0]}_avatar.jpg`
-  const jsonLoc = `${path.split('.jpg')[0]}.json`
-  if (fs.existsSync(jsonLoc)) {
-    const facedata = fs.readFileSync(jsonLoc);
-    const faces = JSON.parse(facedata);
-    // store all the faces y values in an array to average them
-
-    const yValues = []
-    const faceAreas = []
-    let largestFaceArea = 1
-    let largestFaceYValue
-    let largestFace
-
-    for (const face of faces) {
-      const faceArea = face.width * face.height
-      yValues.push(face.y)
-      faceAreas.push(faceArea)
-      // largestFaceArea = faceArea > largestFaceArea ? faceArea : largestFaceArea
-      if (faceArea > largestFaceArea) {
-        largestFaceArea = faceArea
-        largestFaceYValue = face.y + face.height / 2
-        largestFace = face
-      }
-    }
-
-    const weightedFaces = []
-    for (const fa of faceAreas) {
-      weightedFaces.push(fa / largestFaceArea)
-    }
-    // const sumArrayValues = (values) => values.reduce((p, c) => p + c, 0)
-
-    // const weightedMean = (factorsArray, weightsArray) => sumArrayValues(factorsArray.map((factor, index) => factor * weightsArray[index])) / sumArrayValues(weightsArray)
-
-    // let avgY = Math.round(weightedMean(yValues, weightedFaces))
-    // let avgY = Math.round(yValues.reduce((a, b) => a + b, 0) / yValues.length)
-    let avgY = largestFaceYValue
-
-    // console.log(avgY)
-    if ((avgY - (height / 2)) < 0) {
-      avgY -= (avgY - (height / 2))
-      logger.info(`New Y Value: ${avgY}`)
-    }
-
-    gm(path)
-      .gravity('NorthWest')
-      .crop(largestFace.width, largestFace.height, largestFace.x, largestFace.y)
-      .write(avatarSavePath, (err) => {
-        if (err) {
-          logger.error(err)
-        }
-      })
-    gm(path)
-      .gravity('NorthWest')
-      .crop(width, height, 0, avgY - (height / 2))
-      .write(bannerSavePath, (err) => {
-        if (err) {
-          logger.err(err);
-        }
-        // gm(savePath).append(path, false).write(`${savePath.split('.png')[0]}_appended.png`, (err) => {
-        //   if (err) {
-        //     console.log(err)
-        //   }
-        // })
-      })
-  } else {
-    gm(path)
-      .gravity('NorthWest')
-      .crop(100, 100, (680 / 2) - 100, (1000 / 2) - 100)
-      .write(avatarSavePath, (err) => {
-        if (err) {
-          logger.error(err)
-        }
-      })
-    gm(path)
-      .gravity('NorthWest')
-      .crop(width, height, 0, 333 - (height / 2))
-      .write(bannerSavePath, (err) => {
-        if (err) {
-          logger.info(err);
-        }
-        // gm(savePath).append(path, false).write(`${savePath.split('.png')[0]}_noface_appended.png`, (err) => {
-        //   if (err) {
-        //     console.log(err)
-        //   }
-        // })
-      })
-  }
-}
-
-async function createAndUpload(asset) {
-  logger.info(`downloading asset for show: ${asset.showId}`)
-  const imageName = uuidv4()
-  if (!fs.existsSync(`${config.imagesRootPath}`)) {
-    fs.mkdirSync(`${config.imagesRootPath}`);
-  }
-  if (!fs.existsSync(`${config.imagesRootPath}/${imageName}/`)) {
-    fs.mkdirSync(`${config.imagesRootPath}/${imageName}/`)
-  }
-  const imageDir = `${config.imagesRootPath}/${imageName}`
-
-  const { filename } = await download.image({
-    url: `https://www.thetvdb.com/banners/${asset.poster_art}`,
-    dest: imageDir,
-    timeout: 5000,
-  })
-  const filenameSplit = filename.split('/')
-  const filenameUID = filename.split('.jpg')[0].split('/')[filenameSplit.length - 1]
-
-  // await crop(758, 140, `${postersDir}/${show.id}.jpg`, `${bannersDir}/${show.id}.png`)
-  await crop(454, 80, filename, filename)
-  // sleep 500 miliseconds so that files get closed before trying to upload
-  await sleep(500)
-  if (!asset.s3_poster) {
-    const s3PosterResp = await uploadFileToS3(filename, `anime_assets/${imageName}_poster.jpg`)
-    asset.s3_poster = s3PosterResp.Key
-  }
-  if (!asset.s3_banner) {
-    const s3BannerResp = await uploadFileToS3(`${imageDir}/${filenameUID}_banner.jpg`, `anime_assets/${imageName}_banner.png`)
-    asset.s3_banner = s3BannerResp.Key
-  }
-  if (!asset.s3_avatar) {
-    const s3AvatarResp = await uploadFileToS3(`${imageDir}/${filenameUID}_avatar.jpg`, `anime_assets/${imageName}_avatar.png`)
-    asset.s3_avatar = s3AvatarResp.Key
-  }
-  asset.s3_bucket = 'animetrics'
-  asset.save()
-
-  await rimraf.sync(imageDir)
-}
-
 function createWorkingDir(imageName) {
   if (!fs.existsSync(`${config.imagesRootPath}`)) {
     fs.mkdirSync(`${config.imagesRootPath}`);
@@ -160,8 +27,9 @@ function createWorkingDir(imageName) {
   return `${config.imagesRootPath}/${imageName}/`
 }
 
-async function cropBanner(width, height, fileToCrop, savePath, saveName) {
-  const pyProg = await spawn('python3', [config.detectFacePath, fileToCrop, config.detectFaceConfPath]);
+const cropBanner = (width, height, fileToCrop, savePath, saveName) => new Promise(async (resolve, reject) => {
+  logger.info('Creating new banner from asset poster...')
+  const pyProg = await spawn('python3', [config.detectFacePath, fileToCrop, config.detectFaceConfPath])
   const bannerSavePath = `${savePath}/${saveName}_banner.jpg`
   const jsonLoc = `${fileToCrop.split('.')[0]}.json`
   if (fs.existsSync(jsonLoc)) {
@@ -170,14 +38,12 @@ async function cropBanner(width, height, fileToCrop, savePath, saveName) {
     // store all the faces y values in an array to average them
     let largestFaceArea = 1
     let largestFaceYValue
-    let largestFace
 
     for (const face of faces) {
       const faceArea = face.width * face.height
       if (faceArea > largestFaceArea) {
         largestFaceArea = faceArea
         largestFaceYValue = face.y + face.height / 2
-        largestFace = face
       }
     }
 
@@ -193,9 +59,9 @@ async function cropBanner(width, height, fileToCrop, savePath, saveName) {
       .crop(width, height, 0, avgY - (height / 2))
       .write(bannerSavePath, (err) => {
         if (err) {
-          logger.err(err);
-          bannerSavePath = null
+          return reject(err)
         }
+        return resolve(bannerSavePath)
       })
   } else {
     gm(fileToCrop)
@@ -203,17 +69,16 @@ async function cropBanner(width, height, fileToCrop, savePath, saveName) {
       .crop(width, height, 0, 333 - (height / 2))
       .write(bannerSavePath, (err) => {
         if (err) {
-          logger.info(err);
-          bannerSavePath = null
+          return reject(err)
         }
+        return resolve(bannerSavePath)
       })
   }
-  await sleep(2000)
-  return bannerSavePath
-}
+})
 
-async function cropAvatar(fileToCrop, savePath, saveName) {
-  const pyProg = await spawn('python3', [config.detectFacePath, fileToCrop, config.detectFaceConfPath]);
+const cropAvatar = (fileToCrop, savePath, saveName) => new Promise(async (resolve, reject) => {
+  logger.info('Creating new avatar from asset poster...')
+  const pyProg = await spawn('python3', [config.detectFacePath, fileToCrop, config.detectFaceConfPath])
   const avatarSavePath = `${savePath}/${saveName}_avatar.jpg`
   const jsonLoc = `${fileToCrop.split('.')[0]}.json`
   if (fs.existsSync(jsonLoc)) {
@@ -234,9 +99,9 @@ async function cropAvatar(fileToCrop, savePath, saveName) {
       .crop(largestFace.width, largestFace.height, largestFace.x, largestFace.y)
       .write(avatarSavePath, (err) => {
         if (err) {
-          logger.error(err)
-          avatarSavePath = null
+          return reject(err)
         }
+        return resolve(avatarSavePath)
       })
   } else {
     gm(fileToCrop)
@@ -244,13 +109,33 @@ async function cropAvatar(fileToCrop, savePath, saveName) {
       .crop(100, 100, (680 / 2) - 100, (1000 / 2) - 100)
       .write(avatarSavePath, (err) => {
         if (err) {
-          logger.error(err)
-          avatarSavePath = null
+          return reject(err)
         }
+        return resolve(avatarSavePath)
       })
   }
-  await sleep(2000)
-  return avatarSavePath
+})
+
+async function createS3Poster(asset) {
+  logger.info('Creating S3 Poster from asset poster...')
+  const imageName = uuidv4()
+  const imageDir = createWorkingDir(imageName)
+
+  const { filename } = await download.image({
+    url: `https://www.thetvdb.com/banners/${asset.poster_art}`,
+    dest: imageDir,
+    timeout: 5000,
+  })
+
+  if (filename) {
+    // sleep 500 miliseconds so that files get closed before trying to upload
+    await sleep(500)
+    const s3Resp = await uploadFileToS3(filename, `anime_assets/${imageName}_poster.jpg`)
+    asset.s3_poster = s3Resp.Key
+    asset.save()
+  }
+
+  await rimraf.sync(imageDir)
 }
 
 async function createBanner(asset) {
@@ -265,6 +150,8 @@ async function createBanner(asset) {
 
   const path = await cropBanner(454, 80, filename, imageDir, imageName)
   if (path) {
+    // sleep 500 miliseconds so that files get closed before trying to upload
+    await sleep(500)
     const s3BannerResp = await uploadFileToS3(path, `anime_assets/${imageName}_banner.jpg`)
     asset.s3_banner = s3BannerResp.Key
     asset.save()
@@ -284,6 +171,8 @@ async function createAvatar(asset) {
 
   const path = await cropAvatar(filename, imageDir, imageName)
   if (path) {
+    // sleep 500 miliseconds so that files get closed before trying to upload
+    await sleep(500)
     const s3AvatarResp = await uploadFileToS3(path, `anime_assets/${imageName}_avatar.jpg`)
     asset.s3_avatar = s3AvatarResp.Key
     asset.save()
@@ -311,20 +200,23 @@ module.exports = {
         },
       })
       for (const asset of assets) {
-        await createAndUpload(asset)
+        if (!asset.s3_poster) await createS3Poster(asset)
+        if (!asset.s3_banner) await createBanner(asset)
+        if (!asset.s3_avatar) await createAvatar(asset)
+        asset.s3_bucket = 'animetrics'
+        asset.save()
       }
     } catch (err) {
       logger.error(err)
     }
   },
+  async createS3Poster(asset) {
+    await createS3Poster(asset)
+  },
   async createBannerFromAssetPoster(asset) {
-    logger.info('Creating new banner from asset poster...')
     await createBanner(asset)
-    logger.info('Created new banner from asset poster.')
   },
   async createAvatarFromAssetPoster(asset) {
-    logger.info('Creating new avatar from asset poster...')
     await createAvatar(asset)
-    logger.info('Created new avatar from asset poster.')
   }
 }
