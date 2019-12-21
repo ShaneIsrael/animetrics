@@ -212,7 +212,7 @@ async function cropBanner(width, height, fileToCrop, savePath, saveName) {
   return bannerSavePath
 }
 
-async function cropAvatar(width, height, fileToCrop, savePath, saveName) {
+async function cropAvatar(fileToCrop, savePath, saveName) {
   const pyProg = await spawn('python3', [config.detectFacePath, fileToCrop, config.detectFaceConfPath]);
   const avatarSavePath = `${savePath}/${saveName}_avatar.jpg`
   const jsonLoc = `${fileToCrop.split('.')[0]}.json`
@@ -264,13 +264,11 @@ async function createBanner(asset) {
   })
 
   const path = await cropBanner(454, 80, filename, imageDir, imageName)
-  console.log(path)
   if (path) {
     const s3BannerResp = await uploadFileToS3(path, `anime_assets/${imageName}_banner.jpg`)
     asset.s3_banner = s3BannerResp.Key
     asset.save()
   }
-  console.log(asset.s3_banner)
   await rimraf.sync(imageDir)
 }
 
@@ -284,7 +282,7 @@ async function createAvatar(asset) {
     timeout: 5000,
   })
 
-  const path = await cropBanner(454, 80, filename, imageDir, imageName)
+  const path = await cropAvatar(filename, imageDir, imageName)
   if (path) {
     const s3AvatarResp = await uploadFileToS3(path, `anime_assets/${imageName}_avatar.jpg`)
     asset.s3_avatar = s3AvatarResp.Key
@@ -320,13 +318,13 @@ module.exports = {
     }
   },
   async createBannerFromAssetPoster(asset) {
-      logger.info('Creating new banner from asset poster...')
-      await createBanner(asset)
-      logger.info('Created new banner from asset poster.')
+    logger.info('Creating new banner from asset poster...')
+    await createBanner(asset)
+    logger.info('Created new banner from asset poster.')
   },
   async createAvatarFromAssetPoster(asset) {
-      logger.info('Creating new avatar from asset poster...')
-      await createAvatar(asset)
-      logger.info('Created new avatar from asset poster.')
+    logger.info('Creating new avatar from asset poster...')
+    await createAvatar(asset)
+    logger.info('Created new avatar from asset poster.')
   }
 }

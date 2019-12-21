@@ -7,7 +7,7 @@ const fetchAssets = require('../fetch/fetchAssets')
 
 async function init() {
   try {
-    const assets = await Asset.findAll({
+    const missingAvatars = await Asset.findAll({
       where: {
         s3_poster: {
           [Op.ne]: null,
@@ -15,8 +15,19 @@ async function init() {
         s3_avatar: null,
       }
     })
-    for (const asset of assets) {
+    for (const asset of missingAvatars) {
       await fetchAssets.createAvatarFromAssetPoster(asset)
+    }
+    const missingBanners = await Asset.findAll({
+      where: {
+        s3_poster: {
+          [Op.ne]: null,
+        },
+        s3_banner: null,
+      }
+    })
+    for (const asset of missingBanners) {
+      await fetchAssets.createBannerFromAssetPoster(asset)
     }
   } catch (err) {
     console.log(err)
