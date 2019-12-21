@@ -40,6 +40,15 @@ module.exports = {
       }
       return [((weighted / total) * 10).toFixed(2), total, 'weighted']
     }
+    if (_.difference(keys, ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']).length === 0) {
+      let weighted = 0
+      for (const key of keys) {
+        const value = poll[key]
+        total += Number(value)
+        weighted += value * (value/10)
+      }
+      return [((weighted / total) * 10).toFixed(2), total, 'weighted']
+    }
     if (_.difference(keys, ['Dislike', 'Like']).length === 0) {
       for (const key of keys) {
         const value = poll[key]

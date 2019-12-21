@@ -24,19 +24,36 @@ async function scrapePollData(url) {
   const html = (await axios.get(`${url}/r`)).data
   const $ = cheerio.load(html)
   const results = {};
-  $('.results-area.basic-type-results .basic-option-wrapper').each(
-    (i, elem) => {
-      const option = $(elem)
-        .find('.basic-left-container span.basic-option-title')
-        .text();
-      const score = $(elem)
-        .find('.basic-right-container span.basic-option-total')
-        .text();
-      results[option] = score;
-    },
-  )
+  if ($('.results-area.basic-type-results').length > 0) {
+    $('.results-area.basic-type-results').find('.basic-option-wrapper').each(
+      (i, elem) => {
+        const option = $(elem)
+          .find('.basic-left-container span.basic-option-title')
+          .text();
+        const score = $(elem)
+          .find('.basic-right-container span.basic-option-total')
+          .text();
+        results[option] = score;
+      },
+    )
+  }
+  else if ($('.results-area.rating-type-results').length > 0) {
+    $('.results-area.rating-type-results').find('.rating-option-wrapper').each(
+      (i, elem) => {
+        const option = $(elem)
+          .find('.rating-left-wrapper')
+          .text();
+        const score = $(elem)
+          .find('.rating-right-wrapper')
+          .text().replace('(', '').replace(')', '');
+        results[option] = score;
+      },
+    )
+  }
   return results
 }
+
+service.scrapePollData = async (url) => scrapePollData(url)
 
 /**
  * Get all poll rankings by week

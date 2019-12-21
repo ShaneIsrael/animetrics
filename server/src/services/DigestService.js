@@ -92,6 +92,12 @@ service.digestDiscussionPost = async (post) => {
     .split('">Rate')[0]
     .split('<h1><a href="')[1]
   }
+  // attempt to grab from table, table likely doesn't exist so this is probably in vain.
+  if (!pollUrl) {
+    if (post.selftext.split(`${episodeNumber}|`).length > 1) {
+      pollUrl = post.selftext.split(`${episodeNumber}|`)[1].split('[Poll]')[1].split('/)')[0].replace('(', '')
+    }
+  }
 
   let showRow = await Show.findOne({ where: { title: showTitle } })
   if (!showRow) {
