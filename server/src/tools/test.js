@@ -12,11 +12,11 @@ async function init() {
         s3_poster: {
           [Op.ne]: null,
         },
-        s3_banner: null
+        s3_avatar: null,
       }
     })
     for (const asset of assets) {
-      await fetchAssets.createBannerFromAssetPoster(asset)
+      await fetchAssets.createAvatarFromAssetPoster(asset)
     }
   } catch (err) {
     console.log(err)
