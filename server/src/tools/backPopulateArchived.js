@@ -74,8 +74,17 @@ async function digestArchivedDiscussions(year) {
   let at = 0
   for (const id of postIds) {
     logger.info(`back populating archived posts: ${at}/${toDo}`)
-    const post = await fetchDiscussions.getSubmission(id)
-    await digestDiscussionPost(post)
+    const exists = await EpisodeDiscussion.findOne({
+      where: {
+        post_id: id
+      }
+    })
+    if (!exists) {
+      const post = await fetchDiscussions.getSubmission(id)
+      await digestDiscussionPost(post)
+    } else {
+      logger.info('already tracked, skipping.')
+    }
     at += 1
   }
   await updateTvDbIds()
