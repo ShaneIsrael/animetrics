@@ -45,7 +45,7 @@ module.exports = {
       for (const key of keys) {
         const value = poll[key]
         total += Number(value)
-        weighted += value * (value/10)
+        weighted += value * (key/10)
       }
       return [((weighted / total) * 10).toFixed(2), total, 'weighted']
     }
