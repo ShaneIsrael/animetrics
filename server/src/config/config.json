@@ -2,7 +2,7 @@
   "dev": {
     "dialect": "sqlite",
     "storage": "/mnt/c/database/dev.db",
-    "logging": false
+    "logging": true
   },
   "prod": {
     "dialect": "sqlite",
