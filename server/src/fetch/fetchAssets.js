@@ -73,7 +73,7 @@ async function crop(width, height, path, savePath) {
       })
     gm(path)
       .gravity('NorthWest')
-      .crop(width, height, (680 - 454) / 2, avgY - (height / 2))
+      .crop(width, height, 0, avgY - (height / 2))
       .write(bannerSavePath, (err) => {
         if (err) {
           logger.err(err);
@@ -95,7 +95,7 @@ async function crop(width, height, path, savePath) {
       })
     gm(path)
       .gravity('NorthWest')
-      .crop(width, height, (680 - 454) / 2, 333 - (height / 2))
+      .crop(width, height, 0, 333 - (height / 2))
       .write(bannerSavePath, (err) => {
         if (err) {
           logger.info(err);
@@ -188,9 +188,9 @@ async function cropBanner(width, height, fileToCrop, savePath, saveName) {
       logger.info(`New Y Value: ${avgY}`)
     }
 
-    gm(path)
+    gm(fileToCrop)
       .gravity('NorthWest')
-      .crop(width, height, (680 - width) / 2, avgY - (height / 2))
+      .crop(width, height, 0, avgY - (height / 2))
       .write(bannerSavePath, (err) => {
         if (err) {
           logger.err(err);
@@ -198,9 +198,9 @@ async function cropBanner(width, height, fileToCrop, savePath, saveName) {
         }
       })
   } else {
-    gm(path)
+    gm(fileToCrop)
       .gravity('NorthWest')
-      .crop(width, height, (680 - width) / 2, 333 - (height / 2))
+      .crop(width, height, 0, 333 - (height / 2))
       .write(bannerSavePath, (err) => {
         if (err) {
           logger.info(err);
@@ -229,7 +229,7 @@ async function cropAvatar(width, height, fileToCrop, savePath, saveName) {
       }
     }
 
-    gm(path)
+    gm(fileToCrop)
       .gravity('NorthWest')
       .crop(largestFace.width, largestFace.height, largestFace.x, largestFace.y)
       .write(avatarSavePath, (err) => {
@@ -239,7 +239,7 @@ async function cropAvatar(width, height, fileToCrop, savePath, saveName) {
         }
       })
   } else {
-    gm(path)
+    gm(fileToCrop)
       .gravity('NorthWest')
       .crop(100, 100, (680 / 2) - 100, (1000 / 2) - 100)
       .write(avatarSavePath, (err) => {
@@ -320,21 +320,13 @@ module.exports = {
     }
   },
   async createBannerFromAssetPoster(asset) {
-    try {
       logger.info('Creating new banner from asset poster...')
       await createBanner(asset)
       logger.info('Created new banner from asset poster.')
-    } catch(err) {
-      logger.error(err)
-    }
   },
   async createAvatarFromAssetPoster(asset) {
-    try {
       logger.info('Creating new avatar from asset poster...')
       await createAvatar(asset)
       logger.info('Created new avatar from asset poster.')
-    } catch(err) {
-      logger.error(err)
-    }
   }
 }
