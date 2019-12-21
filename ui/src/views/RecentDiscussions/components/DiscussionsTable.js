@@ -61,7 +61,11 @@ export default function DiscussionsTable(props) {
 
   const createViewButton = React.useCallback(href => {
     return (
-      <Button variant="outlined" color="primary" onClick={() => window.open(href, '_blank')}>
+      <Button
+        color="primary"
+        onClick={() => window.open(href, '_blank')}
+        variant="outlined"
+      >
         view
       </Button>
     )
@@ -69,7 +73,10 @@ export default function DiscussionsTable(props) {
 
   const createAvatar = React.useCallback(url => {
     return (
-      <Avatar className={classes.avatar} src={`https://animetrics.sfo2.cdn.digitaloceanspaces.com/${url}`} />
+      <Avatar
+        className={classes.avatar}
+        src={`https://animetrics.sfo2.cdn.digitaloceanspaces.com/${url}`}
+      />
     )
   }, [classes.avatar])
 
@@ -82,7 +89,7 @@ export default function DiscussionsTable(props) {
   }, [createViewButton, createAvatar])
 
   React.useEffect(() => {
-      setRows(createRows(discussions))
+    setRows(createRows(discussions))
   }, [discussions, createRows])
 
   const handleChangePage = async (newPage) => {
@@ -96,14 +103,17 @@ export default function DiscussionsTable(props) {
   return (
     <Paper className={classes.root}>
       <TableContainer className={classes.container}>
-        <Table stickyHeader aria-label="sticky table">
+        <Table
+          aria-label="sticky table"
+          stickyHeader
+        >
           <TableHead>
             <TableRow>
               {columns.map(column => (
                 <TableCell
+                  align={column.align}
                   className={classes.tableHeadCell}
                   key={column.id}
-                  align={column.align}
                   style={{ minWidth: column.minWidth }}
                 >
                   {column.label}
@@ -114,16 +124,27 @@ export default function DiscussionsTable(props) {
           <TableBody>
             {rows.map(row => {
               return (
-                <TableRow hover role="checkbox" tabIndex={-1} key={row.key}>
+                <TableRow
+                  hover
+                  key={row.key}
+                  role="checkbox"
+                  tabIndex={-1}
+                >
                   {columns.map(column => {
                     const value = row[column.id]
                     if (isMobileOnly && column.id === 'episode') {
-                      return <TableCell key={column.id} align={column.align}>
-                      {`S${row['season'] < 10 ? '0'+row['season']:row['season']}E${value}`}
+                      return <TableCell
+                        align={column.align}
+                        key={column.id}
+                      >
+                        {`S${row['season'] < 10 ? '0'+row['season']:row['season']}E${value}`}
                       </TableCell>
                     } else {
                       return (
-                        <TableCell key={column.id} align={column.align}>
+                        <TableCell
+                          align={column.align}
+                          key={column.id}
+                        >
                           {column.format && typeof value === 'number' ? column.format(value) : value}
                         </TableCell>
                       )
@@ -136,22 +157,44 @@ export default function DiscussionsTable(props) {
         </Table>
       </TableContainer>
       <Paper style={{height: 40}}>
-        <Grid container direction="row">
-          <Grid item xs/>
+        <Grid
+          container
+          direction="row"
+        >
+          <Grid
+            item
+            xs
+          />
           <Grid item>
-            <IconButton style={{marginRight: 10}} aria-label="page left" disabled={page === 0} onClick={() => handleChangePage(page - 1)}>
+            <IconButton
+              aria-label="page left"
+              disabled={page === 0}
+              onClick={() => handleChangePage(page - 1)}
+              style={{marginRight: 10}}
+            >
               <ArrowBackIosIcon />
             </IconButton>
           </Grid>
           <Grid item>
-            <Typography style={{marginTop: 3}} variant="h5">{page + 1}</Typography>
+            <Typography
+              style={{marginTop: 3}}
+              variant="h5"
+            >{page + 1}</Typography>
           </Grid>
           <Grid item>
-            <IconButton style={{marginLeft: 10}} aria-label="page right" disabled={rows.length < rowsPerPage} onClick={() => handleChangePage(page + 1)}>
+            <IconButton
+              aria-label="page right"
+              disabled={rows.length < rowsPerPage}
+              onClick={() => handleChangePage(page + 1)}
+              style={{marginLeft: 10}}
+            >
               <ArrowForwardIosIcon />
             </IconButton>
           </Grid>
-          <Grid item xs/>
+          <Grid
+            item
+            xs
+          />
         </Grid>
       </Paper>
     </Paper>

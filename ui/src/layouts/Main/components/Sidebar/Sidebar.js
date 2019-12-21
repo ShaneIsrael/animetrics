@@ -26,9 +26,9 @@ const categories = [
   {
     id: '/r/Manga',
     children: [
-      { id: 'Karma Rankings', path: '', icon: <ScoreIcon /> },
-      { id: 'Poll Rankings', path: '', icon: <PollIcon /> },
-      { id: 'Discussion Finder', path: '', icon: <ForumIcon /> },
+      { id: 'Karma Rankings', path: 'under-construction', icon: <ScoreIcon /> },
+      { id: 'Poll Rankings', path: 'under-construction', icon: <PollIcon /> },
+      { id: 'Discussion Finder', path: 'under-construction', icon: <ForumIcon /> },
     ],
   },
 ];
