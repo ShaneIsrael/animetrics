@@ -11,6 +11,7 @@ const {
 } = require('../models')
 const { environment } = require('../config')
 const config = require('../config')[environment].assets
+const spaces = require('../config').spaces
 const logger = require('../logger')
 const { uploadFileToS3 } = require('../services')
 
@@ -148,6 +149,150 @@ async function createAndUpload(asset) {
 
   await rimraf.sync(imageDir)
 }
+
+function createWorkingDir(imageName) {
+  if (!fs.existsSync(`${config.imagesRootPath}`)) {
+    fs.mkdirSync(`${config.imagesRootPath}`);
+  }
+  if (!fs.existsSync(`${config.imagesRootPath}/${imageName}/`)) {
+    fs.mkdirSync(`${config.imagesRootPath}/${imageName}/`)
+  }
+  return `${config.imagesRootPath}/${imageName}/`
+}
+
+async function cropBanner(width, height, fileToCrop, savePath, saveName) {
+  const pyProg = await spawn('python3', [config.detectFacePath, fileToCrop, config.detectFaceConfPath]);
+  const bannerSavePath = `${savePath}/${saveName}_banner.jpg`
+  const jsonLoc = `${fileToCrop.split('.')[0]}.json`
+  if (fs.existsSync(jsonLoc)) {
+    const facedata = fs.readFileSync(jsonLoc);
+    const faces = JSON.parse(facedata);
+    // store all the faces y values in an array to average them
+    let largestFaceArea = 1
+    let largestFaceYValue
+    let largestFace
+
+    for (const face of faces) {
+      const faceArea = face.width * face.height
+      if (faceArea > largestFaceArea) {
+        largestFaceArea = faceArea
+        largestFaceYValue = face.y + face.height / 2
+        largestFace = face
+      }
+    }
+
+    let avgY = largestFaceYValue
+
+    if ((avgY - (height / 2)) < 0) {
+      avgY -= (avgY - (height / 2))
+      logger.info(`New Y Value: ${avgY}`)
+    }
+
+    gm(path)
+      .gravity('NorthWest')
+      .crop(width, height, (680 - width) / 2, avgY - (height / 2))
+      .write(bannerSavePath, (err) => {
+        if (err) {
+          logger.err(err);
+          bannerSavePath = null
+        }
+      })
+  } else {
+    gm(path)
+      .gravity('NorthWest')
+      .crop(width, height, (680 - width) / 2, 333 - (height / 2))
+      .write(bannerSavePath, (err) => {
+        if (err) {
+          logger.info(err);
+          bannerSavePath = null
+        }
+      })
+  }
+  await sleep(2000)
+  return bannerSavePath
+}
+
+async function cropAvatar(width, height, fileToCrop, savePath, saveName) {
+  const pyProg = await spawn('python3', [config.detectFacePath, fileToCrop, config.detectFaceConfPath]);
+  const avatarSavePath = `${savePath}/${saveName}_avatar.jpg`
+  const jsonLoc = `${fileToCrop.split('.')[0]}.json`
+  if (fs.existsSync(jsonLoc)) {
+    const facedata = fs.readFileSync(jsonLoc);
+    const faces = JSON.parse(facedata);
+    // store all the faces y values in an array to average them
+    let largestFace
+
+    for (const face of faces) {
+      const faceArea = face.width * face.height
+      if (faceArea > largestFaceArea) {
+        largestFace = face
+      }
+    }
+
+    gm(path)
+      .gravity('NorthWest')
+      .crop(largestFace.width, largestFace.height, largestFace.x, largestFace.y)
+      .write(avatarSavePath, (err) => {
+        if (err) {
+          logger.error(err)
+          avatarSavePath = null
+        }
+      })
+  } else {
+    gm(path)
+      .gravity('NorthWest')
+      .crop(100, 100, (680 / 2) - 100, (1000 / 2) - 100)
+      .write(avatarSavePath, (err) => {
+        if (err) {
+          logger.error(err)
+          avatarSavePath = null
+        }
+      })
+  }
+  await sleep(2000)
+  return avatarSavePath
+}
+
+async function createBanner(asset) {
+  const imageName = uuidv4()
+  const imageDir = createWorkingDir(imageName)
+
+  const { filename } = await download.image({
+    url: `${spaces.edge}/${asset.s3_poster}`,
+    dest: imageDir,
+    timeout: 5000,
+  })
+
+  const path = await cropBanner(454, 80, filename, imageDir, imageName)
+  console.log(path)
+  if (path) {
+    const s3BannerResp = await uploadFileToS3(path, `anime_assets/${imageName}_banner.jpg`)
+    asset.s3_banner = s3BannerResp.Key
+    asset.save()
+  }
+  console.log(asset.s3_banner)
+  await rimraf.sync(imageDir)
+}
+
+async function createAvatar(asset) {
+  const imageName = uuidv4()
+  const imageDir = createWorkingDir(imageName)
+
+  const { filename } = await download.image({
+    url: `${spaces.edge}/${asset.s3_poster}`,
+    dest: imageDir,
+    timeout: 5000,
+  })
+
+  const path = await cropBanner(454, 80, filename, imageDir, imageName)
+  if (path) {
+    const s3AvatarResp = await uploadFileToS3(path, `anime_assets/${imageName}_avatar.jpg`)
+    asset.s3_avatar = s3AvatarResp.Key
+    asset.save()
+  }
+  await rimraf.sync(imageDir)
+}
+
 module.exports = {
   async fetch() {
     try {
@@ -174,4 +319,22 @@ module.exports = {
       logger.error(err)
     }
   },
+  async createBannerFromAssetPoster(asset) {
+    try {
+      logger.info('Creating new banner from asset poster...')
+      await createBanner(asset)
+      logger.info('Created new banner from asset poster.')
+    } catch(err) {
+      logger.error(err)
+    }
+  },
+  async createAvatarFromAssetPoster(asset) {
+    try {
+      logger.info('Creating new avatar from asset poster...')
+      await createAvatar(asset)
+      logger.info('Created new avatar from asset poster.')
+    } catch(err) {
+      logger.error(err)
+    }
+  }
 }
