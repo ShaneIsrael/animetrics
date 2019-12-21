@@ -86,7 +86,7 @@ const cropAvatar = (fileToCrop, savePath, saveName) => new Promise(async (resolv
     const faces = JSON.parse(facedata);
     // store all the faces y values in an array to average them
     let largestFace
-    let largestFaceArea
+    let largestFaceArea = 1
     for (const face of faces) {
       const faceArea = face.width * face.height
       if (faceArea > largestFaceArea) {
