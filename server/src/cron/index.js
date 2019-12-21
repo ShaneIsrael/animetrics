@@ -11,7 +11,7 @@ const {
 const fetchDiscussions = require('../fetch/fetchDiscussions')
 const fetchAssets = require('../fetch/fetchAssets')
 const fetchUsers = require('../fetch/fetchRedditMalUsers')
-
+const pollFixer = require('../tools/pollFixer')
 async function updatePosters() {
   const assets = await Asset.findAll({
     where: {
@@ -64,10 +64,6 @@ async function getDiscussionsAndPopulate() {
       }
     }
   }
-  await updateTvDbIds()
-  await updatePosters()
-  await fetchAssets.fetch()
-  await generateDiscussionResults()
 }
 
 async function updateRalScores() {
@@ -89,14 +85,21 @@ async function init() {
       logger.info('starting cron jobs...')
       // Every 15 minutes | Get Episode Discussions and populate data
       cron.schedule('0 */15 * * * *', async () => {
+        logger.info('--- Starting Discussion Populate Job ---')
         try {
           getDiscussionsAndPopulate()
+          await updateTvDbIds()
+          await updatePosters()
+          await fetchAssets.fetch()
+          await generateDiscussionResults()
+          await pollFixer.init()
         } catch (err) {
           logger.error(err)
         }
       })
       // Every Hour | Check for unset ral scores and update them
       cron.schedule('0 0 * * * *', async () => {
+        logger.info('--- Starting RAL Score Updater Job ---')
         try {
           updateRalScores()
         } catch (err) {
@@ -106,6 +109,7 @@ async function init() {
 
       // Every Monday at 12:00am update users scores
       cron.schedule('0 0 0 * * 1', async () => {
+        logger.info('--- Starting RAL Users Fetch & Update Job ---')
         try {
           await fetchUsers.fetch()
           fetchUsers.fetchScores()
@@ -116,6 +120,7 @@ async function init() {
 
       // Every 6 Hours | Refresh with TvDb
       cron.schedule('0 0 */6 * * *', async () => {
+        logger.info('--- Starting Refresh TVDB Auth Token Job ---')
         try {
           await refreshTvDb()
         } catch (err) {
