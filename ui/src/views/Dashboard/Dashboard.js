@@ -25,7 +25,9 @@ const useStyles = makeStyles(theme => ({
     boxShadow: 'none'
   },
   headerMobile: {
-    padding: 32,
+    paddingTop: 32,
+    paddingLeft: 8,
+    paddingRight: 8,
     height: 150 ,
     backgroundColor: 'rgba(0,0,0,0)',
     boxShadow: 'none'
@@ -60,7 +62,7 @@ const useStyles = makeStyles(theme => ({
   },
   subheaderMobile: {
     color: theme.palette.primary.main,
-    paddingLeft: 48,
+    paddingLeft: 24,
     paddingRight: 24,
     fontSize: 18,
     fontWeight: 100
