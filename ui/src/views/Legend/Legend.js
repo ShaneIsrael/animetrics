@@ -8,6 +8,8 @@ import clsx from 'clsx'
 
 const useStyles = makeStyles(theme => ({
   root: {
+    maxWidth: '100%',
+    maxHeight: '100%'
   },
 }))
 
@@ -21,11 +23,11 @@ const Legend = () => {
         direction="column"
         justify="center"
         alignItems="center"
-        spacing={4}
+        spacing={2}
       >
         <Grid
           item
-          xs={11}
+          xs
         >
           <Typography variant="body1">
             Animetrics is a system for harvesting anime discussion data from the Reddit Anime community to use as a way to show the popularity of a series or episode on a weekly basis. 
@@ -44,7 +46,7 @@ const Legend = () => {
           item
           xs={12}
         >
-          <img src="https://animetrics.sfo2.cdn.digitaloceanspaces.com/animetrics/legend.png" width={isMobileOnly ? 400 : 'auto'} />
+          <img src="https://animetrics.sfo2.cdn.digitaloceanspaces.com/animetrics/legend.png" className={classes.root} />
         </Grid>
       </Grid>
     </div>
