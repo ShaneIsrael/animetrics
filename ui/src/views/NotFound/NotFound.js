@@ -13,6 +13,7 @@ const useStyles = makeStyles(() => ({
   },
   image: {
     maxWidth: '100%',
+    maxHeight: '100%'
   }
 }))
 
@@ -22,7 +23,7 @@ const NotFound = () => {
   return (
     <div className={classes.root}>
       <div className={classes.content}>
-        <a href="/dashboard">
+        <a href="/">
           <img
             alt="404 Page Not Found"
             className={classes.image}

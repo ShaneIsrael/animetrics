@@ -116,14 +116,14 @@ const Dashboard = () => {
                 spacing={6}
               >
                 <Grid item>
-                  <RouterLink to="/dashboard">
-                    <img
-                      alt="Animetrics Logo"
-                      className={classes.logo}
-                      height={96}
-                      src="/images/logos/logo_full_light_blue_wlb_stroke.png"
-                    />
-                  </RouterLink>
+                  <img
+                    style={{cursor: 'pointer'}}
+                    alt="Animetrics Logo"
+                    className={classes.logo}
+                    height={96}
+                    src="/images/logos/logo_full_light_blue_wlb_stroke.png"
+                    onClick={() => window.location.reload()}
+                  />
                 </Grid>
                 <Grid
                   item
@@ -173,9 +173,9 @@ const Dashboard = () => {
                   item
                   xs={12}
                 >
-                  <RouterLink to="/dashboard">
+                  <RouterLink to="/">
                     <img
-                      alt="ANIRANKS Logo"
+                      alt="Animetrics Logo"
                       className={classes.logo}
                       height={72}
                       src="/images/logos/logo_full_light_blue_wlb_stroke.png"
