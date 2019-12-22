@@ -53,7 +53,7 @@ const useStyles = makeStyles(theme => ({
   },
   pollRankingPaper: {
     padding: 10,
-    maxWidth: 430
+    maxWidth: 500
   },
   centerGridItem: {
     margin: '0 auto'
@@ -77,21 +77,20 @@ function createPollResults(results) {
 
 function useKey(key, handler) {
   // Does an event match the key we're watching?
-  const match = event => key.toLowerCase() == event.key.toLowerCase()
-
-  const onUp = event => {
-    if (match(event)) handler()
-  }
 
   // Bind and unbind events
   useEffect(() => {
+    const match = event => key.toLowerCase() === event.key.toLowerCase()
+    const onUp = event => {
+      if (match(event)) handler()
+    }  
     // window.addEventListener('keydown', onDown)
     window.addEventListener('keyup', onUp)
     return () => {
       // window.removeEventListener('keydown', onDown)
       window.removeEventListener('keyup', onUp)
     }
-  }, [key])
+  }, [handler, key])
 }
 
 const PollRankings = () => {
@@ -138,7 +137,7 @@ const PollRankings = () => {
         setSelectedWeek(0)
       }
     }
-  }, [selectedWeek, setSelectedWeek])
+  }, [weeks, selectedWeek, setSelectedWeek])
 
   const createWeekSelectOptions = async (weeks) => {
     const weekSelectOptions = weeks.map((week, index) => {
@@ -159,7 +158,7 @@ const PollRankings = () => {
           <option
             key={index}
             value={index}
-          ><center>{start} &rarr; {end}</center></option>
+          >{start} &rarr; {end}</option>
           :
           <MenuItem
             key={index}
@@ -198,17 +197,12 @@ const PollRankings = () => {
         >
           <Grid
             item
-            xs={4}
           >
             <div>
               <FormControl 
                 className={classes.formControl}
-                // variant="outlined"
+                variant="outlined"
               >
-                {/* <InputLabel 
-                  id="select-week-label"
-                  ref={inputLabel}
-                >Week Of</InputLabel> */}
                 <Select 
                   className={classes.selectEmpty} 
                   native={isMobile} 
@@ -235,7 +229,10 @@ const PollRankings = () => {
               >
                 <Grid
                   container
+                  direction="column"
                   justify="center"
+                  alignItems="center"
+                  spacing={1}
                 >
                   {renderedPollResults}
                   {renderedPollResults.length === 0 &&

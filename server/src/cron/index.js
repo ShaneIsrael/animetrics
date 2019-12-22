@@ -1,7 +1,7 @@
 const cron = require('node-cron')
 const moment = require('moment')
 const logger = require('../logger')
-const environment = require('../config').environment
+const { environment } = require('../config')
 const {
   digestDiscussionPost, authTvDb, refreshTvDb, updateTvDbIds, getSeriesPoster, createDiscussionResult, updateRedditAnimeListScore,
 } = require('../services')
@@ -11,7 +11,7 @@ const {
 const fetchDiscussions = require('../fetch/fetchDiscussions')
 const fetchAssets = require('../fetch/fetchAssets')
 const fetchUsers = require('../fetch/fetchRedditMalUsers')
-
+const pollFixer = require('../tools/pollFixer')
 async function updatePosters() {
   const assets = await Asset.findAll({
     where: {
@@ -27,7 +27,6 @@ async function updatePosters() {
 }
 
 async function generateDiscussionResults() {
-  const [epResults, pollResults] = []
   const links = await EpisodeResultLink.findAll(
     {
       where: {
@@ -44,7 +43,11 @@ async function generateDiscussionResults() {
 
     if (createDt.isSameOrBefore(dt48hoursAgo)) {
       logger.info(`Creating discussion result for: ${link.EpisodeDiscussion.post_title}`)
-      await createDiscussionResult(link)
+      try {
+        await createDiscussionResult(link)
+      } catch (err) {
+        logger.error(err)
+      }
     }
   }
 }
@@ -52,13 +55,15 @@ async function getDiscussionsAndPopulate() {
   const discussions = await fetchDiscussions.fetch()
   if (discussions) {
     for (const discussion of discussions) {
-      await digestDiscussionPost(discussion)
+      const createdDt = moment.utc(discussion.created_utc)
+      const dt15MinsAgo = moment.utc().subtract(15, 'minutes')
+      // don't process if the discussion isn't at least 15 minutes old. This is to help prevent getting
+      // discussions made by non-mods that get deleted.
+      if (createdDt.isSameOrBefore(dt15MinsAgo)) {
+        await digestDiscussionPost(discussion)
+      }
     }
   }
-  await updateTvDbIds()
-  await updatePosters()
-  await fetchAssets.fetch()
-  await generateDiscussionResults()
 }
 
 async function updateRalScores() {
@@ -77,38 +82,45 @@ async function init() {
       logger.info('beginning cron jobs')
       await authTvDb()
       logger.info('tvdb auth successful')
-      if (config)
       logger.info('starting cron jobs...')
-      // Every 1 hour | Get Episode Discussions and populate data
-      cron.schedule('0 0 * * * *', async () => {
+      // Every 15 minutes | Get Episode Discussions and populate data
+      cron.schedule('0 */15 * * * *', async () => {
+        logger.info('--- Starting Discussion Populate Job ---')
         try {
           getDiscussionsAndPopulate()
+          await updateTvDbIds()
+          await updatePosters()
+          await fetchAssets.fetch()
+          await generateDiscussionResults()
+          await pollFixer.init()
         } catch (err) {
-          logger.error(err.message)
+          logger.error(err)
         }
       })
       // Every Hour | Check for unset ral scores and update them
       cron.schedule('0 0 * * * *', async () => {
+        logger.info('--- Starting RAL Score Updater Job ---')
         try {
-          getDiscussionsAndPopulate()
           updateRalScores()
         } catch (err) {
-          logger.error(err.message)
+          logger.error(err)
         }
       })
 
       // Every Monday at 12:00am update users scores
       cron.schedule('0 0 0 * * 1', async () => {
+        logger.info('--- Starting RAL Users Fetch & Update Job ---')
         try {
           await fetchUsers.fetch()
           fetchUsers.fetchScores()
         } catch (err) {
-          logger.error(err.message)
+          logger.error(err)
         }
       })
 
       // Every 6 Hours | Refresh with TvDb
       cron.schedule('0 0 */6 * * *', async () => {
+        logger.info('--- Starting Refresh TVDB Auth Token Job ---')
         try {
           await refreshTvDb()
         } catch (err) {
@@ -120,7 +132,7 @@ async function init() {
     }
   } catch (err) {
     // console.log(err)
-    logger.error(err.message)
+    logger.error(err)
   }
 }
 init()
