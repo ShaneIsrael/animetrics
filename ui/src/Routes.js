@@ -17,16 +17,16 @@ import {
 const Routes = () => {
   return (
     <Switch>
-      <Redirect
+      {/* <Redirect
         exact
         from="/"
         to="/dashboard"
-      />
+      /> */}
       <RouteWithLayout
         component={DashboardView}
         exact
         layout={MinimalLayout}
-        path="/dashboard"
+        path="/"
       />
       <RouteWithLayout
         component={KarmaRankingsView}
