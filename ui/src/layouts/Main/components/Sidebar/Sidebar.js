@@ -13,6 +13,7 @@ import HomeIcon from '@material-ui/icons/Home'
 import ScoreIcon from '@material-ui/icons/Score'
 import PollIcon from '@material-ui/icons/Poll'
 import ForumIcon from '@material-ui/icons/Forum'
+import HelpIcon from '@material-ui/icons/Help';
 
 const categories = [
   {
@@ -29,6 +30,12 @@ const categories = [
       { id: 'Karma Rankings', path: 'under-construction', icon: <ScoreIcon /> },
       { id: 'Poll Rankings', path: 'under-construction', icon: <PollIcon /> },
       { id: 'Discussion Finder', path: 'under-construction', icon: <ForumIcon /> },
+    ],
+  },
+  {
+    id: 'Help / Support',
+    children: [
+      { id: 'About Animetrics', path: '/legend', icon: <HelpIcon /> },
     ],
   },
 ];

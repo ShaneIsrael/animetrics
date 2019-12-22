@@ -10,7 +10,8 @@ import {
   KarmaRankings as KarmaRankingsView,
   RecentDiscussions as RecentDiscussionsView,
   Overrides as OverridesView,
-  NotFound as NotFoundView
+  NotFound as NotFoundView,
+  Legend as LegendView
 } from './views'
 
 const Routes = () => {
@@ -50,6 +51,12 @@ const Routes = () => {
         exact
         layout={MainLayout}
         path="/overrides"
+      />
+      <RouteWithLayout
+        component={LegendView}
+        exact
+        layout={MainLayout}
+        path="/legend"
       />
       <RouteWithLayout
         component={NotFoundView}
