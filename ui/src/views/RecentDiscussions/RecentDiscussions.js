@@ -75,6 +75,7 @@ const RecentDiscussions = () => {
           >
             <TextField
                             autoFocus
+                            spellcheck="false"
                             id="outlined-basic"
                             label="Series Title"
                             onChange={(event) => setDiscussionQuery(event.target.value)}
