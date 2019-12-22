@@ -1,17 +1,19 @@
 /* eslint-disable react/no-multi-comp */
 import React, {useEffect} from 'react'
 import PropTypes from 'prop-types'
+import clsx from 'clsx'
 import {isMobile} from 'react-device-detect'
-import { makeStyles } from '@material-ui/styles'
-import Typography from '@material-ui/core/Typography'
+import { makeStyles, withStyles } from '@material-ui/styles'
 import Box from '@material-ui/core/Box'
-// eslint-disable-next-line
-import { Grid, Paper, InputLabel, FormControl, Select, MenuItem } from '@material-ui/core'
 import moment from 'moment'
+import ls from 'local-storage'
+// eslint-disable-next-line
+import { Grid, Paper, InputLabel, FormControl, Select, MenuItem, Switch, Typography } from '@material-ui/core'
+
+import { Alert } from 'components'
 import { AnimeRankingResult, DetailsCard } from './components'
 import { WeekService, ResultsService } from '../../services'
-import clsx from 'clsx'
-import { Alert } from 'components'
+
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -36,7 +38,6 @@ TabPanel.propTypes = {
   value: PropTypes.any.isRequired,
 }
 
-
 const useStyles = makeStyles(theme => ({
   root: {
     padding: theme.spacing(0.5),
@@ -53,18 +54,52 @@ const useStyles = makeStyles(theme => ({
   karmaRankingPaper: {
     padding: 10,
     // width: 700
+    width: '100%',
     maxWidth: 700
   },
   selectedAnimeCard: {
     maxHeight: '100vh'
   },
   centerGridItem: {
-    margin: '0 auto'
+    // margin: '0 auto'
   }
 
 }))
+const AntSwitch = withStyles(theme => ({
+  root: {
+    width: 28,
+    height: 16,
+    padding: 0,
+    display: 'flex',
+  },
+  switchBase: {
+    padding: 2,
+    color: theme.palette.grey[500],
+    '&$checked': {
+      transform: 'translateX(12px)',
+      color: theme.palette.common.white,
+      '& + $track': {
+        opacity: 1,
+        backgroundColor: theme.palette.primary.main,
+        borderColor: theme.palette.primary.main,
+      },
+    },
+  },
+  thumb: {
+    width: 12,
+    height: 12,
+    boxShadow: 'none',
+  },
+  track: {
+    border: `1px solid ${theme.palette.grey[500]}`,
+    borderRadius: 16 / 2,
+    opacity: 1,
+    backgroundColor: theme.palette.common.white,
+  },
+  checked: {},
+}))(Switch)
 
-function createResults(results, setHandler) {
+function createResults(results, setHandler, modernCardStyle) {
   try {
     if (Object.keys(results).length === 0) return []
     const render = results.map((res, index) => {
@@ -72,6 +107,7 @@ function createResults(results, setHandler) {
       return <AnimeRankingResult 
         banner={`https://animetrics.sfo2.cdn.digitaloceanspaces.com/${res.assets[0].s3_banner}`}
         commentCount={res.result.comment_count}
+        commentCountPrevious={res.previous.result ? res.previous.result.comment_count : null}
         episode={res.discussion.episode}
         key={5000+index} 
         malScore={res.mal.score.toFixed(2)} 
@@ -96,46 +132,52 @@ function createResults(results, setHandler) {
 }
 
 function useKey(key, handler) {
-  // Does an event match the key we're watching?
-  const match = event => key.toLowerCase() === event.key.toLowerCase()
-
-  const onUp = event => {
-    if (match(event)) handler()
-  }
-
   // Bind and unbind events
   useEffect(() => {
+    // Does an event match the key we're watching?\
+    const match = event => key.toLowerCase() === event.key.toLowerCase()
+
+    const onUp = event => {
+      if (match(event)) handler()
+    }  
     // window.addEventListener('keydown', onDown)
     window.addEventListener('keyup', onUp)
     return () => {
       // window.removeEventListener('keydown', onDown)
       window.removeEventListener('keyup', onUp)
     }
-  }, [key, onUp])
+  }, [key, handler])
 }
 
 const KarmaRankings = () => {
   const classes = useStyles()
   // eslint-disable-next-line
   const inputLabel = React.useRef(null);
+  const [resultData, setResultData] = React.useState(null)
   const [weeks, setWeeks] = React.useState(null)
   const [selectedWeek, setSelectedWeek] = React.useState(1);
   const [weekSelectOptions, setWeekSelectOptions] = React.useState([])
   const [selectedAnime, setSelectedAnime] = React.useState(null)
   const [renderedResults, setRenderedResults] = React.useState([])
+  const [modernCardStyle, setModernCardStyle] = React.useState(true)
 
   const setAnimeSelection = (selection) => {
     setSelectedAnime(selection)
   }
-
   useEffect(() => {
     async function fetchData() {
       try {
+        if (ls.get('modernCardStyle') === null) {
+          ls('modernCardStyle', true)
+        }
+        setModernCardStyle(ls.get('modernCardStyle'))
         const wks = (await WeekService.getWeeks()).data
         const results = (await ResultsService.getResultsByWeek(wks[1].id)).data
+        setResultData(results)
         setWeeks(wks)
         setSelectedWeek(1)
         createWeekSelectOptions(wks)
+
         setRenderedResults(createResults(results, setAnimeSelection))
       } catch (err) {
         console.log(err)
@@ -149,6 +191,7 @@ const KarmaRankings = () => {
     async function fetchData() {
       try {
         const results = (await ResultsService.getResultsByWeek(weeks[selectedWeek].id)).data
+        setResultData(results)
         setRenderedResults(createResults(results, setAnimeSelection))
       } catch (err) {
         console.log(err)
@@ -163,7 +206,7 @@ const KarmaRankings = () => {
         setSelectedWeek(0)
       }
     }
-  }, [selectedWeek, setSelectedWeek])
+  }, [weeks, selectedWeek, setSelectedWeek, modernCardStyle])
 
   const createWeekSelectOptions = async (weeks) => {
     const weekSelectOptions = weeks.map((week, index) => {
@@ -180,7 +223,7 @@ const KarmaRankings = () => {
           <option
             key={index}
             value={index}
-          ><center>{start} &rarr; {end}</center></option>
+          >{start} &rarr; {end}</option>
           :
           <MenuItem
             key={index}
@@ -202,9 +245,13 @@ const KarmaRankings = () => {
   const handleChange = async event => {
     setSelectedWeek(event.target.value)
   }
+  const handleCardStyleChange = event => {
+    ls('modernCardStyle', event.target.checked)
+    setModernCardStyle(event.target.checked)
+  }
 
   return (
-    <div className={clsx({[classes.root]: true})}>
+    <div>
       {selectedAnime && 
         <DetailsCard
           className={classes.selectedAnimeCard}
@@ -225,17 +272,12 @@ const KarmaRankings = () => {
         >
           <Grid
             item
-            xs={4}
           >
             <div>
               <FormControl 
                 className={classes.formControl}
-                // variant="outlined"
+                variant="outlined"
               >
-                {/* <InputLabel 
-                  id="select-week-label"
-                  ref={inputLabel}
-                >Week Of</InputLabel> */}
                 <Select 
                   className={classes.selectEmpty} 
                   native={isMobile} 
@@ -247,20 +289,36 @@ const KarmaRankings = () => {
               </FormControl>
             </div>
           </Grid>
-          <Grid container direction="column" justify="center">
+          <Grid container direction="column" justify="center" alignItems="center" >
             <Grid
               item
-              // xs={12}
-              className={classes.centerGridItem}
             >
               <Paper
                 className={clsx({[classes.karmaRankingPaper]: true})}
                 elevation={10}
                 square
               >
+                {!isMobile &&
+                  <Typography component="div">
+                    <Grid component="label" container alignItems="center" spacing={1}>
+                      <Grid item>Classic</Grid>
+                      <Grid item>
+                        <AntSwitch
+                          checked={modernCardStyle}
+                          onChange={handleCardStyleChange}
+                          value={modernCardStyle}
+                        />
+                      </Grid>
+                      <Grid item>Modern</Grid>
+                    </Grid>
+                  </Typography>
+                }
                 <Grid
                   container
+                  direction="column"
                   justify="center"
+                  alignItems="center"
+                  spacing={1}
                 >
                   {renderedResults}
                   {renderedResults.length === 0 &&

@@ -3,7 +3,8 @@
 /* eslint-disable prefer-destructuring */
 
 const axios = require('axios')
-const config = require('../config/config')[process.env.NODE_ENV].tvdb
+const { environment } = require('../config')
+const config = require('../config')[environment].tvdb
 const { Show } = require('../models')
 const logger = require('../logger')
 

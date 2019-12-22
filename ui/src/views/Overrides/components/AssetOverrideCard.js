@@ -52,7 +52,7 @@ export default function AssetOverrideCard(props) {
           newAsset = (await OverridesService.overrideAssetBanner(id, newAssetUrl, token)).data
           setAssetURL(newAsset.s3_banner)
           break
-        case 'avatar':
+        default:
           newAsset = (await OverridesService.overrideAssetAvatar(id, newAssetUrl, token)).data
           setAssetURL(newAsset.s3_avatar)
           break

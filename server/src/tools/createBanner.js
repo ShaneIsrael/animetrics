@@ -1,5 +1,6 @@
-const gm = require('gm');
-const fs = require('fs');
+const gm = require('gm')
+const fs = require('fs')
+const logger = require('../logger')
 
 
 function resize(width, height, path) {
@@ -12,9 +13,9 @@ function resize(width, height, path) {
     .resize(width, height)
     .write('./tmp.png', (err) => {
       if (err) {
-        console.log(err);
+        logger.error(err);
       } else {
-        console.log('./tmp.png');
+        logger.info('./tmp.png');
       }
     })
 
@@ -27,9 +28,9 @@ function crop(width, height, path, savePath) {
     .crop(width, height, 121, -140)
     .write('./tmp.png', (err) => {
       if (err) {
-        console.log(err);
+        logger.error(err);
       } else {
-        console.log('./tmp.png');
+        logger.info('./tmp.png');
       }
     })
 }

@@ -40,7 +40,11 @@ async function generateDiscussionResults() {
 
     if (createDt.isSameOrBefore(dt48hoursAgo)) {
       logger.info(`Creating discussion result for: ${link.EpisodeDiscussion.post_title}`)
-      await createDiscussionResult(link)
+      try {
+        await createDiscussionResult(link)
+      } catch (err) {
+        logger.error(err)
+      }
     }
   }
 }
@@ -66,7 +70,7 @@ async function init() {
     await authTvDb()
     await backPopulate(args[0])
   } catch (err) {
-    console.log(err)
+    logger.error(err)
   }
 }
 init()

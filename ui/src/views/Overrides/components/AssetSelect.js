@@ -2,7 +2,6 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
-import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 
@@ -42,7 +41,7 @@ export default function AssetSelect(props) {
   
   React.useEffect(() => {
     setLabelWidth(inputLabel.current.offsetWidth);
-  }, []);
+  }, [setLabelWidth]);
 
   function createSeasonItems(id) {
     const seasonItems = []
@@ -91,6 +90,7 @@ export default function AssetSelect(props) {
         <Select
           onChange={handleShowChange}
           value={show}
+          labelWidth={labelWidth}
         >
           <MenuItem value="">
             <em>None</em>
@@ -109,7 +109,7 @@ export default function AssetSelect(props) {
           onChange={handleSeasonChange}
           value={season}
         >
-        {seasonItems}
+          {seasonItems}
         </Select>
       </FormControl>
     </div>
