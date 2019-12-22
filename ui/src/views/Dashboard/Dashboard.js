@@ -64,6 +64,7 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.primary.main,
     paddingLeft: 24,
     paddingRight: 24,
+    paddingTop: 20,
     fontSize: 18,
     fontWeight: 100
   },
@@ -207,7 +208,7 @@ const Dashboard = () => {
           implementation="js"
           smDown
         >
-          <Typography className={classes.subheader}>Visualizing Anime metrics through the Reddit community.</Typography>
+          <Typography component="h1" className={classes.subheader}>Visualizing Anime metrics to gauge popularity through the Reddit community.</Typography>
           <div className={classes.recentAiredSection}>
             <Grid container>
               <Typography style={{paddingLeft: 40}} className={classes.recentAiredFont}>Recently Aired Discussions</Typography>
@@ -223,7 +224,7 @@ const Dashboard = () => {
           implementation="js"
           mdUp
         >
-          <Typography className={classes.subheaderMobile}>Visualizing Anime metrics through the Reddit community.</Typography>
+          <Typography component="h1" className={classes.subheaderMobile}>Visualizing Anime metrics to gauge popularity through the Reddit community.</Typography>
           <div className={classes.recentAiredSection}>
             <Grid container justify="center">
               <Typography className={classes.recentAiredFont}>Recently Aired Discussions</Typography>
