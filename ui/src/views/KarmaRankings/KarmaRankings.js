@@ -301,7 +301,7 @@ const KarmaRankings = () => {
                 {!isMobile &&
                   <Typography component="div">
                     <Grid component="label" container alignItems="center" spacing={1}>
-                      <Grid item>Classic View</Grid>
+                      <Grid item>Classic</Grid>
                       <Grid item>
                         <AntSwitch
                           checked={modernCardStyle}
@@ -309,7 +309,7 @@ const KarmaRankings = () => {
                           value={modernCardStyle}
                         />
                       </Grid>
-                      <Grid item>Modern View</Grid>
+                      <Grid item>Modern</Grid>
                     </Grid>
                   </Typography>
                 }
