@@ -16,6 +16,7 @@ import ForwardIcon from '@material-ui/icons/Forward'
 import RemoveIcon from '@material-ui/icons/Remove'
 import Zoom from '@material-ui/core/Zoom'
 import LazyLoad from 'react-lazy-load'
+import ls from 'local-storage'
 
 import clsx from 'clsx'
 import { deepOrange, deepPurple, green, lightGreen, yellow, lightBlue } from '@material-ui/core/colors'
@@ -153,7 +154,7 @@ const desktopStyles = makeStyles(theme => ({
   squareChip: {
     borderRadius: 0,
     margin: theme.spacing(0.5),
-    width: 80,
+    minWidth: 80,
     height: 31,
   },
   titleFont: {
@@ -274,10 +275,7 @@ const AnimeRankingResult = (props) => {
     return number
   }
 
-  // let posColorClass = {}
-  // if (pos === 0) posColorClass = classes.firstPlace
-  // if (pos === 1) posColorClass = classes.secondPlace
-  // if (pos === 2) posColorClass = classes.thirdPlace
+  const modernCardStyle = ls.get('modernCardStyle')
   return (
     <Grid
       item
@@ -389,244 +387,246 @@ const AnimeRankingResult = (props) => {
         implementation="js"
         smDown
       >
-        <Card className={clsx(desktop.card)}>
-          <div
-            onClick={() => handleSelection(result.result.id, result.show.id, result.assets, title)}
-            style={{flexGrow: 0, cursor: 'pointer'}}
-          >
-            <CardMedia
-              title="Poster Art"
+        {modernCardStyle &&
+          <Card className={clsx(desktop.card)}>
+            <div
+              onClick={() => handleSelection(result.result.id, result.show.id, result.assets, title)}
+              style={{flexGrow: 0, cursor: 'pointer'}}
             >
-              <LazyLoad
-                debounce={false}
-                offsetVertical={400}
-                width={desktop.cover}
+              <CardMedia
+                title="Poster Art"
               >
-                <img
-                  alt="poster art"
-                  className={desktop.cover}
-                  src={`https://animetrics.sfo2.cdn.digitaloceanspaces.com/${result.assets[0].s3_poster}`}
-                />
-              </LazyLoad>
-            </CardMedia>
-          </div>
-          <div className={desktop.details}>
-            <CardContent>
-              <Grid container>
-                <Grid container>
-                  <Grid
-                    item
-                    xs={9}
-                  >
-                    <Typography
-                      className={desktop.titleFont}
-                      component="h6"
-                      variant="h6"
-                    >
-                      {title}
-                    </Typography>
-                  </Grid>
-                  <Grid
-                    item
-                    xs={3}
-                  >
-                    <Typography
-                      align="right"
-                      color="primary"
-                      variant="subtitle1"
-                    >
-                      {`Episode ${episode}`}
-                    </Typography>
-                  </Grid>
-                  <Grid
-                    item
-                    xs={12}
-                  >
-                    <hr className={desktop.hr}/>
-                  </Grid>
-                </Grid>
-                <Grid
-                  className={desktop.statsContainer}
-                  container
+                <LazyLoad
+                  debounce={false}
+                  offsetVertical={400}
+                  width={desktop.cover}
                 >
-                  <Grid
-                    item
-                    xs={3}
-                  >
-                    <LightTooltip
-                      enterDelay={500}
-                      placement="left"
-                      title="Current Rank"
-                      TransitionComponent={Zoom}
-                    >
-                      <Chip
-                        className={clsx({[desktop.positionChip]: true, [classes.rankColor]: true})}
-                        label={pos + 1}
-                        variant="outlined"
-                      />
-                    </LightTooltip>
-                    <LightTooltip
-                      enterDelay={500}
-                      placement="left"
-                      title="Rank Change"
-                      TransitionComponent={Zoom}
-                    >
-                      <Chip
-                        avatar={posChangeIcon}
-                        className={clsx({[desktop.positionChangeChip]: true, [classes.orangeColor]: posDirection === 'up', [classes.purpleColor]: posDirection === 'down'})}
-                        label={!isNaN(posChange) ? Math.abs(posChange) : ''}
-                        variant="outlined"
-                      />
-                    </LightTooltip>
-                  </Grid>
-                  <Grid
-                    item
-                    style={{marginLeft: -10}}
-                    xs={3}
-                  >
-                    <Grid className={desktop.chipContainer}>
-                      <LightTooltip
-                        enterDelay={500}
-                        placement={scoreChangeIcon ? 'top':'right'}
-                        title="Karma Score"
-                        TransitionComponent={Zoom}
-                      >
-                        <Chip
-                          avatar={<ScoreIcon />}
-                          className={clsx({[desktop.squareChip]: true, [classes.rankColor]: true})}
-                          label={score}
-                          variant="outlined"
-                        />
-                      </LightTooltip>
-                    </Grid>
-                    <Grid className={desktop.chipContainer}>
-                      <LightTooltip
-                        enterDelay={500}
-                        placement={redditPollScoreIcon ? 'top':'right'}
-                        title="Episode Poll Score"
-                        TransitionComponent={Zoom}
-                      >
-                        <Chip
-                          avatar={<PollIcon className={clsx({[classes.orangeColor]: redditPollScoreDirection === 'up', [classes.purpleColor]: redditPollScoreDirection === 'down'})}/>}
-                          className={clsx({[desktop.squareChip]: true})}
-                          label={pollScore > 0 ? pollScore.toFixed(2) : '-----'}
-                          variant="outlined"
-                        />
-                      </LightTooltip>
-                    </Grid>
-                    <Grid className={desktop.chipContainer}>
-                      <LightTooltip
-                        enterDelay={500}
-                        placement={commentCountChangeIcon ? 'top':'right'}
-                        title="Discussion Comment Count"
-                        TransitionComponent={Zoom}
-                      >
-                        <Chip
-                          avatar={<ForumIcon/>}
-                          className={clsx({[desktop.squareChip]: true})}
-                          label={commentCount}
-                          variant="outlined"
-                        />
-                      </LightTooltip>
-                    </Grid>
-
-                  </Grid>
-                  <Grid
-                    item
-                    xs={3}
-                  >
-                    <Grid className={desktop.chipContainer}>
-                      <LightTooltip
-                        enterDelay={500}
-                        placement="right"
-                        title="Score Change"
-                        TransitionComponent={Zoom}
-                      >
-                        <Chip
-                          avatar={scoreChangeDirection === 'none' ? <RemoveIcon/> : scoreChangeIcon}
-                          className={clsx({[desktop.squareChip]: true, [classes.orangeColor]: scoreChangeDirection === 'up', [classes.purpleColor]: scoreChangeDirection === 'down'})}
-                          label={scoreChangeDirection === 'none' ? '000' : formatZeroes(Math.abs(scoreChange))}
-                          variant="outlined"
-                        />
-                      </LightTooltip>
-                    </Grid>
-                    <Grid className={desktop.chipContainer}>
-                      <LightTooltip
-                        enterDelay={500}
-                        placement="right"
-                        title="Poll Score Change"
-                        TransitionComponent={Zoom}
-                      >
-                        <Chip
-                          avatar={redditPollScoreDirection === 'none' ? <RemoveIcon/> : redditPollScoreIcon}
-                          className={clsx({[desktop.squareChip]: true, [classes.orangeColor]: redditPollScoreDirection === 'up', [classes.purpleColor]: redditPollScoreDirection === 'down'})}
-                          label={redditPollScoreDirection === 'none' ? '000' : Math.abs(pollScoreChange).toFixed(2)}
-                          variant="outlined"
-                        />
-                      </LightTooltip>
-                    </Grid>
-                    <Grid className={desktop.chipContainer}>
-                      <LightTooltip
-                        enterDelay={500}
-                        placement="right"
-                        title="Comment Count Change"
-                        TransitionComponent={Zoom}
-                      >
-                        <Chip
-                          avatar={commentCountChangeDirection === 'none' ? <RemoveIcon/> : commentCountChangeIcon}
-                          className={clsx({[desktop.squareChip]: true, [classes.orangeColor]: commentCountChangeDirection === 'up', [classes.purpleColor]: commentCountChangeDirection === 'down'})}
-                          label={commentCountChangeDirection === 'none' ? '000' : formatZeroes(Math.abs(commentCountChange))}
-                          variant="outlined"
-                        />
-                      </LightTooltip>
-                    </Grid>
-                  </Grid>
+                  <img
+                    alt="poster art"
+                    className={desktop.cover}
+                    src={`https://animetrics.sfo2.cdn.digitaloceanspaces.com/${result.assets[0].s3_poster}`}
+                  />
+                </LazyLoad>
+              </CardMedia>
+            </div>
+            <div className={desktop.details}>
+              <CardContent>
+                <Grid container>
                   <Grid container>
                     <Grid
                       item
-                      xs={10}
+                      xs={9}
+                    >
+                      <Typography
+                        className={desktop.titleFont}
+                        component="h6"
+                        variant="h6"
+                      >
+                        {title}
+                      </Typography>
+                    </Grid>
+                    <Grid
+                      item
+                      xs={3}
+                    >
+                      <Typography
+                        align="right"
+                        color="primary"
+                        variant="subtitle1"
+                      >
+                        {`Episode ${episode}`}
+                      </Typography>
+                    </Grid>
+                    <Grid
+                      item
+                      xs={12}
+                    >
+                      <hr className={desktop.hr}/>
+                    </Grid>
+                  </Grid>
+                  <Grid
+                    className={desktop.statsContainer}
+                    container
+                  >
+                    <Grid
+                      item
+                      xs={3}
                     >
                       <LightTooltip
                         enterDelay={500}
-                        placement="bottom"
-                        title="MyAnimeList Score"
+                        placement="left"
+                        title="Current Rank"
                         TransitionComponent={Zoom}
                       >
                         <Chip
-                          avatar={<Avatar
-                            className={clsx({[classes.backgroundColor]: true, [classes.orangeColor]: malScoreDirection === 'up', [classes.purpleColor]: malScoreDirection === 'down'})}
-                            variant="square"
-                          >M</Avatar>}
-                          className={clsx({[desktop.squareChip]: true, [desktop.chipRalMal]: true, [classes.orangeColor]: malScoreDirection === 'up', [classes.purpleColor]: malScoreDirection === 'down'})}
-                          label={malScore > 0 ? malScore : '-----'}
+                          className={clsx({[desktop.positionChip]: true, [classes.rankColor]: true})}
+                          label={pos + 1}
                           variant="outlined"
                         />
                       </LightTooltip>
                       <LightTooltip
                         enterDelay={500}
-                        placement="bottom"
-                        title="Reddit MyAnimeList Score"
+                        placement="left"
+                        title="Rank Change"
                         TransitionComponent={Zoom}
                       >
                         <Chip
-                          avatar={<Avatar
-                            className={clsx({[classes.orangeColor]: ralScoreDirection === 'up', [classes.purpleColor]: ralScoreDirection === 'down'})}
-                            variant="square"
-                          >R</Avatar>}
-                          className={clsx({[desktop.squareChip]: true, [desktop.chipRalMal]: true, [classes.orangeColor]: ralScoreDirection === 'up', [classes.purpleColor]: ralScoreDirection === 'down'})}
-                          label={ralScore > 0 ? ralScore : '-----'}
+                          avatar={posChangeIcon}
+                          className={clsx({[desktop.positionChangeChip]: true, [classes.orangeColor]: posDirection === 'up', [classes.purpleColor]: posDirection === 'down'})}
+                          label={!isNaN(posChange) ? Math.abs(posChange) : ''}
                           variant="outlined"
                         />
                       </LightTooltip>
                     </Grid>
+                    <Grid
+                      item
+                      style={{marginLeft: -10}}
+                      xs={3}
+                    >
+                      <Grid className={desktop.chipContainer}>
+                        <LightTooltip
+                          enterDelay={500}
+                          placement={scoreChangeIcon ? 'top':'right'}
+                          title="Karma Score"
+                          TransitionComponent={Zoom}
+                        >
+                          <Chip
+                            avatar={<ScoreIcon />}
+                            className={clsx({[desktop.squareChip]: true, [classes.rankColor]: true})}
+                            label={score}
+                            variant="outlined"
+                          />
+                        </LightTooltip>
+                      </Grid>
+                      <Grid className={desktop.chipContainer}>
+                        <LightTooltip
+                          enterDelay={500}
+                          placement={redditPollScoreIcon ? 'top':'right'}
+                          title="Episode Poll Score"
+                          TransitionComponent={Zoom}
+                        >
+                          <Chip
+                            avatar={<PollIcon className={clsx({[classes.orangeColor]: redditPollScoreDirection === 'up', [classes.purpleColor]: redditPollScoreDirection === 'down'})}/>}
+                            className={clsx({[desktop.squareChip]: true})}
+                            label={pollScore > 0 ? pollScore.toFixed(2) : '-----'}
+                            variant="outlined"
+                          />
+                        </LightTooltip>
+                      </Grid>
+                      <Grid className={desktop.chipContainer}>
+                        <LightTooltip
+                          enterDelay={500}
+                          placement={commentCountChangeIcon ? 'top':'right'}
+                          title="Discussion Comment Count"
+                          TransitionComponent={Zoom}
+                        >
+                          <Chip
+                            avatar={<ForumIcon/>}
+                            className={clsx({[desktop.squareChip]: true})}
+                            label={commentCount}
+                            variant="outlined"
+                          />
+                        </LightTooltip>
+                      </Grid>
+
+                    </Grid>
+                    <Grid
+                      item
+                      xs={3}
+                    >
+                      <Grid className={desktop.chipContainer}>
+                        <LightTooltip
+                          enterDelay={500}
+                          placement="right"
+                          title="Score Change"
+                          TransitionComponent={Zoom}
+                        >
+                          <Chip
+                            avatar={scoreChangeDirection === 'none' ? <RemoveIcon/> : scoreChangeIcon}
+                            className={clsx({[desktop.squareChip]: true, [classes.orangeColor]: scoreChangeDirection === 'up', [classes.purpleColor]: scoreChangeDirection === 'down'})}
+                            label={scoreChangeDirection === 'none' ? '000' : formatZeroes(Math.abs(scoreChange))}
+                            variant="outlined"
+                          />
+                        </LightTooltip>
+                      </Grid>
+                      <Grid className={desktop.chipContainer}>
+                        <LightTooltip
+                          enterDelay={500}
+                          placement="right"
+                          title="Poll Score Change"
+                          TransitionComponent={Zoom}
+                        >
+                          <Chip
+                            avatar={redditPollScoreDirection === 'none' ? <RemoveIcon/> : redditPollScoreIcon}
+                            className={clsx({[desktop.squareChip]: true, [classes.orangeColor]: redditPollScoreDirection === 'up', [classes.purpleColor]: redditPollScoreDirection === 'down'})}
+                            label={redditPollScoreDirection === 'none' ? '000' : Math.abs(pollScoreChange).toFixed(2)}
+                            variant="outlined"
+                          />
+                        </LightTooltip>
+                      </Grid>
+                      <Grid className={desktop.chipContainer}>
+                        <LightTooltip
+                          enterDelay={500}
+                          placement="right"
+                          title="Comment Count Change"
+                          TransitionComponent={Zoom}
+                        >
+                          <Chip
+                            avatar={commentCountChangeDirection === 'none' ? <RemoveIcon/> : commentCountChangeIcon}
+                            className={clsx({[desktop.squareChip]: true, [classes.orangeColor]: commentCountChangeDirection === 'up', [classes.purpleColor]: commentCountChangeDirection === 'down'})}
+                            label={commentCountChangeDirection === 'none' ? '000' : formatZeroes(Math.abs(commentCountChange))}
+                            variant="outlined"
+                          />
+                        </LightTooltip>
+                      </Grid>
+                    </Grid>
+                    <Grid container>
+                      <Grid
+                        item
+                        xs={10}
+                      >
+                        <LightTooltip
+                          enterDelay={500}
+                          placement="bottom"
+                          title="MyAnimeList Score"
+                          TransitionComponent={Zoom}
+                        >
+                          <Chip
+                            avatar={<Avatar
+                              className={clsx({[classes.backgroundColor]: true, [classes.orangeColor]: malScoreDirection === 'up', [classes.purpleColor]: malScoreDirection === 'down'})}
+                              variant="square"
+                            >M</Avatar>}
+                            className={clsx({[desktop.squareChip]: true, [desktop.chipRalMal]: true, [classes.orangeColor]: malScoreDirection === 'up', [classes.purpleColor]: malScoreDirection === 'down'})}
+                            label={malScore > 0 ? malScore : '-----'}
+                            variant="outlined"
+                          />
+                        </LightTooltip>
+                        <LightTooltip
+                          enterDelay={500}
+                          placement="bottom"
+                          title="Reddit MyAnimeList Score"
+                          TransitionComponent={Zoom}
+                        >
+                          <Chip
+                            avatar={<Avatar
+                              className={clsx({[classes.orangeColor]: ralScoreDirection === 'up', [classes.purpleColor]: ralScoreDirection === 'down'})}
+                              variant="square"
+                            >R</Avatar>}
+                            className={clsx({[desktop.squareChip]: true, [desktop.chipRalMal]: true, [classes.orangeColor]: ralScoreDirection === 'up', [classes.purpleColor]: ralScoreDirection === 'down'})}
+                            label={ralScore > 0 ? ralScore : '-----'}
+                            variant="outlined"
+                          />
+                        </LightTooltip>
+                      </Grid>
+                    </Grid>
                   </Grid>
                 </Grid>
-              </Grid>
-            </CardContent>
-          </div>
-
-        </Card>
-        {/* <Grid item xs={12}>
+              </CardContent>
+            </div>
+          </Card>
+        }
+        {!modernCardStyle && 
+          <Grid item xs={12}>
             <div className={clsx(classes.root, 'grow')}>
               <Paper
                 className={classes.paper}
@@ -658,7 +658,8 @@ const AnimeRankingResult = (props) => {
                 </Grid>
               </Paper>
             </div>
-          </Grid> */}
+          </Grid>
+        }
       </Hidden>
     </Grid>
 
