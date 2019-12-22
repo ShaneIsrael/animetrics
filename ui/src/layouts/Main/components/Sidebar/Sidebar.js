@@ -13,7 +13,9 @@ import HomeIcon from '@material-ui/icons/Home'
 import ScoreIcon from '@material-ui/icons/Score'
 import PollIcon from '@material-ui/icons/Poll'
 import ForumIcon from '@material-ui/icons/Forum'
-import HelpIcon from '@material-ui/icons/Help';
+import HelpIcon from '@material-ui/icons/Help'
+import WarningIcon from '@material-ui/icons/Warning'
+import FeedbackIcon from '@material-ui/icons/Feedback'
 
 const categories = [
   {
@@ -36,6 +38,9 @@ const categories = [
     id: 'Help / Support',
     children: [
       { id: 'About Animetrics', path: '/legend', icon: <HelpIcon /> },
+      { id: 'Submit Feedback', path: '/support/feedback', icon: <FeedbackIcon /> },
+      { id: 'Report A Problem', path: '/support/report-issue', icon: <WarningIcon /> },
+      { id: 'Report Incorrect Art', path: '/support/report-asset', icon: <WarningIcon /> },
     ],
   },
 ];

@@ -27,12 +27,11 @@ const useStyles = makeStyles(theme => ({
 
 export default function DetailsOverrideCard(props) {
   const classes = useStyles()
-  const { showToUpdate, title, subtitle} = props
+  const { authToken, showToUpdate, title, subtitle} = props
 
   const [newTvdbId, setNewTvdbId] = React.useState('')
   const [show, setShow] = React.useState(showToUpdate)
   const [disabled, setDisabled] = React.useState(false)
-  const [token, setToken] = React.useState('')
   const [error, setError] = React.useState(null)
   const [message, setMessage] = React.useState(null)
 
@@ -42,8 +41,7 @@ export default function DetailsOverrideCard(props) {
     setMessage(null)
     let updatedShow
     try {
-      updatedShow = (await OverridesService.overrideShowTvdbId(showId, newTvdbId, token)).data
-      console.log(updatedShow)
+      updatedShow = (await OverridesService.overrideShowTvdbId(showId, newTvdbId, authToken)).data
       setShow(updatedShow)
       setMessage('TVDB ID has been updated successfully!')
     } catch(err) {
@@ -76,7 +74,6 @@ export default function DetailsOverrideCard(props) {
           <Alert variant="success" message={message}/>
         }
         <div>
-          <TextField className={classes.textfield} value={token} onChange={e => setToken(e.target.value)} label="Authorization Token"/>
           <TextField className={classes.textfield} value={newTvdbId} onChange={e => setNewTvdbId(e.target.value)} label="New TVDB ID" />
         </div>
         <div>
