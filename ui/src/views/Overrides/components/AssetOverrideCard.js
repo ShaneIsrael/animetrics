@@ -28,14 +28,14 @@ const useStyles = makeStyles(theme => ({
 
 export default function AssetOverrideCard(props) {
   const classes = useStyles()
-  const { assetId, type, assetUrl, title, subtitle} = props
+  const { authToken, assetId, type, assetUrl, title, subtitle} = props
   const [assetURL, setAssetURL] = React.useState(assetUrl)
 
   const [newAssetUrl, setNewAssetUrl] = React.useState('')
   const [disabled, setDisabled] = React.useState(false)
-  const [token, setToken] = React.useState('')
   const [error, setError] = React.useState(null)
   const [message, setMessage] = React.useState(null)
+
 
   const updateAsset = async (id) => {
     setDisabled(true)
@@ -45,15 +45,15 @@ export default function AssetOverrideCard(props) {
     try {
       switch (type) {
         case 'poster':
-          newAsset = (await OverridesService.overrideAssetPoster(id, newAssetUrl, token)).data
+          newAsset = (await OverridesService.overrideAssetPoster(id, newAssetUrl, authToken)).data
           setAssetURL(newAsset.s3_poster)
           break
         case 'banner':
-          newAsset = (await OverridesService.overrideAssetBanner(id, newAssetUrl, token)).data
+          newAsset = (await OverridesService.overrideAssetBanner(id, newAssetUrl, authToken)).data
           setAssetURL(newAsset.s3_banner)
           break
         default:
-          newAsset = (await OverridesService.overrideAssetAvatar(id, newAssetUrl, token)).data
+          newAsset = (await OverridesService.overrideAssetAvatar(id, newAssetUrl, authToken)).data
           setAssetURL(newAsset.s3_avatar)
           break
       }
@@ -90,7 +90,6 @@ export default function AssetOverrideCard(props) {
           <Alert variant="success" message={message}/>
         }
         <div>
-          <TextField className={classes.textfield} value={token} onChange={e => setToken(e.target.value)} label="Authorization Token"/>
           <TextField className={classes.textfield} value={newAssetUrl} onChange={e => setNewAssetUrl(e.target.value)} label="New Asset URL" />
         </div>
         <div>
