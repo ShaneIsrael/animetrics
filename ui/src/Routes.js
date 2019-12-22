@@ -8,8 +8,10 @@ import {
   Dashboard as DashboardView,
   PollRankings as PollRankingsView,
   KarmaRankings as KarmaRankingsView,
+  RecentDiscussions as RecentDiscussionsView,
   Overrides as OverridesView,
-  NotFound as NotFoundView
+  NotFound as NotFoundView,
+  Legend as LegendView
 } from './views'
 
 const Routes = () => {
@@ -18,7 +20,7 @@ const Routes = () => {
       <Redirect
         exact
         from="/"
-        to="/karma-rankings"
+        to="/dashboard"
       />
       <RouteWithLayout
         component={DashboardView}
@@ -39,18 +41,30 @@ const Routes = () => {
         path="/poll-rankings"
       />
       <RouteWithLayout
+        component={RecentDiscussionsView}
+        exact
+        layout={MainLayout}
+        path="/discussions"
+      />
+      <RouteWithLayout
         component={OverridesView}
         exact
         layout={MainLayout}
         path="/overrides"
       />
       <RouteWithLayout
+        component={LegendView}
+        exact
+        layout={MainLayout}
+        path="/legend"
+      />
+      <RouteWithLayout
         component={NotFoundView}
         exact
         layout={MinimalLayout}
-        path="/not-found"
+        path="/404"
       />
-      <Redirect to="/not-found" />
+      <Redirect to="/404" />
     </Switch>
   )
 }

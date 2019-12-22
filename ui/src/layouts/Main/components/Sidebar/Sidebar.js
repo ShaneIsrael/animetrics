@@ -13,6 +13,7 @@ import HomeIcon from '@material-ui/icons/Home'
 import ScoreIcon from '@material-ui/icons/Score'
 import PollIcon from '@material-ui/icons/Poll'
 import ForumIcon from '@material-ui/icons/Forum'
+import HelpIcon from '@material-ui/icons/Help';
 
 const categories = [
   {
@@ -20,15 +21,21 @@ const categories = [
     children: [
       { id: 'Karma Rankings', path: '/karma-rankings', icon: <ScoreIcon />},
       { id: 'Poll Rankings', path: '/poll-rankings', icon: <PollIcon /> },
-      { id: 'Recent Discussions', path: '/discussions', icon: <ForumIcon /> },
+      { id: 'Discussion Finder', path: '/discussions', icon: <ForumIcon /> },
     ],
   },
   {
     id: '/r/Manga',
     children: [
-      { id: 'Karma Rankings', path: '', icon: <ScoreIcon /> },
-      { id: 'Poll Rankings', path: '', icon: <PollIcon /> },
-      { id: 'Recent Discussions', path: '', icon: <ForumIcon /> },
+      { id: 'Karma Rankings', path: 'under-construction', icon: <ScoreIcon /> },
+      { id: 'Poll Rankings', path: 'under-construction', icon: <PollIcon /> },
+      { id: 'Discussion Finder', path: 'under-construction', icon: <ForumIcon /> },
+    ],
+  },
+  {
+    id: 'Help / Support',
+    children: [
+      { id: 'About Animetrics', path: '/legend', icon: <HelpIcon /> },
     ],
   },
 ];

@@ -1,2 +1,2 @@
-export NODE_ENV=prod
-pm2 start src/app.js
+pm2 delete animetrics
+pm2 start env.config.js --env production

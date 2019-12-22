@@ -80,7 +80,7 @@ service.digestDiscussionPost = async (post) => {
   // logger.info(`Digesting: ${post.title}`)
   const seasonSplit = post.title.split(/ Season /)[1];
   const seasonNumber = seasonSplit ? seasonSplit.split(' ')[0] : 1
-  const showTitle = post.title.split(' - Episode')[0].split(' Season')[0]
+  const showTitle = post.title.replace('[Spoilers] ').split(' - Episode')[0].split(' Season')[0]
   const episodeNumber = post.title.split('- Episode ')[1].split(' ')[0]
   let pollUrl = null
   if (post.selftext && post.selftext.indexOf('Rate this episode here.') >= 0) {
@@ -91,6 +91,12 @@ service.digestDiscussionPost = async (post) => {
     pollUrl = post.selftext_html
     .split('">Rate')[0]
     .split('<h1><a href="')[1]
+  }
+  // attempt to grab from table, table likely doesn't exist so this is probably in vain.
+  if (!pollUrl) {
+    if (post.selftext.split(`${episodeNumber}|`).length > 1) {
+      pollUrl = post.selftext.split(`${episodeNumber}|`)[1].split('[Poll]')[1].split('/)')[0].replace('(', '')
+    }
   }
 
   let showRow = await Show.findOne({ where: { title: showTitle } })

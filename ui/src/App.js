@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Router } from 'react-router-dom'
 import { createBrowserHistory } from 'history'
-import { createMuiTheme, ThemeProvider, withStyles } from '@material-ui/core/styles'
+import { createMuiTheme } from '@material-ui/core/styles'
 import validate from 'validate.js'
 import ReactGA from 'react-ga'
 

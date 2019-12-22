@@ -3,4 +3,5 @@ export { default as KarmaRankings } from './KarmaRankings'
 export { default as PollRankings } from './PollRankings'
 export { default as Overrides } from './Overrides'
 export { default as NotFound } from './NotFound'
-
+export { default as RecentDiscussions } from './RecentDiscussions'
+export { default as Legend } from './Legend'

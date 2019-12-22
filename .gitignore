@@ -8,3 +8,4 @@ ui/package-lock.json
 
 ui/build
 server/src/databases/*.db
+server/logs/*.log
