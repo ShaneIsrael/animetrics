@@ -89,16 +89,19 @@ function Sidebar(props) {
     <Drawer variant="permanent" {...other}>
       <List disablePadding>
         <ListItem className={clsx(classes.firebase, classes.item, classes.itemCategory)}>
-          <RouterLink to="/">
-            <img
-              alt="ANIRANKS Logo"
-              src="/images/logos/logo_full_light_blue_wlb_stroke.png"
-              height={48}
-            />
-          </RouterLink>
+          {/* <RouterLink to={window.location.pathname}>
+
+          </RouterLink> */}
+          <img
+            style={{cursor: 'pointer'}}
+            alt="Animetrics Logo"
+            src="/images/logos/logo_full_light_blue_wlb_stroke.png"
+            height={48}
+            onClick={() => window.location.reload()}
+          />
         </ListItem>
-        <RouterLink style={{cursor: 'pointer'}} to='/dashboard'>
-          <ListItem className={clsx(classes.item, classes.itemCategory, (window.location.pathname === '/dashboard') && classes.itemActiveItem)}>
+        <RouterLink style={{cursor: 'pointer'}} to='/'>
+          <ListItem className={clsx(classes.item, classes.itemCategory, (window.location.pathname === '/') && classes.itemActiveItem)}>
             <ListItemIcon className={classes.itemIcon}>
               <HomeIcon />
             </ListItemIcon>
