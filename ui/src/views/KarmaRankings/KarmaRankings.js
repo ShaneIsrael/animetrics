@@ -298,19 +298,21 @@ const KarmaRankings = () => {
                 elevation={10}
                 square
               >
-                <Typography component="div">
-                  <Grid component="label" container alignItems="center" spacing={1}>
-                    <Grid item>Classic View</Grid>
-                    <Grid item>
-                      <AntSwitch
-                        checked={modernCardStyle}
-                        onChange={handleCardStyleChange}
-                        value={modernCardStyle}
-                      />
+                {!isMobile &&
+                  <Typography component="div">
+                    <Grid component="label" container alignItems="center" spacing={1}>
+                      <Grid item>Classic View</Grid>
+                      <Grid item>
+                        <AntSwitch
+                          checked={modernCardStyle}
+                          onChange={handleCardStyleChange}
+                          value={modernCardStyle}
+                        />
+                      </Grid>
+                      <Grid item>Modern View</Grid>
                     </Grid>
-                    <Grid item>Modern View</Grid>
-                  </Grid>
-                </Typography>
+                  </Typography>
+                }
                 <Grid
                   container
                   direction="column"
