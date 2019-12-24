@@ -16,6 +16,7 @@ import ForumIcon from '@material-ui/icons/Forum'
 import HelpIcon from '@material-ui/icons/Help'
 import WarningIcon from '@material-ui/icons/Warning'
 import FeedbackIcon from '@material-ui/icons/Feedback'
+import LocalCafeIcon from '@material-ui/icons/LocalCafe'
 
 const categories = [
   {
@@ -40,7 +41,12 @@ const categories = [
       { id: 'About Animetrics', path: '/legend', icon: <HelpIcon /> },
       { id: 'Submit Feedback', path: '/support/feedback', icon: <FeedbackIcon /> },
       { id: 'Report A Problem', path: '/support/report-issue', icon: <WarningIcon /> },
-      { id: 'Report Incorrect Art', path: '/support/report-asset', icon: <WarningIcon /> },
+    ],
+  },
+  {
+    id: 'Support Animetrics',
+    children: [
+      { id: 'Donate', path: 'https://donorbox.org/animetrics-website-support', icon: <LocalCafeIcon /> },
     ],
   },
 ];
@@ -130,24 +136,41 @@ function Sidebar(props) {
                 {id}
               </ListItemText>
             </ListItem>
-            {children.map(({ id: childId, path, icon }, index) => (
-              <RouterLink key={index} to={path}>
-                <ListItem
-                  key={childId}
-                  button
-                  className={clsx(classes.item, (window.location.pathname === path) && classes.itemActiveItem)}
-                >
-                  <ListItemIcon className={classes.itemIcon}>{icon}</ListItemIcon>
-                  <ListItemText
-                    classes={{
-                      primary: classes.itemPrimary,
-                    }}
-                  >
-                    {childId}
-                  </ListItemText>
-                </ListItem>
-              </RouterLink>
-            ))}
+            {children.map(({ id: childId, path, icon }, index) => {
+              if (childId === 'Donate') {
+              return <ListItem
+                        key={childId}
+                        button
+                        className={clsx(classes.item)}
+                        onClick={() => window.open(path, '_blank')}
+                      >
+                        <ListItemIcon className={classes.itemIcon}>{icon}</ListItemIcon>
+                        <ListItemText
+                          classes={{
+                            primary: classes.itemPrimary,
+                          }}
+                        >
+                          {childId}
+                        </ListItemText>
+                      </ListItem>
+              }
+              return <RouterLink key={index} to={path}>
+                      <ListItem
+                        key={childId}
+                        button
+                        className={clsx(classes.item, (window.location.pathname === path) && classes.itemActiveItem)}
+                      >
+                        <ListItemIcon className={classes.itemIcon}>{icon}</ListItemIcon>
+                        <ListItemText
+                          classes={{
+                            primary: classes.itemPrimary,
+                          }}
+                        >
+                          {childId}
+                        </ListItemText>
+                      </ListItem>
+                    </RouterLink>
+            })}
 
             <Divider className={classes.divider} />
           </React.Fragment>
