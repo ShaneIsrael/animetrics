@@ -79,10 +79,11 @@ service.digestDiscussionPost = async (post, ignoreFlair) => {
   if (post.title.indexOf('Megathread') !== -1) return
   if (post.title.indexOf('Episode') === -1) return
   // logger.info(`Digesting: ${post.title}`)
-  const seasonSplit = post.title.split(/ Season /)[1];
+  const postTitle = post.title.replace('Episodes', 'Episode')
+  const seasonSplit = postTitle.split(/ Season /)[1];
   const seasonNumber = seasonSplit ? seasonSplit.split(' ')[0] : 1
-  const showTitle = post.title.replace('[Spoilers] ', '').replace(' -', '').split(' Episode')[0].split(' Season')[0]
-  let episodeNumber = post.title.split(' Episode ')[1].split(' ')[0]
+  const showTitle = postTitle.replace('[Spoilers] ', '').replace(' -', '').split(' Episode')[0].split(' Season')[0]
+  let episodeNumber = postTitle.split(' Episode ')[1].split(' ')[0]
   if (episodeNumber.indexOf('-') > -1) {
     // account for discussions that are for 2 episodes, ignore the 2nd
     episodeNumber = episodeNumber.split('-')[0]
