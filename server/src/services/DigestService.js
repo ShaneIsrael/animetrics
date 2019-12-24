@@ -1,13 +1,14 @@
 const service = {}
 const moment = require('moment')
 const { findAnime, searchAnime } = require('./MALService')
-
+const utils = require('../tools/utils')
 const {
   Asset,
   Week,
   Show,
   EpisodeDiscussion,
   EpisodeResultLink,
+  Season,
 } = require('../models')
 
 const logger = require('../logger')
@@ -129,9 +130,16 @@ service.digestDiscussionPost = async (post) => {
     .format('YYYY-MM-DD 23:59:59')
   let weekRow = await Week.findOne({ where: { start_dt: postWeekStartDt } })
   if (!weekRow) {
+    const seasonOfYear = utils.getAnimeSeason(postWeekStartDt)
+    const year = moment.utc(postWeekStartDt).year()
+    const season = await Season.findOrCreate({
+      where: { season: seasonOfYear, year },
+      defaults: { season: seasonOfYear, year }
+    })
     weekRow = await Week.create({
       start_dt: postWeekStartDt,
       end_dt: postWeekEndDt,
+      seasonId: season[0].id
     })
   }
   if (!discussion) {

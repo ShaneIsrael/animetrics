@@ -9,7 +9,7 @@ import Box from '@material-ui/core/Box'
 import { Grid, Paper, InputLabel, FormControl, Select, MenuItem } from '@material-ui/core'
 import moment from 'moment'
 import { AnimePollRanking } from './components'
-import { WeekService, ResultsService } from '../../services'
+import { WeekService, ResultsService, SeasonService } from '../../services'
 import clsx from 'clsx'
 import { Alert } from 'components'
 
@@ -45,8 +45,7 @@ const useStyles = makeStyles(theme => ({
   },
   formControl: {
     margin: theme.spacing(1),
-    minWidth: 200,
-    width: '100%'
+    minWidth: 120,
   },
   selectEmpty: {
     marginTop: theme.spacing(2),
@@ -98,18 +97,24 @@ const PollRankings = () => {
   // eslint-disable-next-line
   const inputLabel = React.useRef(null);
   const [weeks, setWeeks] = React.useState(null)
-  const [selectedWeek, setSelectedWeek] = React.useState(1);
+  const [selectedWeek, setSelectedWeek] = React.useState(1)
+  const [seasons, setSeasons] = React.useState(null)
+  const [selectedSeason, setSelectedSeason] = React.useState(0)
+  const [seasonSelectOptions, setSeasonSelectOptions] = React.useState([])
   const [weekSelectOptions, setWeekSelectOptions] = React.useState([])
   const [renderedPollResults, setRenderedPollResults] = React.useState([])
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const wks = (await WeekService.getWeeks()).data
+        const seasons = (await SeasonService.getSeasons()).data
+        const wks = (await WeekService.getWeeksBySeason(seasons[0].season, seasons[0].year)).data
         const pollResults = (await ResultsService.getRedditPollResultsByWeek(wks[1].id)).data
         setWeeks(wks)
         setSelectedWeek(1)
+        setSeasons(seasons)
         createWeekSelectOptions(wks)
+        createSeasonSelectOptions(seasons)
         setRenderedPollResults(createPollResults(pollResults))
       } catch (err) {
         console.log(err)
@@ -139,11 +144,30 @@ const PollRankings = () => {
     }
   }, [weeks, selectedWeek, setSelectedWeek])
 
+  useEffect(() => {
+    
+    async function fetchData() {
+      try {
+        const season = seasons[selectedSeason]
+        const wks = (await WeekService.getWeeksBySeason(season.season, season.year)).data
+        const pollResults = (await ResultsService.getRedditPollResultsByWeek(wks[0].id)).data
+        setWeeks(wks)
+        if (selectedSeason === 0) setSelectedWeek(1)
+        else setSelectedWeek(0)
+        createWeekSelectOptions(wks)
+        setRenderedPollResults(createPollResults(pollResults))
+      } catch (err) {
+        console.log(err)
+      }
+    }
+    fetchData()
+  }, [selectedSeason])
+
   const createWeekSelectOptions = async (weeks) => {
     const weekSelectOptions = weeks.map((week, index) => {
       const start = moment(week.start_dt, 'YYYY-MM-DD HH:mm:ss').format('MMM Do, YYYY')
       const end = moment(week.end_dt, 'YYYY-MM-DD HH:mm:ss').format('MMM Do, YYYY')
-      if (index === 0) {
+      if (index === 0 && selectedSeason === 0) {
         return isMobile ? <option
           key={index}
           value={index}
@@ -169,6 +193,22 @@ const PollRankings = () => {
     setWeekSelectOptions(weekSelectOptions)
   }
 
+  const createSeasonSelectOptions = async (seasons) => {
+    const seasonSelectOptions = seasons.map((season, index) => {
+      return isMobile 
+      ? 
+      <option
+        key={index}
+        value={index}
+      >{season.season} {season.year}</option>
+      :
+      <MenuItem
+        key={index}
+        value={index}
+      ><center>{season.season.replace(/^\w/, c => c.toUpperCase())} of {season.year}</center></MenuItem>
+    })
+    setSeasonSelectOptions(seasonSelectOptions)
+  }
 
   useKey('ArrowRight', () => {
     setSelectedWeek(prevState => prevState + 1)
@@ -177,8 +217,11 @@ const PollRankings = () => {
     setSelectedWeek(prevState => prevState - 1)
   })
 
-  const handleChange = async event => {
+  const handleWeekChange = async event => {
     setSelectedWeek(event.target.value)
+  }
+  const handleSeasonChange = async event => {
+    setSelectedSeason(event.target.value)
   }
 
   return (
@@ -196,23 +239,38 @@ const PollRankings = () => {
           xs={12}
         >
           <Grid
-            item
-          >
-            <div>
-              <FormControl 
-                className={classes.formControl}
-                variant="outlined"
-              >
-                <Select 
-                  className={classes.selectEmpty} 
-                  native={isMobile} 
-                  onChange={handleChange}
-                  value={selectedWeek}
+            container
+            justify="center">
+            <Grid item>
+              <div>
+                <FormControl 
+                  className={classes.formControl}
+                  variant="outlined"
                 >
-                  {weekSelectOptions}
-                </Select>
-              </FormControl>
-            </div>
+                  <Select 
+                    className={classes.selectEmpty} 
+                    native={isMobile} 
+                    onChange={handleSeasonChange}
+                    value={selectedSeason}
+                  >
+                    {seasonSelectOptions}
+                  </Select>
+                </FormControl>
+                <FormControl 
+                  className={classes.formControl}
+                  variant="outlined"
+                >
+                  <Select 
+                    className={classes.selectEmpty} 
+                    native={isMobile} 
+                    onChange={handleWeekChange}
+                    value={selectedWeek}
+                  >
+                    {weekSelectOptions}
+                  </Select>
+                </FormControl>
+              </div>
+            </Grid>
           </Grid>
           <Grid
             container
