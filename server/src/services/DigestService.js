@@ -74,15 +74,15 @@ async function searchMal(seasonNumber, showTitle) {
  * Digests a discussion post and stores in the database
  * @param {Object} post A reddit discussion post object
  */
-service.digestDiscussionPost = async (post) => {
-  if (post.link_flair_text && post.link_flair_text !== 'Episode') return
+service.digestDiscussionPost = async (post, ignoreFlair) => {
+  if (!ignoreFlair && post.link_flair_text && post.link_flair_text !== 'Episode') return
   if (post.title.indexOf('Megathread') !== -1) return
-  if (post.title.indexOf('- Episode ') === -1) return
+  if (post.title.indexOf('Episode') === -1) return
   // logger.info(`Digesting: ${post.title}`)
   const seasonSplit = post.title.split(/ Season /)[1];
   const seasonNumber = seasonSplit ? seasonSplit.split(' ')[0] : 1
-  const showTitle = post.title.replace('[Spoilers] ').split(' - Episode')[0].split(' Season')[0]
-  const episodeNumber = post.title.split('- Episode ')[1].split(' ')[0]
+  const showTitle = post.title.replace('[Spoilers] ').replace('-', '').split(' Episode')[0].split(' Season')[0]
+  const episodeNumber = post.title.split(' Episode ')[1].split(' ')[0]
   let pollUrl = null
   if (post.selftext && post.selftext.indexOf('Rate this episode here.') >= 0) {
     pollUrl = post.selftext
