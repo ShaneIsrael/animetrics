@@ -81,7 +81,11 @@ async function digestArchivedDiscussions(year) {
     })
     if (!exists) {
       const post = await fetchDiscussions.getSubmission(id)
-      await digestDiscussionPost(post, true)
+      if (post) {
+        await digestDiscussionPost(post, true)
+      } else {
+        logger.info(`Could not find post with id: ${id}`)
+      }
     } else {
       logger.info('already tracked, skipping.')
     }
