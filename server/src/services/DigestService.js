@@ -82,11 +82,13 @@ service.digestDiscussionPost = async (post, ignoreFlair) => {
   const seasonSplit = post.title.split(/ Season /)[1];
   const seasonNumber = seasonSplit ? seasonSplit.split(' ')[0] : 1
   const showTitle = post.title.replace('[Spoilers] ', '').replace(' -', '').split(' Episode')[0].split(' Season')[0]
-  const episodeNumber = post.title.split(' Episode ')[1].split(' ')[0]
+  let episodeNumber = post.title.split(' Episode ')[1].split(' ')[0]
   if (episodeNumber.indexOf('-') > -1) {
     // account for discussions that are for 2 episodes, ignore the 2nd
     episodeNumber = episodeNumber.split('-')[0]
   }
+  // don't create discussions for filler episodes such as 5.5
+  if (!Number.isInteger(episodeNumber)) return
   let pollUrl = null
   if (post.selftext && post.selftext.indexOf('Rate this episode here.') >= 0) {
     pollUrl = post.selftext
