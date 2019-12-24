@@ -12,7 +12,7 @@ import { Grid, Paper, InputLabel, FormControl, Select, MenuItem, Switch, Typogra
 
 import { Alert } from 'components'
 import { AnimeRankingResult, DetailsCard } from './components'
-import { WeekService, ResultsService } from '../../services'
+import { WeekService, ResultsService, SeasonService } from '../../services'
 
 
 function TabPanel(props) {
@@ -45,8 +45,7 @@ const useStyles = makeStyles(theme => ({
   },
   formControl: {
     margin: theme.spacing(1),
-    minWidth: 200,
-    width: '100%'
+    minWidth: 120,
   },
   selectEmpty: {
     marginTop: theme.spacing(2),
@@ -156,7 +155,10 @@ const KarmaRankings = () => {
   const [resultData, setResultData] = React.useState(null)
   const [weeks, setWeeks] = React.useState(null)
   const [selectedWeek, setSelectedWeek] = React.useState(1);
+  const [seasons, setSeasons] = React.useState(null)
+  const [selectedSeason, setSelectedSeason] = React.useState(0)
   const [weekSelectOptions, setWeekSelectOptions] = React.useState([])
+  const [seasonSelectOptions, setSeasonSelectOptions] = React.useState([])
   const [selectedAnime, setSelectedAnime] = React.useState(null)
   const [renderedResults, setRenderedResults] = React.useState([])
   const [modernCardStyle, setModernCardStyle] = React.useState(true)
@@ -164,6 +166,7 @@ const KarmaRankings = () => {
   const setAnimeSelection = (selection) => {
     setSelectedAnime(selection)
   }
+  
   useEffect(() => {
     async function fetchData() {
       try {
@@ -171,13 +174,15 @@ const KarmaRankings = () => {
           ls('modernCardStyle', true)
         }
         setModernCardStyle(ls.get('modernCardStyle'))
-        const wks = (await WeekService.getWeeks()).data
+        const seasons = (await SeasonService.getSeasons()).data
+        const wks = (await WeekService.getWeeksBySeason(seasons[0].season, seasons[0].year)).data
         const results = (await ResultsService.getResultsByWeek(wks[1].id)).data
         setResultData(results)
         setWeeks(wks)
+        setSeasons(seasons)
         setSelectedWeek(1)
         createWeekSelectOptions(wks)
-
+        createSeasonSelectOptions(seasons)
         setRenderedResults(createResults(results, setAnimeSelection))
       } catch (err) {
         console.log(err)
@@ -208,11 +213,34 @@ const KarmaRankings = () => {
     }
   }, [weeks, selectedWeek, setSelectedWeek, modernCardStyle])
 
+
+  
+  useEffect(() => {
+    
+    async function fetchData() {
+      try {
+        const season = seasons[selectedSeason]
+        const wks = (await WeekService.getWeeksBySeason(season.season, season.year)).data
+        const results = (await ResultsService.getResultsByWeek(wks[0].id)).data
+        setResultData(results)
+        setWeeks(wks)
+        if (selectedSeason === 0) setSelectedWeek(1)
+        else setSelectedWeek(0)
+        createWeekSelectOptions(wks)
+        setRenderedResults(createResults(results, setAnimeSelection))
+      } catch (err) {
+        console.log(err)
+      }
+    }
+    fetchData()
+  }, [selectedSeason])
+  
+
   const createWeekSelectOptions = async (weeks) => {
     const weekSelectOptions = weeks.map((week, index) => {
       const start = moment(week.start_dt, 'YYYY-MM-DD HH:mm:ss').format('MMM Do, YYYY')
       const end = moment(week.end_dt, 'YYYY-MM-DD HH:mm:ss').format('MMM Do, YYYY')
-      if (index === 0) {
+      if (index === 0 && selectedSeason === 0) {
         return isMobile ? <option
           key={index}
           value={index}>Current Week</option> 
@@ -234,6 +262,23 @@ const KarmaRankings = () => {
     setWeekSelectOptions(weekSelectOptions)
   }
 
+  const createSeasonSelectOptions = async (seasons) => {
+    const seasonSelectOptions = seasons.map((season, index) => {
+      return isMobile 
+      ? 
+      <option
+        key={index}
+        value={index}
+      >{season.season} {season.year}</option>
+      :
+      <MenuItem
+        key={index}
+        value={index}
+      ><center>{season.season.replace(/^\w/, c => c.toUpperCase())} of {season.year}</center></MenuItem>
+    })
+    setSeasonSelectOptions(seasonSelectOptions)
+  }
+
 
   useKey('ArrowRight', () => {
     setSelectedWeek(prevState => prevState + 1)
@@ -242,8 +287,11 @@ const KarmaRankings = () => {
     setSelectedWeek(prevState => prevState - 1)
   })
 
-  const handleChange = async event => {
+  const handleWeekChange = async event => {
     setSelectedWeek(event.target.value)
+  }
+  const handleSeasonChange = async event => {
+    setSelectedSeason(event.target.value)
   }
   const handleCardStyleChange = event => {
     ls('modernCardStyle', event.target.checked)
@@ -266,28 +314,42 @@ const KarmaRankings = () => {
 
         <Grid
           container
-          item
           justify="center"
           xs={12}
         >
           <Grid
-            item
-          >
-            <div>
-              <FormControl 
-                className={classes.formControl}
-                variant="outlined"
-              >
-                <Select 
-                  className={classes.selectEmpty} 
-                  native={isMobile} 
-                  onChange={handleChange}
-                  value={selectedWeek}
+            container
+            justify="center">
+            <Grid item>
+              <div>
+                <FormControl 
+                  className={classes.formControl}
+                  variant="outlined"
                 >
-                  {weekSelectOptions}
-                </Select>
-              </FormControl>
-            </div>
+                  <Select 
+                    className={classes.selectEmpty} 
+                    native={isMobile} 
+                    onChange={handleSeasonChange}
+                    value={selectedSeason}
+                  >
+                    {seasonSelectOptions}
+                  </Select>
+                </FormControl>
+                <FormControl 
+                  className={classes.formControl}
+                  variant="outlined"
+                >
+                  <Select 
+                    className={classes.selectEmpty} 
+                    native={isMobile} 
+                    onChange={handleWeekChange}
+                    value={selectedWeek}
+                  >
+                    {weekSelectOptions}
+                  </Select>
+                </FormControl>
+              </div>
+            </Grid>
           </Grid>
           <Grid container direction="column" justify="center" alignItems="center" >
             <Grid

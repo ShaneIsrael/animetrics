@@ -149,13 +149,16 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: 'rgba(0, 0, 0, 0.4)',
     borderRadius: 0,
     width: 300,
-    height: 125,
+    height: '100%',
   },
   cardHeader: {
     padding: 8
   },
   cardContent: {
     padding: 8,
+    '&:last-child': {
+      paddingBottom: 8
+    }
   },
   squareChip: {
     borderRadius: 0,
@@ -197,13 +200,16 @@ const desktopStyles = makeStyles(theme => ({
     backgroundColor: 'rgba(0, 0, 0, 0.4)',
     borderRadius: 0,
     width: 450,
-    height: 155,
+    height: '100%',
   },
   cardHeader: {
     padding: 8,
   },
   cardContent: {
     padding: 8,
+    '&:last-child': {
+      paddingBottom: 8
+    }
   },
   squareChip: {
     borderRadius: 0,

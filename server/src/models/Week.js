@@ -6,6 +6,10 @@ module.exports = (connection, Sequelize) => connection.define(
       primaryKey: true,
       autoIncrement: true,
     },
+    seasonId: {
+      type: Sequelize.INTEGER,
+      foreignKey: true,
+    },
     start_dt: {
       type: Sequelize.DATE,
       allowNull: false,

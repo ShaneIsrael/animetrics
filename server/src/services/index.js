@@ -9,6 +9,7 @@ const TokenService = require('./TokenService')
 const OverridesService = require('./OverridesService')
 const ShowService = require('./ShowService')
 const DiscussionService = require('./DiscussionService')
+const SeasonService = require('./SeasonService')
 
 module.exports = {
   ...WeekService,
@@ -22,4 +23,5 @@ module.exports = {
   ...OverridesService,
   ...ShowService,
   ...DiscussionService,
+  ...SeasonService,
 }

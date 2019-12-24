@@ -6,6 +6,7 @@ const OverridesController = require('./OverridesController')
 const ShowController = require('./ShowController')
 const AssetController = require('./AssetController')
 const DiscussionController = require('./DiscussionController')
+const SeasonController = require('./SeasonController')
 
 module.exports = {
   ...WeekController,
@@ -16,4 +17,5 @@ module.exports = {
   ...ShowController,
   ...AssetController,
   ...DiscussionController,
+  ...SeasonController,
 }
