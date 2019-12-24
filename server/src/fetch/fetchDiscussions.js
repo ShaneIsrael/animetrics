@@ -70,7 +70,7 @@ module.exports = {
       const post = await r.getSubmission(id).fetch();
       return post
     } catch (err) {
-      if (err.response.status === 404) {
+      if (err.statusCode === 404) {
         return null
       }
       throw err
