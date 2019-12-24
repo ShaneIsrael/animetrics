@@ -96,7 +96,11 @@ service.digestDiscussionPost = async (post, ignoreFlair) => {
   // attempt to grab from table, table likely doesn't exist so this is probably in vain.
   if (!pollUrl) {
     if (post.selftext.split(`${episodeNumber}|`).length > 1) {
-      pollUrl = post.selftext.split(`${episodeNumber}|`)[1].split('[Poll]')[1].split('/)')[0].replace('(', '')
+      const tableSplit = post.selftext.split(`${episodeNumber}|`)[1]
+      const pollSplit = tableSplit.split('[Poll]')[1]
+      if (pollSplit) {
+        pollUrl = pollSplit.split('/)')[0].replace('(', '')
+      }
     }
   }
 
