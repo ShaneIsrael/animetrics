@@ -88,7 +88,7 @@ service.digestDiscussionPost = async (post, ignoreFlair) => {
     episodeNumber = episodeNumber.split('-')[0]
   }
   // don't create discussions for filler episodes such as 5.5
-  if (!Number.isInteger(episodeNumber)) return
+  if (!Number.isInteger(Number(episodeNumber))) return
   let pollUrl = null
   if (post.selftext && post.selftext.indexOf('Rate this episode here.') >= 0) {
     pollUrl = post.selftext
