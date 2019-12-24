@@ -66,7 +66,14 @@ module.exports = {
   },
 
   async getSubmission(id) {
-    const post = await r.getSubmission(id).fetch();
-    return post;
+    try {
+      const post = await r.getSubmission(id).fetch();
+      return post
+    } catch (err) {
+      if (err.response.status === 404) {
+        return null
+      }
+      throw err
+    }
   },
 }
