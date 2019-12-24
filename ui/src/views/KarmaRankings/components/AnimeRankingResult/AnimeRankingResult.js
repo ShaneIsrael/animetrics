@@ -627,7 +627,11 @@ const AnimeRankingResult = (props) => {
         }
         {!modernCardStyle && 
           <Grid item xs={12}>
-            <div className={clsx(classes.root, 'grow')}>
+            <div 
+              className={clsx(classes.root, 'grow')}
+              onClick={() => handleSelection(result.result.id, result.show.id, result.assets, title)}
+              style={{flexGrow: 0, cursor: 'pointer'}}
+            >
               <Paper
                 className={classes.paper}
                 square
