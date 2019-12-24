@@ -81,7 +81,7 @@ async function digestArchivedDiscussions(year) {
     })
     if (!exists) {
       const post = await fetchDiscussions.getSubmission(id)
-      await digestDiscussionPost(post)
+      await digestDiscussionPost(post, true)
     } else {
       logger.info('already tracked, skipping.')
     }
