@@ -182,12 +182,12 @@ const PollRankings = () => {
           <option
             key={index}
             value={index}
-          >{start} &rarr; {end}</option>
+          >Week {weeks.length - index}</option>
           :
           <MenuItem
             key={index}
             value={index}
-          ><center>{start} &rarr; {end}</center></MenuItem>
+          ><center>Week {weeks.length - index}</center></MenuItem>
       }
     })
     setWeekSelectOptions(weekSelectOptions)
