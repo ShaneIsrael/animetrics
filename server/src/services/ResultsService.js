@@ -115,7 +115,7 @@ service.getResultsByWeek = async (id) => {
 
   const prevWeek = await Week.findOne({ where: { [Op.and]: { start_dt: { [Op.lte]: prevWeekDt }, end_dt: { [Op.gte]: prevWeekDt } } } })
   let previousResultLinks
-  if (prevWeek) { previousResultLinks = await EpisodeResultLink.findAll({ where: { weekId: prevWeek.id }, include: [{ model: Show, include: [{ model: Asset, raw: true }] }, {model: EpisodeDiscussion, include: [RedditPollResult]}, { model: EpisodeDiscussionResult, include: [MALSnapshot] }] }) }
+  if (prevWeek) { previousResultLinks = await EpisodeResultLink.findAll({ where: { weekId: prevWeek.id, episodeDiscussionResultId: { [Op.ne]: null } }, include: [{ model: Show, include: [{ model: Asset, raw: true }] }, {model: EpisodeDiscussion, include: [RedditPollResult]}, { model: EpisodeDiscussionResult, include: [MALSnapshot] }] }) }
 
   const resultObjects = {}
   for (const rl of resultLinks) {
