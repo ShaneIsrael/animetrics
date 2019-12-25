@@ -13,7 +13,7 @@ const { environment } = require('../config')
 const config = require('../config')[environment].assets
 const spaces = require('../config').spaces
 const logger = require('../logger')
-const AssetService = require('./AssetService')
+const AssetService = require('../services/AssetService')
 
 const sleep = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds))
 
