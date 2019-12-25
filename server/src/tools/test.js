@@ -1,23 +1,28 @@
-const moment = require('moment')
-const { Week, Season } = require('../models')
-const utils = require('./utils')
+const logger = require('../logger')
+const {
+  getSeriesPoster,
+} = require('../services')
+const {
+  Asset, Show, Op,
+} = require('../models')
+const fetchAssets = require('../fetch/fetchAssets')
 
-async function init() {
-  const weeks = await Week.findAll({
+async function updatePosters() {
+  const assets = await Asset.findAll({
     where: {
-      seasonId: null
+      poster_art: null,
     },
-    order: [['start_dt', 'ASC']]
+    include: [Show],
   })
-  for (const week of weeks) {
-    const year = moment.utc(week.start_dt).year()
-    const season = utils.getAnimeSeason(week.start_dt)
-    const seasonResult = await Season.findOrCreate({
-      where: { season, year },
-      defaults: { season, year }
-    })
-    week.seasonId = seasonResult[0].id
-    week.save()
+  for (const asset of assets) {
+    const art = await getSeriesPoster(asset.Show.tvdb_id)
+    if (art === null) {
+      console.log(asset.Show.title, asset.Show.tvdb_id)
+    } else {
+      asset.poster_art = art
+      asset.save()
+    }
   }
+  await fetchAssets.fetch()
 }
-init()
+updatePosters()
