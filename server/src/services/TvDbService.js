@@ -112,6 +112,7 @@ async function getPoster(id) {
     }
     return highestRated.fileName;
   } catch (err) {
+    logger.error(err.message)
     return null;
   }
 }
