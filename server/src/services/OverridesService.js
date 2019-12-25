@@ -14,6 +14,8 @@ const TvDbService = require('./TvDbService')
 const { environment } = require('../config')
 const config = require('../config')[environment].assets
 
+const fetchAssets = require('../fetch/fetchAssets')
+
 const sleep = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds))
 async function upload(type, overrideAssetUrl) {
   const imageName = uuidv4()
@@ -63,8 +65,10 @@ service.overrideAssetPoster = async (assetId, assetUrl, token) => {
     table_id: asset.id,
     previous_values: asset.dataValues,
   })
+  if (!asset.poster_art) asset.poster_art = ulResp.Key
   asset.s3_poster = ulResp.Key
   asset.save()
+  await fetchAssets.fetchByAsset(asset)
   return asset
 }
 
