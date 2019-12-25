@@ -211,6 +211,13 @@ module.exports = {
       logger.error(err)
     }
   },
+  async fetchByAsset(asset) {
+    if (!asset.s3_poster) await createS3Poster(asset)
+    if (!asset.s3_banner) await createBanner(asset)
+    if (!asset.s3_avatar) await createAvatar(asset)
+    asset.s3_bucket = 'animetrics'
+    asset.save()
+  },
   async createS3Poster(asset) {
     await createS3Poster(asset)
   },
