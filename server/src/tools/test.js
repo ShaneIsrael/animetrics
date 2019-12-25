@@ -1,6 +1,6 @@
 const logger = require('../logger')
 const {
-  getSeriesPoster,
+  getSeriesPoster, authTvDb
 } = require('../services')
 const {
   Asset, Show, Op,
@@ -8,6 +8,7 @@ const {
 const fetchAssets = require('../fetch/fetchAssets')
 
 async function updatePosters() {
+  await authTvDb()
   const assets = await Asset.findAll({
     where: {
       poster_art: null,
