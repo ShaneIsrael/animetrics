@@ -28,7 +28,7 @@ service.getShowsAndAssets = async () => {
   return shows
 }
 
-const { EpisodeDiscussion, EpisodeDiscussionResult, MALSnapshot, RedditPollResult } = require('../models')
+const { EpisodeDiscussion, EpisodeDiscussionResult, MALSnapshot, RedditPollResult, EpisodeResultLink } = require('../models')
 
 service.fix = async(req, res) => {
   const show1 = req.query.correct
@@ -49,6 +49,8 @@ service.fix = async(req, res) => {
     rows = await RedditPollResult.findAll({where: {showId: incorrectShow.id}})
     replaceShowId(correctShow.id, rows)
     rows = await EpisodeDiscussionResult.findAll({where: {showId: incorrectShow.id}})
+    replaceShowId(correctShow.id, rows)
+    rows = await EpisodeResultLink.findAll({where: {showId: incorrectShow.id}})
     replaceShowId(correctShow.id, rows)
 
     await incorrectShow.destroy()
