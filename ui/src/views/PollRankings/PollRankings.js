@@ -148,14 +148,16 @@ const PollRankings = () => {
     
     async function fetchData() {
       try {
-        const season = seasons[selectedSeason]
-        const wks = (await WeekService.getWeeksBySeason(season.season, season.year)).data
-        const pollResults = (await ResultsService.getRedditPollResultsByWeek(wks[0].id)).data
-        setWeeks(wks)
-        if (selectedSeason === 0) setSelectedWeek(1)
-        else setSelectedWeek(0)
-        createWeekSelectOptions(wks)
-        setRenderedPollResults(createPollResults(pollResults))
+        if (seasons) {
+          const season = seasons[selectedSeason]
+          const wks = (await WeekService.getWeeksBySeason(season.season, season.year)).data
+          const pollResults = (await ResultsService.getRedditPollResultsByWeek(wks[0].id)).data
+          setWeeks(wks)
+          if (selectedSeason === 0) setSelectedWeek(1)
+          else setSelectedWeek(0)
+          createWeekSelectOptions(wks)
+          setRenderedPollResults(createPollResults(pollResults))
+        }
       } catch (err) {
         console.log(err)
       }
