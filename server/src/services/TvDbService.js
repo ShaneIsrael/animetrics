@@ -131,6 +131,7 @@ service.authTvDb = async () => {
   const res = (await tvdb.post('/login', {
     apikey: config.API_KEY,
   })).data;
+  console.log(res.token)
   process.env.TVDB_JWT_TOKEN = res.token
 }
 service.refreshTvDb = async () => {
