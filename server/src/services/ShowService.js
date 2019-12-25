@@ -30,7 +30,7 @@ service.getShowsAndAssets = async () => {
 
 const { EpisodeDiscussion, EpisodeDiscussionResult, MALSnapshot, RedditPollResult, EpisodeResultLink } = require('../models')
 
-service.fix = async(req, res) => {
+service.fixDuplicateShow = async(req, res) => {
   const show1 = req.query.correct
   const show2 = req.query.incorrect
 

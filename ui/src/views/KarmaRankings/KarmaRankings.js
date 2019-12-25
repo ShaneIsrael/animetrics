@@ -219,15 +219,17 @@ const KarmaRankings = () => {
     
     async function fetchData() {
       try {
-        const season = seasons[selectedSeason]
-        const wks = (await WeekService.getWeeksBySeason(season.season, season.year)).data
-        const results = (await ResultsService.getResultsByWeek(wks[0].id)).data
-        setResultData(results)
-        setWeeks(wks)
-        if (selectedSeason === 0) setSelectedWeek(1)
-        else setSelectedWeek(0)
-        createWeekSelectOptions(wks)
-        setRenderedResults(createResults(results, setAnimeSelection))
+        if (seasons) {
+          const season = seasons[selectedSeason]
+          const wks = (await WeekService.getWeeksBySeason(season.season, season.year)).data
+          const results = (await ResultsService.getResultsByWeek(wks[0].id)).data
+          setResultData(results)
+          setWeeks(wks)
+          if (selectedSeason === 0) setSelectedWeek(1)
+          else setSelectedWeek(0)
+          createWeekSelectOptions(wks)
+          setRenderedResults(createResults(results, setAnimeSelection))
+        }
       } catch (err) {
         console.log(err)
       }
