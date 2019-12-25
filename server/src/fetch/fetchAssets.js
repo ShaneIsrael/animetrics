@@ -13,7 +13,7 @@ const { environment } = require('../config')
 const config = require('../config')[environment].assets
 const spaces = require('../config').spaces
 const logger = require('../logger')
-const { uploadFileToS3 } = require('../services')
+const AssetService = require('./AssetService')
 
 const sleep = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds))
 
@@ -131,7 +131,7 @@ async function createS3Poster(asset) {
   if (filename) {
     // sleep 500 miliseconds so that files get closed before trying to upload
     await sleep(500)
-    const s3Resp = await uploadFileToS3(filename, `anime_assets/${imageName}_poster.jpg`)
+    const s3Resp = await AssetService.uploadFileToS3(filename, `anime_assets/${imageName}_poster.jpg`)
     asset.s3_poster = s3Resp.Key
     asset.save()
   }
@@ -153,7 +153,7 @@ async function createBanner(asset) {
   if (path) {
     // sleep 500 miliseconds so that files get closed before trying to upload
     await sleep(500)
-    const s3BannerResp = await uploadFileToS3(path, `anime_assets/${imageName}_banner.jpg`)
+    const s3BannerResp = await AssetService.uploadFileToS3(path, `anime_assets/${imageName}_banner.jpg`)
     asset.s3_banner = s3BannerResp.Key
     asset.save()
   }
@@ -174,7 +174,7 @@ async function createAvatar(asset) {
   if (path) {
     // sleep 500 miliseconds so that files get closed before trying to upload
     await sleep(500)
-    const s3AvatarResp = await uploadFileToS3(path, `anime_assets/${imageName}_avatar.jpg`)
+    const s3AvatarResp = await AssetService.uploadFileToS3(path, `anime_assets/${imageName}_avatar.jpg`)
     asset.s3_avatar = s3AvatarResp.Key
     asset.save()
   }
