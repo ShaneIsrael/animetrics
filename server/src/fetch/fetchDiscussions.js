@@ -23,6 +23,13 @@ module.exports = {
     })
     return posts
   },
+  async fetchById(id) {
+    const post = await ps.searchById(id, {
+      subreddit: 'anime',
+      fields: 'id,title,score,num_comments,url,selftext,created_utc,',
+    })
+    return post[0]
+  },
   async recursiveFetch(days) {
     let total = []
     let left = days

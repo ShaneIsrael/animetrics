@@ -117,6 +117,7 @@ export default function DetailsCard(props) {
   }
 
   const title = details && details.show.seriesName
+  const posterUrl = selectedAnime.assets && selectedAnime.assets[0].s3_poster ? `https://animetrics.sfo2.cdn.digitaloceanspaces.com/${result.assets[0].s3_poster}` : 'https://animetrics.sfo2.cdn.digitaloceanspaces.com/animetrics/missing_poster_art.png'
   const cardRender = (
     <div>
       <Hidden
@@ -129,7 +130,7 @@ export default function DetailsCard(props) {
             className={classes.cover}
             alt="Selected Anime Details"
             // height="500"
-            image={`https://animetrics.sfo2.cdn.digitaloceanspaces.com/${selectedAnime.assets[0].s3_poster}`}
+            image={posterUrl}
             title={title}
           />
           <div className={classes.details}>
@@ -171,7 +172,7 @@ export default function DetailsCard(props) {
               component="img"
               alt="Selected Anime Details"
               height="500"
-              image={`https://animetrics.sfo2.cdn.digitaloceanspaces.com/${selectedAnime.assets[0].s3_poster}`}
+              image={posterUrl}
               title={title}
             />
             <CardContent className={classes.contentMobile}>
