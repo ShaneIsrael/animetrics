@@ -121,7 +121,7 @@ function createResults(results, setHandler, modernCardStyle) {
         score={res.result.ups}
         scorePrevious={res.previous.result ? res.previous.result.ups : null}
         setAnimeSelection={setHandler}
-        title={res.show.title}
+        title={res.show.english_title ? res.show.english_title : res.show.title}
       />
     })
     return render

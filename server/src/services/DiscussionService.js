@@ -74,6 +74,11 @@ service.getDiscussionsByPage = async (page, size, query) => {
             },
           },
           {
+            english_title: {
+              [Op.like]: `%${query}%`
+            }
+          },
+          {
             seriesName:{
               [Op.like]: `%${query}%`,
             }
@@ -81,17 +86,19 @@ service.getDiscussionsByPage = async (page, size, query) => {
         ]
       },
     })
-    let showTitle, altTitle, seriesName
+    let showTitle, altTitle, seriesName, englishTitle
     if (show) {
       showTitle = show.title,
       altTitle = show.alt_title,
       seriesName = show.seriesName
+      englishTitle = show.english_title
     }
     let or = [
       { post_title: { [Op.like]: `%${query}%` } },
       { post_title: { [Op.like]: `%${showTitle}%` } },
       { post_title: { [Op.like]: `%${altTitle}%` } },
       { post_title: { [Op.like]: `%${seriesName}%` } },
+      { post_title: { [Op.like]: `%${englishTitle}%` } },
     ]
 
     discussions = await EpisodeDiscussion.findAll({
