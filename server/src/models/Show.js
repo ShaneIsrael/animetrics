@@ -19,6 +19,9 @@ module.exports = (connection, Sequelize) => connection.define(
     alt_title: {
       type: Sequelize.STRING,
     },
+    english_title: {
+      type: Sequelize.STRING,
+    },
     seriesName: {
       type: Sequelize.STRING,
     },

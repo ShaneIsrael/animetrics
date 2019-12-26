@@ -243,7 +243,7 @@ const AnimePollRanking = (props) => {
             avatar={
               <LazyLoad debounce={true} offsetVertical={400} width={50}><Avatar className={classes.avatarMobile} src={avatar} /></LazyLoad>
             }
-            title={current.show.title}
+            title={current.show.english_title ? current.show.english_title : current.show.title}
             subheader={`Episode ${current.discussion.episode}`}
             subheaderTypographyProps={{color: 'primary'}}
           />
@@ -284,7 +284,7 @@ const AnimePollRanking = (props) => {
             avatar={
               <LazyLoad debounce={true} offsetVertical={400} width={80}><Avatar className={desktop.avatar} src={avatar} /></LazyLoad>
             }
-            title={current.show.title}
+            title={current.show.english_title ? current.show.english_title : current.show.title}
             titleTypographyProps={{variant: 'h6', component: 'h6'}}
             subheader={`Episode ${current.discussion.episode}`}
             subheaderTypographyProps={{color: 'primary'}}
@@ -390,7 +390,7 @@ const AnimePollRanking = (props) => {
                   square
                 >
                   <Typography align="left" className={clsx(classes.titleFont)} variant="h5">
-                    {current.show.title.toUpperCase()}
+                    {current.show.english_title ? current.show.english_title.toUpperCase() : current.show.title.toUpperCase()}
                   </Typography>
                 </Paper>
                 <Paper
