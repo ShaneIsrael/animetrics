@@ -202,7 +202,7 @@ const PollRankings = () => {
       <option
         key={index}
         value={index}
-      >{season.season} {season.year}</option>
+      >{season.season.replace(/^\w/, c => c.toUpperCase())} of {season.year}</option>
       :
       <MenuItem
         key={index}
