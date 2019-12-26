@@ -102,6 +102,9 @@ async function digestDiscussionPost(post, ignoreFlair) {
         },
         {
           alt_title: altTitle
+        },
+        {
+          english_title: altTitle
         }
       ]
     } })
@@ -112,7 +115,8 @@ async function digestDiscussionPost(post, ignoreFlair) {
     logger.info(`Creating new show: title=${showTitle} altTitle=${altTitle} malId=${malId}`)
     showRow = await Show.create({
       title: showTitle,
-      alt_title: altTitle,
+      alt_title: malDetails.title_synonyms ? malDetails.title_synonyms[0] : null,
+      english_title: malDetails.english_title,
       mal_id: malId,
     })
   }

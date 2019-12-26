@@ -84,7 +84,7 @@ export default function DiscussionsTable(props) {
     return discussions.map((d, idx) => {
       const utcDate = moment.utc(d.post_created_dt)
       const localDate = moment(utcDate).local()
-      return {key: idx, action: createViewButton(d.post_url), avatar: createAvatar(d.Show.Assets[0].s3_avatar), title: d.Show.title, season: d.season, episode: d.episode, date: localDate.format('LLL')}
+      return {key: idx, action: createViewButton(d.post_url), avatar: createAvatar(d.Show.Assets[0].s3_avatar), title: d.Show.english_title ? d.Show.english_title : d.Show.title, season: d.season, episode: d.episode, date: localDate.format('LLL')}
     })
   }, [createViewButton, createAvatar])
 
@@ -132,7 +132,7 @@ export default function DiscussionsTable(props) {
                   tabIndex={-1}
                 >
                   {columns.map(column => {
-                    const value = row[column.id]
+                    let value = row[column.id]
                     if (isMobileOnly && column.id === 'episode') {
                       return <TableCell
                         align={column.align}
