@@ -15,7 +15,7 @@ import PollIcon from '@material-ui/icons/Poll'
 import ForumIcon from '@material-ui/icons/Forum'
 import HelpIcon from '@material-ui/icons/Help'
 import WarningIcon from '@material-ui/icons/Warning'
-import FeedbackIcon from '@material-ui/icons/Feedback'
+import RateReviewIcon from '@material-ui/icons/RateReview'
 import LocalCafeIcon from '@material-ui/icons/LocalCafe'
 
 const categories = [
@@ -39,13 +39,13 @@ const categories = [
     id: 'Help / Support',
     children: [
       { id: 'About Animetrics', path: '/legend', icon: <HelpIcon /> },
-      { id: 'Submit Feedback', path: '/support/feedback', icon: <FeedbackIcon /> },
-      { id: 'Report A Problem', path: '/support/report-issue', icon: <WarningIcon /> },
+      { id: 'Report Issue', path: '/support/report-issue', icon: <WarningIcon /> },
     ],
   },
   {
     id: 'Support Animetrics',
     children: [
+      { id: 'Send Feedback', path: '/support/feedback', icon: <RateReviewIcon /> },
       { id: 'Donate', path: 'https://donorbox.org/animetrics-website-support', icon: <LocalCafeIcon /> },
     ],
   },
