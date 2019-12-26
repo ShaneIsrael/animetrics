@@ -276,6 +276,7 @@ const AnimeRankingResult = (props) => {
   }
 
   const modernCardStyle = ls.get('modernCardStyle')
+  const posterUrl = result.assets && result.assets[0].s3_poster ? `https://animetrics.sfo2.cdn.digitaloceanspaces.com/${result.assets[0].s3_poster}` : 'https://animetrics.sfo2.cdn.digitaloceanspaces.com/animetrics/missing_poster_art.png'
   return (
     <Grid
       item
@@ -313,7 +314,7 @@ const AnimeRankingResult = (props) => {
                 <img
                   alt="poster art"
                   className={mobile.cover}
-                  src={`https://animetrics.sfo2.cdn.digitaloceanspaces.com/${result.assets[0].s3_poster}`}
+                  src={posterUrl}
                 />
               </LazyLoad>
             </CardMedia>
@@ -404,7 +405,7 @@ const AnimeRankingResult = (props) => {
                   <img
                     alt="poster art"
                     className={desktop.cover}
-                    src={`https://animetrics.sfo2.cdn.digitaloceanspaces.com/${result.assets[0].s3_poster}`}
+                    src={posterUrl}
                   />
                 </LazyLoad>
               </CardMedia>
