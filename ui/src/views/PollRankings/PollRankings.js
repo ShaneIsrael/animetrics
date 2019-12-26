@@ -212,10 +212,10 @@ const PollRankings = () => {
     setSeasonSelectOptions(seasonSelectOptions)
   }
 
-  useKey('ArrowRight', () => {
+  useKey('ArrowLeft', () => {
     setSelectedWeek(prevState => prevState + 1)
   })
-  useKey('ArrowLeft', () => {
+  useKey('ArrowRight', () => {
     setSelectedWeek(prevState => prevState - 1)
   })
 
