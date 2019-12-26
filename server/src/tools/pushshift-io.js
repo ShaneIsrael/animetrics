@@ -24,6 +24,16 @@ class PushShift {
     if (res && res.data) return res.data.data
     return []
   }
+  async searchById(id, optionalParams) {
+    const p = optionalParams
+    p.ids = id
+    const res = (await axios.get(this.URL, {
+      params: p,
+    }))
+
+    if (res && res.data) return res.data.data
+    return []
+  }
 }
 
 module.exports = PushShift

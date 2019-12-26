@@ -9,6 +9,7 @@ const {
   EpisodeDiscussion,
   EpisodeResultLink,
   Season,
+  Op
 } = require('../models')
 
 const logger = require('../logger')
@@ -19,112 +20,100 @@ moment.updateLocale('en', {
   },
 })
 
-function getMalSeasonName(season) {
-  switch (Number(season)) {
-  case 1:
-    return '1st Season';
-  case 2:
-    return '2nd Season';
-  case 3:
-    return '3rd Season';
-  case 21:
-    return '21st Season';
-  case 22:
-    return '22nd Season';
-  case 23:
-    return '23rd Season';
-  default:
-    return `${season}th Season`;
+function parseMalId(post) {
+  const myAnimeListUrl = getMyAnimeListUrl(post.selftext)
+  if (myAnimeListUrl) {
+    const malId = myAnimeListUrl.match(/([1-9]\d+)/g)
+    return malId ? malId[0] : null
   }
+  return null
 }
 
-async function searchMal(seasonNumber, showTitle) {
-  const malTitleFormat = seasonNumber > 1
-    ? `${showTitle} ${getMalSeasonName(seasonNumber)}`
-    : showTitle;
-  const anime = await searchAnime(showTitle)
-  let result = {};
-  const latest = { id: anime.results[0].mal_id, result: anime.results[0] };
-  // Attempt to find correct MAL data via general MAL Title Format
-  for (const r of anime.results) {
-    if (r.title.toLowerCase() === malTitleFormat.toLowerCase()) {
-      result = r;
-      break;
-    }
-    // Set latest to the latest TV with the showTitle in the MAL title
-    if (
-      r.type === 'TV'
-      && r.title.toLowerCase().indexOf(showTitle.toLowerCase()) >= 0
-    ) {
-      if (r.mal_id > latest.id) {
-        latest.id = r.mal_id;
-        latest.result = r;
-      }
+function parseEpisode(post) {
+  const episodeString = post.title.match(/(episode\s\d+)/gi)
+  if (episodeString) {
+    const episode = episodeString[0].match(/\d+/gi)
+    if (episode) {
+      return episode[0]
     }
   }
-  // If it couldn't find it based of general MAL Title Format, use latest entry
-  if (Object.keys(result).length === 0) {
-    // console.log(`using latest result for: ${showTitle}`)
-    result = latest.result;
+  return null
+}
+
+function parseSeason(post) {
+  const seasonString = post.title.match(/(season\s\d+)/gi)
+  if (seasonString) {
+    const season = seasonString[0].match(/\d+/gi)
+    if (season) {
+      return season[0]
+    }
   }
-  return result;
+  return 1
+}
+
+function parsePollUrl(text) {
+  const url = text.match(/https?:\/\/(www\.)?(\w*youpoll\w*)\.[a-zA-Z0-9()]{1,6}\/\d+\/\w*/gm)
+  // If the first result has /r assume that the poll wasn't posted with this discussion
+  if (url && url[0].indexOf('/r') >= 0) return null
+  return url ? url[0] : null
+}
+
+function getMyAnimeListUrl(text) {
+  const url = text.match(/https?:\/\/(www\.)?(\w*myanimelist\w*)\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]anime\/[1-9]*)/gm)
+  return url ? url[0] : null
 }
 
 /**
  * Digests a discussion post and stores in the database
  * @param {Object} post A reddit discussion post object
  */
-service.digestDiscussionPost = async (post, ignoreFlair) => {
+async function digestDiscussionPost(post, ignoreFlair) {
   if (!ignoreFlair && post.link_flair_text && post.link_flair_text !== 'Episode') return
   if (post.title.indexOf('Megathread') !== -1) return
   if (post.title.indexOf('Episode') === -1) return
   // logger.info(`Digesting: ${post.title}`)
-  const postTitle = post.title.replace('Episodes', 'Episode')
-  const seasonSplit = postTitle.split(/ Season /)[1];
-  const seasonNumber = seasonSplit ? seasonSplit.split(' ')[0] : 1
-  const showTitle = postTitle.replace('[Spoilers] ', '').replace(' -', '').split(' Episode')[0].split(' Season')[0]
-  let episodeNumber = postTitle.split(' Episode ')[1].split(' ')[0]
-  if (episodeNumber.indexOf('-') > -1) {
-    // account for discussions that are for 2 episodes, ignore the 2nd
-    episodeNumber = episodeNumber.split('-')[0]
+
+  const malId = parseMalId(post)
+  const episode = parseEpisode(post)
+  const season = parseSeason(post)
+  const pollUrl = parsePollUrl(post.selftext)
+
+  if (!malDetails || !episode) {
+    return logger.error(`Could not parse discussion [${post.id}] malId=${malId} episode=${episode}`)
   }
   // don't create discussions for filler episodes such as 5.5
-  if (!Number.isInteger(Number(episodeNumber))) return
-  let pollUrl = null
-  if (post.selftext && post.selftext.indexOf('Rate this episode here.') >= 0) {
-    pollUrl = post.selftext
-      .split('[Rate this episode here.](')[1]
-      .split(')')[0]
-  } else if (post.selftext_html && post.selftext_html.indexOf('>Rate') >= 0) {
-    pollUrl = post.selftext_html
-    .split('">Rate')[0]
-    .split('<h1><a href="')[1]
-  }
-  // attempt to grab from table, table likely doesn't exist so this is probably in vain.
-  if (!pollUrl) {
-    if (post.selftext.split(`${episodeNumber}|`).length > 1) {
-      const tableSplit = post.selftext.split(`${episodeNumber}|`)[1]
-      const pollSplit = tableSplit.split('[Poll]')[1]
-      if (pollSplit) {
-        pollUrl = pollSplit.split('/)')[0].replace('(', '')
-      }
-    }
+  if (!Number.isInteger(Number(episode))) return
+  const malDetails = await findAnime(malId)
+
+  const altTitle = malDetails.title_english
+  ? malDetails.title_english
+  : malDetails.title_synonyms
+    ? malDetails.title_synonyms[0]
+    : null
+  
+  let showRow 
+  if (altTitle) {
+    showRow = await Show.findOne({ where: { title: malDetails.title } })
+  } else {
+    showRow = await Show.findOne({ where: {
+      [Op.or]: [
+        {
+          title: malDetails.title 
+        },
+        {
+          alt_title: altTitle
+        }
+      ]
+    } })
   }
 
-  let showRow = await Show.findOne({ where: { title: showTitle } })
   if (!showRow) {
-    const malResult = await searchMal(seasonNumber, showTitle)
-    const malDetails = await findAnime(malResult.mal_id)
     // eslint-disable-next-line no-nested-ternary
-    const altTitle = malDetails.title_english
-      ? malDetails.title_english
-      : malDetails.title_synonyms
-        ? malDetails.title_synonyms[0]
-        : null
+    logger.info(`Creating new show: title=${showTitle} altTitle=${altTitle} malId=${malId}`)
     showRow = await Show.create({
       title: showTitle,
       alt_title: altTitle,
-      mal_id: malDetails.mal_id,
+      mal_id: malId,
     })
   }
   let discussion = await EpisodeDiscussion.findOne({
@@ -154,13 +143,13 @@ service.digestDiscussionPost = async (post, ignoreFlair) => {
     })
   }
   if (!discussion) {
-    logger.info(`creating discussion for Show: ${showTitle} Season: ${seasonNumber} Episode: ${episodeNumber}`)
+    logger.info(`creating discussion for Show: ${malDetails.title} Season: ${season} Episode: ${episode}`)
     discussion = await EpisodeDiscussion.create({
       showId: showRow.id,
       weekId: weekRow.id,
       post_id: post.id,
-      season: Number(seasonNumber) ? Number(seasonNumber) : 1,
-      episode: Number(episodeNumber),
+      season: Number(season) ? Number(season) : 1,
+      episode: Number(episode),
       post_poll_url: pollUrl,
       post_title: post.title,
       post_url: post.url,
