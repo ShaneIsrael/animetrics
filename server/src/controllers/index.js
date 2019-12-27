@@ -7,7 +7,7 @@ const ShowController = require('./ShowController')
 const AssetController = require('./AssetController')
 const DiscussionController = require('./DiscussionController')
 const SeasonController = require('./SeasonController')
-
+const DialogController = require('./DialogController')
 module.exports = {
   ...WeekController,
   ...ResultsController,
@@ -18,4 +18,5 @@ module.exports = {
   ...AssetController,
   ...DiscussionController,
   ...SeasonController,
+  ...DialogController,
 }

@@ -10,6 +10,7 @@ const OverridesService = require('./OverridesService')
 const ShowService = require('./ShowService')
 const DiscussionService = require('./DiscussionService')
 const SeasonService = require('./SeasonService')
+const DialogService = require('./DialogService')
 
 module.exports = {
   ...WeekService,
@@ -24,4 +25,5 @@ module.exports = {
   ...ShowService,
   ...DiscussionService,
   ...SeasonService,
+  ...DialogService,
 }
