@@ -40,10 +40,11 @@ controller.submitFeedback = async (req, res, next) => {
 controller.submitIssue = async (req, res, next) => {
   try {
     const { type, description } = req.body
-
+    const validOptions = ['Missing Art', 'Missing Series / Episode', 'Incorrect Art', 'Incorrect Series Information', 'Other']
     if (typeof type !== 'string') return res.status(400).send('type must be a string')
     if (typeof description !== 'string') return res.status(400).send('description must be a string')
-
+    if (validOptions.indexOf(type) === -1) return res.status(400).send(`type must be one of ${validOptions}`)
+    
     if (description.length > 1000) {
       return res.status(400).send('description is over the max allowed length')
     }
