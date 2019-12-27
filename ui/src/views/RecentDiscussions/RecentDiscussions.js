@@ -64,29 +64,29 @@ const RecentDiscussions = () => {
         spacing={4}
       >
         <Grid
-                    item
+          item
           xs={12}
         >
           <form
-                        autoComplete="off"
-                        className={classes.root}
-                        noValidate
-                        onSubmit={onSubmit}
+            autoComplete="off"
+            className={classes.root}
+            noValidate
+            onSubmit={onSubmit}
           >
             <TextField
-                            autoFocus
-                            spellcheck="false"
-                            id="outlined-basic"
-                            label="Series Title"
-                            onChange={(event) => setDiscussionQuery(event.target.value)}
-                            placeholder={'No Game No Life'}
-                            variant="outlined"
+              autoFocus
+              id="outlined-basic"
+              label="Series Title"
+              onChange={(event) => setDiscussionQuery(event.target.value)}
+              placeholder={'Sword Art Online'}
+              spellcheck="false"
+              variant="outlined"
             />
           </form>
           <DiscussionsTable
-                        discussions={discussions}
-                        fetchHandler={getPagedDiscussions}
-                        query={discussionQuery}
+            discussions={discussions}
+            fetchHandler={getPagedDiscussions}
+            query={discussionQuery}
           />
         </Grid>
       </Grid>
