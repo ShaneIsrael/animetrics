@@ -100,11 +100,13 @@ async function search(t, original, attempt) {
 
 async function getPoster(id) {
   try {
+    logger.info(`getting poster for series tvdb_id=${id}`)
     const seasonPoster = (await get(`/series/${id}/images/query`,
       {
         params: { keyType: 'poster' },
       })).data;
     let highestRated = {}
+    logger.info(`found posters: ${seasonPoster.data}`)
     for (const poster of seasonPoster.data) {
       if (!highestRated.ratingsInfo || highestRated.ratingsInfo.average < poster.ratingsInfo.average) {
         highestRated = poster
