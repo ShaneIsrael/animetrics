@@ -12,6 +12,7 @@ import Slide from '@material-ui/core/Slide'
 import { DialogContent, DialogContentText, TextField } from '@material-ui/core'
 
 import { DialogService } from 'services'
+import Alert from 'components/Alert'
 
 const useStyles = makeStyles(theme => ({
   appBar: {
@@ -34,6 +35,7 @@ export default function FeedbackDialog(props) {
   const classes = useStyles()
 
   const [ text, setText ] = React.useState('')
+  const [ error, setError ] = React.useState(null)
   const { handleClose, open } = props
 
   const maxLength = 1000
@@ -46,21 +48,29 @@ export default function FeedbackDialog(props) {
       setText(event.target.value.slice(0, maxLength))
     }
   }
+
+  const closeHandler = () => {
+    setText('')
+    setError(null)
+    handleClose()
+  }
   const handleSubmit = async () => {
     try {
       handleClose()
       await DialogService.submitFeedback(text)
       setText('')
     } catch (err) {
-      console.log(err)
+      if (err.response) {
+        setError(err.response.data)
+      }
     }
   }
   return (
     <div>
-      <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
+      <Dialog fullScreen open={open} onClose={closeHandler} TransitionComponent={Transition}>
         <AppBar className={classes.appBar}>
           <Toolbar>
-            <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
+            <IconButton edge="start" color="inherit" onClick={closeHandler} aria-label="close">
               <CloseIcon />
             </IconButton>
             <Typography variant="h6" className={classes.title}>
@@ -72,6 +82,9 @@ export default function FeedbackDialog(props) {
           </Toolbar>
         </AppBar>
         <DialogContent>
+          {error && 
+            <Alert variant="error" message={error}/>
+          }
           <DialogContentText>
             Your feedback will help me continue to improve Animetrics. If there is something you like or do not like, please let me know. If there is a feature that you would like to see I would love to hear about it. Thanks!
           </DialogContentText>

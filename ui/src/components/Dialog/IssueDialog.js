@@ -11,6 +11,7 @@ import CloseIcon from '@material-ui/icons/Close'
 import Slide from '@material-ui/core/Slide'
 import { DialogContent, TextField, FormControl, InputLabel, Select } from '@material-ui/core'
 import { DialogService } from 'services'
+import Alert from 'components/Alert'
 
 const useStyles = makeStyles(theme => ({
   appBar: {
@@ -42,6 +43,7 @@ export default function IssueDialog(props) {
 
   const [ description, setDescription ] = React.useState('')
   const [ issueType, setIssueType ] = React.useState('')
+  const [ error, setError ] = React.useState(null)
   const { handleClose, open } = props
 
   const maxLength = 1000
@@ -60,6 +62,13 @@ export default function IssueDialog(props) {
     }
   }
 
+  const closeHandler = () => {
+    setIssueType('')
+    setDescription('')
+    setError(null)
+    handleClose()
+  }
+
   const handleSubmit = async () => {
     try {
       handleClose()
@@ -67,14 +76,16 @@ export default function IssueDialog(props) {
       setIssueType('')
       setDescription('')
     } catch (err) {
-      console.log(err)
+      if (err.response) {
+        setError(err.response.data)
+      }
     }
   }
   return (
     <div>
       <Dialog
         fullScreen
-        onClose={handleClose}
+        onClose={closeHandler}
         open={open}
         TransitionComponent={Transition}
       >
@@ -84,7 +95,7 @@ export default function IssueDialog(props) {
               aria-label="close"
               color="inherit"
               edge="start"
-              onClick={handleClose}
+              onClick={closeHandler}
             >
               <CloseIcon />
             </IconButton>
@@ -104,9 +115,11 @@ export default function IssueDialog(props) {
           </Toolbar>
         </AppBar>
         <DialogContent>
+          {error && 
+            <Alert variant="error" message={error}/>
+          }
           <FormControl
             className={classes.formControl}
-            // variant="outlined"
           >
             <InputLabel
               htmlFor="issue-type-select"
