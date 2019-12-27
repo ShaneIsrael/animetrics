@@ -89,36 +89,18 @@ service.digestDiscussionPost = async (post, ignoreFlair) => {
 
   const showTitle = malDetails.title
 
-  const altTitle = malDetails.title_english
-    ? malDetails.title_english
-    : malDetails.title_synonyms
-      ? malDetails.title_synonyms[0]
-      : null
-
-  let showRow
-  if (altTitle) {
-    showRow = await Show.findOne({ where: { title: malDetails.title } })
-  } else {
-    showRow = await Show.findOne({
-      where: {
-        [Op.or]: [
-          {
-            title: malDetails.title,
-          },
-          {
-            alt_title: altTitle,
-          },
-          {
-            english_title: altTitle,
-          },
-        ],
-      },
-    })
+  // Lookup show in the database
+  let showRow = await Show.findOne({ where: { title: malDetails.title } })
+  if (!showRow && malDetails.title_english) {
+    showRow = await Show.findOne({ where: { english_title: malDetails.title_english } })
+  }
+  if (!showRow && malDetails.title_synonyms) {
+    showRow = await Show.findOne({ where: { alt_title: malDetails.title_synonyms[0] } })
   }
 
   if (!showRow) {
     // eslint-disable-next-line no-nested-ternary
-    logger.info(`Creating new show: title=${showTitle} altTitle=${altTitle} malId=${malId}`)
+    logger.info(`Creating new show: title=${showTitle} altTitle=${malDetails.title_synonyms ? malDetails.title_synonyms[0] : null} englishTitle=${malDetails.english_title} malId=${malId}`)
     showRow = await Show.create({
       title: showTitle,
       alt_title: malDetails.title_synonyms ? malDetails.title_synonyms[0] : null,

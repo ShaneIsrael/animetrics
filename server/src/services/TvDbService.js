@@ -138,6 +138,7 @@ service.refreshTvDb = async () => {
 }
 
 service.updateTvDbIds = async () => {
+  logger.info('updating tvdb ids')
   const shows = await Show.findAll({ where: { tvdb_id: null } });
   for (const show of shows) {
     let result = await search(show.title, show.title, 0);

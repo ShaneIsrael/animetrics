@@ -12,7 +12,9 @@ const fetchDiscussions = require('../fetch/fetchDiscussions')
 const fetchAssets = require('../fetch/fetchAssets')
 const fetchUsers = require('../fetch/fetchRedditMalUsers')
 const pollFixer = require('../tools/pollFixer')
+
 async function updatePosters() {
+  logger.info('updating posters')
   const assets = await Asset.findAll({
     where: {
       poster_art: null,
