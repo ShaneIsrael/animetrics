@@ -6,7 +6,7 @@ const logger = require('./logger')
 const { environment } = require('./config')
 
 const app = express()
-
+app.set('trust proxy', true)
 app.use(
   morgan('combined', {
     skip(req, res) {
