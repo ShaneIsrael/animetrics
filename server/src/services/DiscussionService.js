@@ -83,26 +83,6 @@ service.getDiscussionsByPage = async (page, size, query) => {
               [Op.like]: `%${query}%`,
             },
           },
-          {
-            title: {
-              [Op.like]: `%${query.replace(' ', '%')}%`,
-            },
-          },
-          {
-            alt_title: {
-              [Op.like]: `%${query.replace(' ', '%')}%`,
-            },
-          },
-          {
-            english_title: {
-              [Op.like]: `%${query.replace(' ', '%')}%`,
-            },
-          },
-          {
-            seriesName: {
-              [Op.like]: `%${query.replace(' ', '%')}%`,
-            },
-          },
         ],
       },
     })
