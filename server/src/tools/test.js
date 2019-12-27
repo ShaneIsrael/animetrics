@@ -14,6 +14,8 @@ async function init() {
     if (malDetails.title_english) {
       show.english_title = malDetails.title_english
       show.alt_title = malDetails.title_synonyms ? malDetails.title_synonyms[0] : null
+
+      console.log(show.dataValues)
       show.save()
     } 
   }
