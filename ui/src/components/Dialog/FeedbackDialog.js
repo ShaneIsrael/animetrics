@@ -56,8 +56,8 @@ export default function FeedbackDialog(props) {
   }
   const handleSubmit = async () => {
     try {
-      handleClose()
       await DialogService.submitFeedback(text)
+      handleClose()
       setText('')
     } catch (err) {
       if (err.response) {
