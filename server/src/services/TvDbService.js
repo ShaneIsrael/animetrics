@@ -141,7 +141,9 @@ service.updateTvDbIds = async () => {
   logger.info('updating tvdb ids')
   const shows = await Show.findAll({ where: { tvdb_id: null } });
   for (const show of shows) {
+    logger.info(`Attempting to update TVDB ID for showId=${show.id} title=${show.title}`)
     let result = await search(show.title, show.title, 0);
+    if (!result && show.english_title) result = await search(show.english_title, show.english_title, 0)
     if (!result && show.alt_title) result = await search(show.alt_title, show.alt_title, 0);
     const match = {};
     if (result && result.data) {
