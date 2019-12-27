@@ -38,6 +38,7 @@ require('./routes/Show')(app)
 require('./routes/Asset')(app)
 require('./routes/Override')(app)
 require('./routes/Discussion')(app)
+require('./routes/Dialog')(app)
 require('./cron')
 
 // Error Handler Middleware
