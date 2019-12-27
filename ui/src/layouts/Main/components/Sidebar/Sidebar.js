@@ -18,6 +18,8 @@ import WarningIcon from '@material-ui/icons/Warning'
 import RateReviewIcon from '@material-ui/icons/RateReview'
 import LocalCafeIcon from '@material-ui/icons/LocalCafe'
 
+import FeedbackDialog from '../../../../components/Dialog'
+
 const categories = [
   {
     id: '/r/Anime',
@@ -94,94 +96,124 @@ const styles = theme => ({
 });
 
 function Sidebar(props) {
+  const [ feedbackOpen, setFeedbackOpen ] = React.useState(false)
   const { classes, ...other } = props;
 
-  return (
-    <Drawer variant="permanent" {...other}>
-      <List disablePadding>
-        <ListItem className={clsx(classes.firebase, classes.item, classes.itemCategory)}>
-          {/* <RouterLink to={window.location.pathname}>
+  const handleFeedbackOpen = () => {
+    setFeedbackOpen(true)
+  }
+  const handleFeedbackClose  = () => {
+    setFeedbackOpen(false)
+  }
 
-          </RouterLink> */}
-          <img
-            style={{cursor: 'pointer'}}
-            alt="Animetrics Logo"
-            src="/images/logos/logo_full_light_blue_wlb_stroke.png"
-            height={48}
-            onClick={() => window.location.reload()}
-          />
-        </ListItem>
-        <RouterLink style={{cursor: 'pointer'}} to='/'>
-          <ListItem className={clsx(classes.item, classes.itemCategory, (window.location.pathname === '/') && classes.itemActiveItem)}>
-            <ListItemIcon className={classes.itemIcon}>
-              <HomeIcon />
-            </ListItemIcon>
-            <ListItemText
-              classes={{
-                primary: classes.itemPrimary,
-              }}
-            >
-              Dashboard
-            </ListItemText>
+  return (
+    <React.Fragment>
+      <FeedbackDialog handleClose={handleFeedbackClose} open={feedbackOpen} />
+      <Drawer variant="permanent" {...other}>
+        <List disablePadding>
+          <ListItem className={clsx(classes.firebase, classes.item, classes.itemCategory)}>
+            {/* <RouterLink to={window.location.pathname}>
+
+            </RouterLink> */}
+            <img
+              style={{cursor: 'pointer'}}
+              alt="Animetrics Logo"
+              src="/images/logos/logo_full_light_blue_wlb_stroke.png"
+              height={48}
+              onClick={() => window.location.reload()}
+            />
           </ListItem>
-        </RouterLink>
-        {categories.map(({ id, children }) => (
-          <React.Fragment key={id}>
-            <ListItem className={classes.categoryHeader}>
+          <RouterLink style={{cursor: 'pointer'}} to='/'>
+            <ListItem className={clsx(classes.item, classes.itemCategory, (window.location.pathname === '/') && classes.itemActiveItem)}>
+              <ListItemIcon className={classes.itemIcon}>
+                <HomeIcon />
+              </ListItemIcon>
               <ListItemText
                 classes={{
-                  primary: classes.categoryHeaderPrimary,
+                  primary: classes.itemPrimary,
                 }}
               >
-                {id}
+                Dashboard
               </ListItemText>
             </ListItem>
-            {children.map(({ id: childId, path, icon }, index) => {
-              if (childId === 'Donate') {
-              return <ListItem
-                        key={childId}
-                        button
-                        className={clsx(classes.item)}
-                        onClick={() => window.open(path, '_blank')}
+          </RouterLink>
+          {categories.map(({ id, children }) => (
+            <React.Fragment key={id}>
+              <ListItem className={classes.categoryHeader}>
+                <ListItemText
+                  classes={{
+                    primary: classes.categoryHeaderPrimary,
+                  }}
+                >
+                  {id}
+                </ListItemText>
+              </ListItem>
+              {children.map(({ id: childId, path, icon }, index) => {
+                let onClick = null
+                if (childId === 'Send Feedback') {
+                    return <ListItem
+                      key={childId}
+                      button
+                      className={clsx(classes.item, (window.location.pathname === path) && classes.itemActiveItem)}
+                      onClick={() => setFeedbackOpen(true)}
+                    >
+                      <ListItemIcon className={classes.itemIcon}>{icon}</ListItemIcon>
+                      <ListItemText
+                        classes={{
+                          primary: classes.itemPrimary,
+                        }}
                       >
-                        <ListItemIcon className={classes.itemIcon}>{icon}</ListItemIcon>
-                        <ListItemText
-                          classes={{
-                            primary: classes.itemPrimary,
-                          }}
+                        {childId}
+                      </ListItemText>
+                    </ListItem>
+                }
+                if (childId === 'Donate') {
+                return <ListItem
+                          key={childId}
+                          button
+                          className={clsx(classes.item)}
+                          onClick={() => window.open(path, '_blank')}
                         >
-                          {childId}
-                        </ListItemText>
-                      </ListItem>
-              }
-              return <RouterLink key={index} to={path}>
-                      <ListItem
-                        key={childId}
-                        button
-                        className={clsx(classes.item, (window.location.pathname === path) && classes.itemActiveItem)}
-                      >
-                        <ListItemIcon className={classes.itemIcon}>{icon}</ListItemIcon>
-                        <ListItemText
-                          classes={{
-                            primary: classes.itemPrimary,
-                          }}
+                          <ListItemIcon className={classes.itemIcon}>{icon}</ListItemIcon>
+                          <ListItemText
+                            classes={{
+                              primary: classes.itemPrimary,
+                            }}
+                          >
+                            {childId}
+                          </ListItemText>
+                        </ListItem>
+                }
+                return <RouterLink key={index} to={path}>
+                        <ListItem
+                          key={childId}
+                          button
+                          className={clsx(classes.item, (window.location.pathname === path) && classes.itemActiveItem)}
+                          onClick={onClick}
                         >
-                          {childId}
-                        </ListItemText>
-                      </ListItem>
-                    </RouterLink>
-            })}
+                          <ListItemIcon className={classes.itemIcon}>{icon}</ListItemIcon>
+                          <ListItemText
+                            classes={{
+                              primary: classes.itemPrimary,
+                            }}
+                          >
+                            {childId}
+                          </ListItemText>
+                        </ListItem>
+                      </RouterLink>
+              })}
 
-            <Divider className={classes.divider} />
-          </React.Fragment>
-        ))}
-      </List>
-    </Drawer>
-  );
+              <Divider className={classes.divider} />
+            </React.Fragment>
+          ))}
+        </List>
+      </Drawer>
+    </React.Fragment>
+  )
 }
 
 Sidebar.propTypes = {
   classes: PropTypes.object.isRequired,
-};
+}
 
-export default withStyles(styles)(Sidebar);
+export default withStyles(styles)(Sidebar)
