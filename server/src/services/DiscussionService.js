@@ -50,8 +50,8 @@ service.getDiscussionsByPage = async (page, size, query) => {
   discussions = await EpisodeDiscussion.findAll({
     where: {
       post_title: {
-        [Op.like]: `%${query}%`
-      }
+        [Op.like]: `%${query}%`,
+      },
     },
     order: [['post_created_dt', 'DESC']],
     include: [{ model: Show, include: [Asset] }],
@@ -75,25 +75,48 @@ service.getDiscussionsByPage = async (page, size, query) => {
           },
           {
             english_title: {
-              [Op.like]: `%${query}%`
-            }
+              [Op.like]: `%${query}%`,
+            },
           },
           {
-            seriesName:{
+            seriesName: {
               [Op.like]: `%${query}%`,
-            }
-          }
-        ]
+            },
+          },
+          {
+            title: {
+              [Op.like]: `%${query.replace(' ', '%')}%`,
+            },
+          },
+          {
+            alt_title: {
+              [Op.like]: `%${query.replace(' ', '%')}%`,
+            },
+          },
+          {
+            english_title: {
+              [Op.like]: `%${query.replace(' ', '%')}%`,
+            },
+          },
+          {
+            seriesName: {
+              [Op.like]: `%${query.replace(' ', '%')}%`,
+            },
+          },
+        ],
       },
     })
-    let showTitle, altTitle, seriesName, englishTitle
+    let showTitle
+    let altTitle
+    let seriesName
+    let englishTitle
     if (show) {
-      showTitle = show.title,
-      altTitle = show.alt_title,
+      showTitle = show.title
+      altTitle = show.alt_title
       seriesName = show.seriesName
       englishTitle = show.english_title
     }
-    let or = [
+    const or = [
       { post_title: { [Op.like]: `%${query}%` } },
       { post_title: { [Op.like]: `%${showTitle}%` } },
       { post_title: { [Op.like]: `%${altTitle}%` } },
@@ -103,7 +126,7 @@ service.getDiscussionsByPage = async (page, size, query) => {
 
     discussions = await EpisodeDiscussion.findAll({
       where: {
-        [Op.or]: or
+        [Op.or]: or,
       },
       order: [['post_created_dt', 'DESC']],
       include: [{ model: Show, include: [Asset] }],
