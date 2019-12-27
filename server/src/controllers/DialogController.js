@@ -2,7 +2,7 @@
 const moment = require('moment')
 const { submitFeedback, submitIssue } = require('../services')
 const { Dialog, Op } = require('../models')
-
+const logger = require('../logger')
 const controller = {}
 
 /**
@@ -11,7 +11,7 @@ const controller = {}
 controller.submitFeedback = async (req, res, next) => {
   try {
     const { feedback } = req.body
-
+    logger.info(req.body)
     if (typeof feedback === 'string') return res.status(400).send('feedback must be a string')
     if (feedback.length > 1000) {
       return res.status(400).send('feedback is over the max allowed length')
@@ -42,6 +42,7 @@ controller.submitIssue = async (req, res, next) => {
   try {
     const { type, description } = req.body
 
+    logger.info(req.body)
     if (typeof type === 'string') return res.status(400).send('type must be a string')
     if (typeof description === 'string') return res.status(400).send('description must be a string')
 
