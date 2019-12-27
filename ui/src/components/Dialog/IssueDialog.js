@@ -71,8 +71,8 @@ export default function IssueDialog(props) {
 
   const handleSubmit = async () => {
     try {
-      handleClose()
       await DialogService.submitIssue(issueType, description)
+      handleClose()
       setIssueType('')
       setDescription('')
     } catch (err) {
