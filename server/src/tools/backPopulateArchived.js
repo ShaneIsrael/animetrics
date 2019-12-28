@@ -19,9 +19,11 @@ async function updatePosters() {
     include: [Show],
   })
   for (const asset of assets) {
-    const art = await getSeriesPoster(asset.Show.tvdb_id)
-    asset.poster_art = art
-    asset.save()
+    if (asset.Show.tvdb_id && asset.Show.tvdb_id !== -1) {
+      const art = await getSeriesPoster(asset.Show.tvdb_id)
+      asset.poster_art = art
+      asset.save()
+    }
   }
   await fetchAssets.fetch()
 }

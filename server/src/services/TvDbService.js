@@ -7,6 +7,7 @@ const { environment } = require('../config')
 const config = require('../config')[environment].tvdb
 const { Show } = require('../models')
 const logger = require('../logger')
+const { findAnime } = require('./MALService')
 
 const tvdb = axios.create({
   baseURL: 'https://api.thetvdb.com/',
@@ -29,11 +30,29 @@ async function get(url, options) {
 async function updateSeriesInformation(id) {
   const show = await Show.findByPk(id)
   logger.info(`updating ${show.id}`)
-  const info = (await get(`/series/${show.tvdb_id}`)).data.data;
-  show.seriesName = info.seriesName
-  show.synopsis = info.overview
-  show.airsDayOfWeek = info.airsDayOfWeek
-  show.genre = info.genre.join(',')
+  if (show.tvdb_id) {
+    const info = (await get(`/series/${show.tvdb_id}`)).data.data;
+    show.seriesName = info.seriesName
+    show.synopsis = info.overview
+    show.airsDayOfWeek = info.airsDayOfWeek
+    show.genre = info.genre.join(',')
+  } else {
+    if (show.mal_id && (!show.synopsis || !show.genre || !show.airsDayOfWeek)) {
+      const info = await findAnime(show.mal_id)
+      if (!show.synopsis && info.synopsis)
+        show.synopsis = info.synopsis
+      if (!show.genre && info.genres) {
+        let genres = []
+        for (const g of info.genres) {
+          genres.push(g.name)
+        }
+        show.genre = genres
+      }
+      if (!show.airsDayOfWeek && info.broadcast) {
+        show.airsDayOfWeek = info.broadcast.match(/\b((mon|tues|wed(nes)?|thur(s)?|fri|sat(ur)?|sun)(days)?(day)?)\b/gi)
+    }
+    show.tvdb_id = -1
+  }
   show.save()
   return show
 }
