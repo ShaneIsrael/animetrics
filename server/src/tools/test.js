@@ -1,23 +1,21 @@
 const service = {}
 const moment = require('moment')
-const { findAnime } = require('../services/MALService')
-const {
-  Show,
-  Op
-} = require('../models')
+
+const fetchDiscussions = require('../fetch/fetchDiscussions')
 
 async function init() {
-  const shows = await Show.findAll()
-  for (const show of shows) {
-    console.log(`updating ${show.id}`)
-    const malDetails = await findAnime(show.mal_id)
-    if (malDetails.title_english) {
-      show.english_title = malDetails.title_english
-      show.alt_title = malDetails.title_synonyms ? malDetails.title_synonyms[0] : null
-
-      console.log(show.dataValues)
-      show.save()
-    } 
+  const discussions = await fetchDiscussions.fetch()
+  if (discussions) {
+    for (const discussion of discussions) {
+      const createdDt = moment.utc(discussion.created_utc)
+      const dt15MinsAgo = moment.utc().subtract(15, 'minutes')
+      // don't process if the discussion isn't at least 15 minutes old. This is to help prevent getting
+      // discussions made by non-mods that get deleted.
+      if (createdDt.isSameOrBefore(dt15MinsAgo)) {
+        // await digestDiscussionPost(discussion)
+        console.log(discussion.title)
+      }
+    }
   }
 }
 init()
