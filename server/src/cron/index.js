@@ -85,16 +85,6 @@ async function updateRalScores() {
 
 async function init() {
   try {
-    try {
-      await getDiscussionsAndPopulate()
-      await updateTvDbIds()
-      await updatePosters()
-      await fetchAssets.fetch()
-      await generateDiscussionResults()
-      await pollFixer.init()
-    } catch (err) {
-      logger.error(err)
-    }
     if (environment === 'prod') {
       logger.info('beginning cron jobs')
       await authTvDb()
@@ -102,17 +92,17 @@ async function init() {
       logger.info('starting cron jobs...')
       // Every 15 minutes | Get Episode Discussions and populate data
       cron.schedule('0 */15 * * * *', async () => {
-        // logger.info('--- Starting Discussion Populate Job ---')
-        // try {
-        //   await getDiscussionsAndPopulate()
-        //   await updateTvDbIds()
-        //   await updatePosters()
-        //   await fetchAssets.fetch()
-        //   await generateDiscussionResults()
-        //   await pollFixer.init()
-        // } catch (err) {
-        //   logger.error(err)
-        // }
+        logger.info('--- Starting Discussion Populate Job ---')
+        try {
+          await getDiscussionsAndPopulate()
+          await updateTvDbIds()
+          await updatePosters()
+          await fetchAssets.fetch()
+          await generateDiscussionResults()
+          await pollFixer.init()
+        } catch (err) {
+          logger.error(err)
+        }
       })
       // Every Hour | Check for unset ral scores and update them
       cron.schedule('0 0 * * * *', async () => {
