@@ -36,6 +36,7 @@ async function updateSeriesInformation(id) {
     show.airsDayOfWeek = info.airsDayOfWeek
     show.genre = info.genre.join(',')
   } else {
+    logger.info('using mal info instead of tvdb')
     if (show.mal_id && (!show.synopsis || !show.genre || !show.airsDayOfWeek)) {
       const info = await findAnime(show.mal_id)
       if (!show.synopsis && info.synopsis)
