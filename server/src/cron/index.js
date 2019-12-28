@@ -66,6 +66,8 @@ async function getDiscussionsAndPopulate() {
       if (createdDt.isSameOrBefore(dt15MinsAgo)) {
         logger.info(`digesting ${discussion.title}`)
         await digestDiscussionPost(discussion)
+      } else {
+        logger.info(`skipping ${discussion.title}`)
       }
     }
   }
