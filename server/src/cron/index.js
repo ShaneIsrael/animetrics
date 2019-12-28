@@ -22,7 +22,7 @@ async function updatePosters() {
     include: [Show],
   })
   for (const asset of assets) {
-    if (asset.Show.tvdb_id) {
+    if (asset.Show.tvdb_id && asset.Show.tvdb_id !== -1) {
       const art = await getSeriesPoster(asset.Show.tvdb_id)
       asset.poster_art = art
       asset.save()
