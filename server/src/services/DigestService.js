@@ -1,6 +1,6 @@
 const service = {}
 const moment = require('moment')
-const { findAnime, searchAnime } = require('./MALService')
+const { findAnime } = require('./MALService')
 const utils = require('../tools/utils')
 const {
   Asset,
@@ -9,7 +9,7 @@ const {
   EpisodeDiscussion,
   EpisodeResultLink,
   Season,
-  Op
+  Op,
 } = require('../models')
 
 const logger = require('../logger')
@@ -20,10 +20,17 @@ moment.updateLocale('en', {
   },
 })
 
+
+function getMyAnimeListUrl(text) {
+  const url = text.match(/https?:\/\/(www\.)?(\w*myanimelist\w*)\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]anime\/[0-9]*)/gm)
+  return url ? url[0] : null
+}
+
+
 function parseMalId(post) {
   const myAnimeListUrl = getMyAnimeListUrl(post.selftext)
   if (myAnimeListUrl) {
-    const malId = myAnimeListUrl.match(/([1-9]\d+)/g)
+    const malId = myAnimeListUrl.match(/([0-9]\d+)/g)
     return malId ? malId[0] : null
   }
   return null
@@ -57,17 +64,11 @@ function parsePollUrl(text) {
   if (url && url[0].indexOf('/r') >= 0) return null
   return url ? url[0] : null
 }
-
-function getMyAnimeListUrl(text) {
-  const url = text.match(/https?:\/\/(www\.)?(\w*myanimelist\w*)\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]anime\/[1-9]*)/gm)
-  return url ? url[0] : null
-}
-
 /**
  * Digests a discussion post and stores in the database
  * @param {Object} post A reddit discussion post object
  */
-async function digestDiscussionPost(post, ignoreFlair) {
+service.digestDiscussionPost = async (post, ignoreFlair) => {
   if (!ignoreFlair && post.link_flair_text && post.link_flair_text !== 'Episode') return
   if (post.title.indexOf('Megathread') !== -1) return
   if (post.title.indexOf('Episode') === -1) return
@@ -77,42 +78,29 @@ async function digestDiscussionPost(post, ignoreFlair) {
   const episode = parseEpisode(post)
   const season = parseSeason(post)
   const pollUrl = parsePollUrl(post.selftext)
+  const malDetails = await findAnime(malId)
 
   if (!malDetails || !episode) {
-    return logger.error(`Could not parse discussion [${post.id}] malId=${malId} episode=${episode}`)
+    logger.error(`Could not parse discussion [${post.id}] malId=${malId} episode=${episode}`)
+    return
   }
   // don't create discussions for filler episodes such as 5.5
   if (!Number.isInteger(Number(episode))) return
-  const malDetails = await findAnime(malId)
 
-  const altTitle = malDetails.title_english
-  ? malDetails.title_english
-  : malDetails.title_synonyms
-    ? malDetails.title_synonyms[0]
-    : null
-  
-  let showRow 
-  if (altTitle) {
-    showRow = await Show.findOne({ where: { title: malDetails.title } })
-  } else {
-    showRow = await Show.findOne({ where: {
-      [Op.or]: [
-        {
-          title: malDetails.title 
-        },
-        {
-          alt_title: altTitle
-        },
-        {
-          english_title: altTitle
-        }
-      ]
-    } })
+  const showTitle = malDetails.title
+
+  // Lookup show in the database
+  let showRow = await Show.findOne({ where: { title: malDetails.title } })
+  if (!showRow && malDetails.title_english) {
+    showRow = await Show.findOne({ where: { english_title: malDetails.title_english } })
+  }
+  if (!showRow && malDetails.title_synonyms) {
+    showRow = await Show.findOne({ where: { alt_title: malDetails.title_synonyms[0] } })
   }
 
   if (!showRow) {
     // eslint-disable-next-line no-nested-ternary
-    logger.info(`Creating new show: title=${showTitle} altTitle=${altTitle} malId=${malId}`)
+    logger.info(`Creating new show: title=${showTitle} altTitle=${malDetails.title_synonyms ? malDetails.title_synonyms[0] : null} englishTitle=${malDetails.english_title} malId=${malId}`)
     showRow = await Show.create({
       title: showTitle,
       alt_title: malDetails.title_synonyms ? malDetails.title_synonyms[0] : null,
@@ -136,14 +124,14 @@ async function digestDiscussionPost(post, ignoreFlair) {
   if (!weekRow) {
     const seasonOfYear = utils.getAnimeSeason(postWeekStartDt)
     const year = moment.utc(postWeekStartDt).year()
-    const season = await Season.findOrCreate({
+    const seasonRow = await Season.findOrCreate({
       where: { season: seasonOfYear, year },
-      defaults: { season: seasonOfYear, year }
+      defaults: { season: seasonOfYear, year },
     })
     weekRow = await Week.create({
       start_dt: postWeekStartDt,
       end_dt: postWeekEndDt,
-      seasonId: season[0].id
+      seasonId: seasonRow[0].id,
     })
   }
   if (!discussion) {

@@ -1,19 +1,19 @@
 /* eslint-disable no-useless-escape */
 /* eslint-disable no-param-reassign */
 /* eslint-disable prefer-destructuring */
-
+const service = {}
 const axios = require('axios')
 const { environment } = require('../config')
 const config = require('../config')[environment].tvdb
 const { Show } = require('../models')
 const logger = require('../logger')
+const { findAnime } = require('./MALService')
 
 const tvdb = axios.create({
   baseURL: 'https://api.thetvdb.com/',
   timeout: 5000,
 })
 
-const service = {}
 
 const sleep = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds))
 
@@ -29,11 +29,34 @@ async function get(url, options) {
 async function updateSeriesInformation(id) {
   const show = await Show.findByPk(id)
   logger.info(`updating ${show.id}`)
-  const info = (await get(`/series/${show.tvdb_id}`)).data.data;
-  show.seriesName = info.seriesName
-  show.synopsis = info.overview
-  show.airsDayOfWeek = info.airsDayOfWeek
-  show.genre = info.genre.join(',')
+  if (show.tvdb_id) {
+    const info = (await get(`/series/${show.tvdb_id}`)).data.data;
+    show.seriesName = info.seriesName
+    show.synopsis = info.overview
+    show.airsDayOfWeek = info.airsDayOfWeek
+    show.genre = info.genre.join(',')
+  } else {
+    logger.info('using mal info instead of tvdb')
+    if (show.mal_id && (!show.synopsis || !show.genre || !show.airsDayOfWeek)) {
+      const info = await findAnime(show.mal_id)
+      if (!show.synopsis && info.synopsis)
+        show.synopsis = info.synopsis
+      if (!show.genre && info.genres) {
+        let genres = []
+        for (const g of info.genres) {
+          genres.push(g.name)
+        }
+        show.genre = genres.toString()
+      }
+      if (!show.airsDayOfWeek && info.broadcast) {
+        const airDay = info.broadcast.match(/\b((mon|tues|wed(nes)?|thur(s)?|fri|sat(ur)?|sun)(days)?(day)?)\b/gi)
+      	if (airDay) {
+	  show.airsDayOfWeek = airDay[0]
+	}
+      }
+      show.tvdb_id = -1
+    }
+  }
   show.save()
   return show
 }
@@ -100,11 +123,13 @@ async function search(t, original, attempt) {
 
 async function getPoster(id) {
   try {
+    logger.info(`getting poster for series tvdb_id=${id}`)
     const seasonPoster = (await get(`/series/${id}/images/query`,
       {
         params: { keyType: 'poster' },
       })).data;
     let highestRated = {}
+    logger.info(`found posters: ${seasonPoster.data}`)
     for (const poster of seasonPoster.data) {
       if (!highestRated.ratingsInfo || highestRated.ratingsInfo.average < poster.ratingsInfo.average) {
         highestRated = poster
@@ -138,9 +163,12 @@ service.refreshTvDb = async () => {
 }
 
 service.updateTvDbIds = async () => {
+  logger.info('updating tvdb ids')
   const shows = await Show.findAll({ where: { tvdb_id: null } });
   for (const show of shows) {
+    logger.info(`Attempting to update TVDB ID for showId=${show.id} title=${show.title}`)
     let result = await search(show.title, show.title, 0);
+    if (!result && show.english_title) result = await search(show.english_title, show.english_title, 0)
     if (!result && show.alt_title) result = await search(show.alt_title, show.alt_title, 0);
     const match = {};
     if (result && result.data) {
@@ -168,9 +196,9 @@ service.updateTvDbIds = async () => {
         logger.info(`NO TVDB MATCH, using first found: ${result.data.data[0].seriesName}`)
         show.tvdb_id = result.data.data[0].id
       }
-      show.save();
-      await updateSeriesInformation(show.id)
+      show.save()
     }
+    await updateSeriesInformation(show.id)
   }
 }
 

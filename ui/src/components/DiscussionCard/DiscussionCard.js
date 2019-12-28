@@ -24,7 +24,7 @@ const useStyles = makeStyles(() => ({
   }
 }))
 
-const missingPosterUrl = 'https://animetrics.sfo2.cdn.digitaloceanspaces.com/animetrics/missing_poster_art.png'
+const missingPosterUrl = 'https://cdn.animetrics.co/animetrics/missing_poster_art.png'
 
 export default function DiscussionCard(props) {
   const classes = useStyles();
@@ -43,7 +43,7 @@ export default function DiscussionCard(props) {
             offsetVertical={400}
             width={250}
           >
-            <img alt="poster art" width={250} src={poster ? `https://animetrics.sfo2.cdn.digitaloceanspaces.com/${poster}` : missingPosterUrl} />
+            <img alt="poster art" width={250} src={poster ? `https://cdn.animetrics.co/${poster}` : missingPosterUrl} />
           </LazyLoad>
         </CardMedia>
         <CardContent className={classes.cardContent}>
