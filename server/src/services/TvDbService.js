@@ -193,9 +193,9 @@ service.updateTvDbIds = async () => {
         logger.info(`NO TVDB MATCH, using first found: ${result.data.data[0].seriesName}`)
         show.tvdb_id = result.data.data[0].id
       }
-      show.save();
-      await updateSeriesInformation(show.id)
+      show.save()
     }
+    await updateSeriesInformation(show.id)
   }
 }
 
