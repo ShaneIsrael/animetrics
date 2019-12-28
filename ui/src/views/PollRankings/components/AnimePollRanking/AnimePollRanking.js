@@ -226,7 +226,7 @@ const AnimePollRanking = (props) => {
 
   let { current } = props
   
-  const avatar = `https://animetrics.sfo2.cdn.digitaloceanspaces.com/${current.assets[0].s3_avatar}`
+  const avatar = `https://cdn.animetrics.co/${current.assets[0].s3_avatar}`
 
   const posChangeUp = current.previous ? current.position < current.previous.position : false
   const posChangeDown = current.previous ? current.position > current.previous.position : false
