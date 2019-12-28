@@ -12,7 +12,9 @@ const fetchDiscussions = require('../fetch/fetchDiscussions')
 const fetchAssets = require('../fetch/fetchAssets')
 const fetchUsers = require('../fetch/fetchRedditMalUsers')
 const pollFixer = require('../tools/pollFixer')
+
 async function updatePosters() {
+  logger.info('updating posters')
   const assets = await Asset.findAll({
     where: {
       poster_art: null,
@@ -20,9 +22,11 @@ async function updatePosters() {
     include: [Show],
   })
   for (const asset of assets) {
-    const art = await getSeriesPoster(asset.Show.tvdb_id)
-    asset.poster_art = art
-    asset.save()
+    if (asset.Show.tvdb_id && asset.Show.tvdb_id !== -1) {
+      const art = await getSeriesPoster(asset.Show.tvdb_id)
+      asset.poster_art = art
+      asset.save()
+    }
   }
 }
 
@@ -60,7 +64,10 @@ async function getDiscussionsAndPopulate() {
       // don't process if the discussion isn't at least 15 minutes old. This is to help prevent getting
       // discussions made by non-mods that get deleted.
       if (createdDt.isSameOrBefore(dt15MinsAgo)) {
+        logger.info(`digesting ${discussion.title}`)
         await digestDiscussionPost(discussion)
+      } else {
+        logger.info(`skipping ${discussion.title}`)
       }
     }
   }
@@ -87,7 +94,7 @@ async function init() {
       cron.schedule('0 */15 * * * *', async () => {
         logger.info('--- Starting Discussion Populate Job ---')
         try {
-          getDiscussionsAndPopulate()
+          await getDiscussionsAndPopulate()
           await updateTvDbIds()
           await updatePosters()
           await fetchAssets.fetch()

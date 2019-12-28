@@ -73,7 +73,7 @@ export default function AssetOverrideCard(props) {
     <Card className={classes.card}>
       <CardMedia
         component="img"
-        image={`https://animetrics.sfo2.cdn.digitaloceanspaces.com/${assetURL}`}
+        image={`https://cdn.animetrics.co/${assetURL}`}
         title={title}
       />
       <CardContent>

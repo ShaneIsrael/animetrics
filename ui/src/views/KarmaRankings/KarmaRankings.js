@@ -104,7 +104,7 @@ function createResults(results, setHandler, modernCardStyle) {
     const render = results.map((res, index) => {
       const posPrevious = res.previous ? res.previous.position : null
       return <AnimeRankingResult 
-        banner={`https://animetrics.sfo2.cdn.digitaloceanspaces.com/${res.assets[0].s3_banner}`}
+        banner={`https://cdn.animetrics.co/${res.assets[0].s3_banner}`}
         commentCount={res.result.comment_count}
         commentCountPrevious={res.previous.result ? res.previous.result.comment_count : null}
         episode={res.discussion.episode}
