@@ -22,7 +22,7 @@ moment.updateLocale('en', {
 
 
 function getMyAnimeListUrl(text) {
-  const url = text.match(/https?:\/\/(www\.)?(\w*myanimelist\w*)\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]anime\/[1-9]*)/gm)
+  const url = text.match(/https?:\/\/(www\.)?(\w*myanimelist\w*)\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]anime\/[0-9]*)/gm)
   return url ? url[0] : null
 }
 
@@ -30,7 +30,7 @@ function getMyAnimeListUrl(text) {
 function parseMalId(post) {
   const myAnimeListUrl = getMyAnimeListUrl(post.selftext)
   if (myAnimeListUrl) {
-    const malId = myAnimeListUrl.match(/([1-9]\d+)/g)
+    const malId = myAnimeListUrl.match(/([0-9]\d+)/g)
     return malId ? malId[0] : null
   }
   return null
