@@ -1,7 +1,7 @@
 /* eslint-disable no-useless-escape */
 /* eslint-disable no-param-reassign */
 /* eslint-disable prefer-destructuring */
-
+const service = {}
 const axios = require('axios')
 const { environment } = require('../config')
 const config = require('../config')[environment].tvdb
@@ -14,7 +14,6 @@ const tvdb = axios.create({
   timeout: 5000,
 })
 
-const service = {}
 
 const sleep = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds))
 
@@ -50,8 +49,9 @@ async function updateSeriesInformation(id) {
       }
       if (!show.airsDayOfWeek && info.broadcast) {
         show.airsDayOfWeek = info.broadcast.match(/\b((mon|tues|wed(nes)?|thur(s)?|fri|sat(ur)?|sun)(days)?(day)?)\b/gi)
+      }
+      show.tvdb_id = -1
     }
-    show.tvdb_id = -1
   }
   show.save()
   return show
