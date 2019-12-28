@@ -46,10 +46,13 @@ async function updateSeriesInformation(id) {
         for (const g of info.genres) {
           genres.push(g.name)
         }
-        show.genre = genres
+        show.genre = genres.toString()
       }
       if (!show.airsDayOfWeek && info.broadcast) {
-        show.airsDayOfWeek = info.broadcast.match(/\b((mon|tues|wed(nes)?|thur(s)?|fri|sat(ur)?|sun)(days)?(day)?)\b/gi)
+        const airDay = info.broadcast.match(/\b((mon|tues|wed(nes)?|thur(s)?|fri|sat(ur)?|sun)(days)?(day)?)\b/gi)
+      	if (airDay) {
+	  show.airsDayOfWeek = airDay[0]
+	}
       }
       show.tvdb_id = -1
     }
