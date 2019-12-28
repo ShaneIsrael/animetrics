@@ -51,7 +51,7 @@ const Legend = () => {
           item
           xs={12}
         >
-          <img src="https://animetrics.sfo2.cdn.digitaloceanspaces.com/animetrics/legend.png" className={classes.root} />
+          <img src="https://cdn.animetrics.co/animetrics/legend.png" className={classes.root} />
         </Grid>
       </Grid>
     </div>

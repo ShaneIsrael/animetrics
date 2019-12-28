@@ -27,7 +27,7 @@ const NotFound = () => {
           <img
             alt="404 Page Not Found"
             className={classes.image}
-            src="https://animetrics.sfo2.cdn.digitaloceanspaces.com/animetrics/404/komi-blush-404.png"
+            src="https://cdn.animetrics.co/animetrics/404/komi-blush-404.png"
             
           />
         </a>
