@@ -9,10 +9,9 @@ import ls from 'local-storage'
 // eslint-disable-next-line
 import { Grid, Paper, FormControl, Select, MenuItem, Switch, Typography } from '@material-ui/core'
 
-import { Alert } from 'components'
-import { AnimeRankingResult, DetailsCard, KarmaGraphModal } from './components'
+import { Alert, KarmaGraphModal, RpGraphModal } from 'components'
+import { AnimeRankingResult, DetailsCard } from './components'
 import { WeekService, ResultsService, SeasonService } from '../../services'
-import RpGraphModal from './components/Graph/RpGraphModal'
 
 
 function TabPanel(props) {
@@ -277,11 +276,32 @@ const KarmaRankings = () => {
     fetchData()
   }, [selectedSeason])
 
-  useKey('ArrowLeft', () => {
-    setSelectedWeek(prevState => prevState + 1)
-  })
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        if (weeks) {
+          const results = (await ResultsService.getResultsByWeek(weeks[selectedWeek].id)).data
+          setRenderedResults(createResults(results, setAnimeSelection, openKarmaGraphModal, openRpGraphModal))
+        }
+      } catch (err) {
+        console.log(err)
+      }
+    }
+    fetchData()
+  }, [selectedWeek])
+
   useKey('ArrowRight', () => {
-    setSelectedWeek(prevState => prevState - 1)
+    setSelectedWeek(prevState => {
+      const total = weeks.length - 1
+      if (prevState + 1 > total) return total
+      return prevState + 1
+    })
+  })
+  useKey('ArrowLeft', () => {
+    setSelectedWeek(prevState => {
+      if (prevState - 1 < 0) return 0
+      return prevState - 1
+    })
   })
 
   const handleWeekChange = async event => {

@@ -13,7 +13,7 @@ import {
   Title
 } from "@devexpress/dx-react-chart-material-ui"
 
-import { SeasonService } from '../../../../services'
+import { SeasonService } from '../../services'
 import { Typography } from '@material-ui/core';
 import { ValueScale, HoverState } from '@devexpress/dx-react-chart';
 
@@ -94,7 +94,7 @@ export default function RpGraphModal(props) {
     async function fetchData() {
       try {
         const seasonEpisodeScore = (await SeasonService.getAllShowEpisodeRedditPollScoreBySeason(params.seasonId, params.showId)).data
-        setMinMax(createMinMax(seasonEpisodeScore))
+        // setMinMax(createMinMax(seasonEpisodeScore))
         setData(generateData(seasonEpisodeScore))
       } catch (err) {
         console.log(err)

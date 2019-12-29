@@ -221,12 +221,15 @@ const AnimePollRanking = (props) => {
   const classes = useStyles()
   const desktop = desktopStyles()
 
-  let { current } = props
+  let { current, openRpGraphModal } = props
   
   const avatar = `https://cdn.animetrics.co/${current.assets[0].s3_avatar}`
 
   const posChangeUp = current.previous ? current.position < current.previous.position : false
   const posChangeDown = current.previous ? current.position > current.previous.position : false
+
+  const seasonId = current.seasonId
+  const showId = current.show.id
 
   return (
     <Grid item xs={12}>
@@ -301,6 +304,7 @@ const AnimePollRanking = (props) => {
                   avatar={<PollIcon />}
                   label={current.score}
                   variant="outlined"
+                  onClick={() => openRpGraphModal(seasonId, showId)}
                 />
               </LightTooltip>
               {(posChangeUp || posChangeDown) &&

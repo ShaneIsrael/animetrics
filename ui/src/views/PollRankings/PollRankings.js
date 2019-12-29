@@ -10,8 +10,7 @@ import { Grid, Paper, FormControl, Select, MenuItem } from '@material-ui/core'
 import { AnimePollRanking } from './components'
 import { WeekService, ResultsService, SeasonService } from '../../services'
 import clsx from 'clsx'
-import { Alert } from 'components'
-
+import { Alert, RpGraphModal } from 'components'
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -59,12 +58,13 @@ const useStyles = makeStyles(theme => ({
 
 }))
 
-function createPollResults(results) {
+function createPollResults(results, openRpGraphModal) {
   try {
     const render = results.map((poll, index) => {
       return <AnimePollRanking
         current={poll}
         key={index}
+        openRpGraphModal={openRpGraphModal}
       />
     })
     return render
@@ -102,6 +102,12 @@ const PollRankings = () => {
   const [seasonSelectOptions, setSeasonSelectOptions] = React.useState([])
   const [weekSelectOptions, setWeekSelectOptions] = React.useState([])
   const [renderedPollResults, setRenderedPollResults] = React.useState([])
+
+
+  const [rpScoreGraphParams, setRpScoreGraphParams] = React.useState(null)
+  const openRpGraphModal = (seasonId, showId) => {
+    setRpScoreGraphParams({seasonId, showId})
+  }
 
   const createWeekSelectOptions = React.useCallback(async (weeks) => {
     const weekSelectOptions = weeks.map((week, index) => {
@@ -159,7 +165,7 @@ const PollRankings = () => {
         setSeasons(seasons)
         createWeekSelectOptions(wks)
         createSeasonSelectOptions(seasons)
-        setRenderedPollResults(createPollResults(pollResults))
+        setRenderedPollResults(createPollResults(pollResults, openRpGraphModal))
       } catch (err) {
         console.log(err)
       }
@@ -171,7 +177,7 @@ const PollRankings = () => {
     async function fetchData() {
       try {
         const pollResults = (await ResultsService.getRedditPollResultsByWeek(weeks[selectedSeason === 0 ? 1 : 0].id)).data
-        setRenderedPollResults(createPollResults(pollResults))
+        setRenderedPollResults(createPollResults(pollResults, openRpGraphModal))
       } catch (err) {
         console.log(err)
       }
@@ -192,7 +198,7 @@ const PollRankings = () => {
           if (selectedSeason === 0) setSelectedWeek(1)
           else setSelectedWeek(0)
           createWeekSelectOptions(wks)
-          setRenderedPollResults(createPollResults(pollResults))
+          setRenderedPollResults(createPollResults(pollResults, openRpGraphModal))
         }
       } catch (err) {
         console.log(err)
@@ -201,11 +207,32 @@ const PollRankings = () => {
     fetchData()
   }, [selectedSeason])
 
-  useKey('ArrowLeft', () => {
-    setSelectedWeek(prevState => prevState + 1)
-  })
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        if (weeks) {
+          const pollResults = (await ResultsService.getRedditPollResultsByWeek(weeks[selectedWeek].id)).data
+          setRenderedPollResults(createPollResults(pollResults, openRpGraphModal))
+        }
+      } catch (err) {
+        console.log(err)
+      }
+    }
+    fetchData()
+  }, [selectedWeek])
+
   useKey('ArrowRight', () => {
-    setSelectedWeek(prevState => prevState - 1)
+    setSelectedWeek(prevState => {
+      const total = weeks.length - 1
+      if (prevState + 1 > total) return total
+      return prevState + 1
+    })
+  })
+  useKey('ArrowLeft', () => {
+    setSelectedWeek(prevState => {
+      if (prevState - 1 < 0) return 0
+      return prevState - 1
+    })
   })
 
   const handleWeekChange = async event => {
@@ -217,6 +244,12 @@ const PollRankings = () => {
 
   return (
     <div className={clsx({[classes.root]: true})}>
+      {
+        rpScoreGraphParams && 
+        <RpGraphModal
+          params={rpScoreGraphParams}
+        />
+      }
       <Grid
         container
         justify="center"
@@ -286,7 +319,7 @@ const PollRankings = () => {
                   {renderedPollResults}
                   {renderedPollResults.length === 0 &&
                   <Alert
-                    message="There are currently 0 results for this week. The first results should appear 48 hours after the week beginds. Please check back later."
+                    message="There are currently 0 results for this week. The first results should appear 48 hours after the week begins. Please check back later."
                     variant="info"
                   />
                   }

@@ -13,7 +13,7 @@ import {
   Title
 } from "@devexpress/dx-react-chart-material-ui"
 
-import { SeasonService } from '../../../../services'
+import { SeasonService } from '../../services'
 import { Typography } from '@material-ui/core';
 import { ValueScale, HoverState } from '@devexpress/dx-react-chart';
 
