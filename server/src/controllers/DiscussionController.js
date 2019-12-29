@@ -39,7 +39,6 @@ controller.getDiscussionsByPage = async (req, res, next) => {
     const discussions = await getDiscussionsByPage(page, size, query)
     res.status(200).send(discussions)
   } catch (err) {
-    console.log(err)
     next(err)
   }
 }

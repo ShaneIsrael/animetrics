@@ -5,14 +5,14 @@ import clsx from 'clsx'
 import {isMobile} from 'react-device-detect'
 import { makeStyles, withStyles } from '@material-ui/styles'
 import Box from '@material-ui/core/Box'
-import moment from 'moment'
 import ls from 'local-storage'
 // eslint-disable-next-line
-import { Grid, Paper, InputLabel, FormControl, Select, MenuItem, Switch, Typography } from '@material-ui/core'
+import { Grid, Paper, FormControl, Select, MenuItem, Switch, Typography } from '@material-ui/core'
 
 import { Alert } from 'components'
-import { AnimeRankingResult, DetailsCard } from './components'
+import { AnimeRankingResult, DetailsCard, KarmaGraphModal } from './components'
 import { WeekService, ResultsService, SeasonService } from '../../services'
+import RpGraphModal from './components/Graph/RpGraphModal'
 
 
 function TabPanel(props) {
@@ -98,7 +98,7 @@ const AntSwitch = withStyles(theme => ({
   checked: {},
 }))(Switch)
 
-function createResults(results, setHandler, modernCardStyle) {
+function createResults(results, setHandler, openKarmaGraphModal, openRpGraphModal) {
   try {
     if (Object.keys(results).length === 0) return []
     const render = results.map((res, index) => {
@@ -122,6 +122,8 @@ function createResults(results, setHandler, modernCardStyle) {
         scorePrevious={res.previous.result ? res.previous.result.ups : null}
         setAnimeSelection={setHandler}
         title={res.show.english_title ? res.show.english_title : res.show.title}
+        openKarmaGraphModal={openKarmaGraphModal}
+        openRpGraphModal={openRpGraphModal}
       />
     })
     return render
@@ -152,9 +154,8 @@ const KarmaRankings = () => {
   const classes = useStyles()
   // eslint-disable-next-line
   const inputLabel = React.useRef(null);
-  const [resultData, setResultData] = React.useState(null)
   const [weeks, setWeeks] = React.useState(null)
-  const [selectedWeek, setSelectedWeek] = React.useState(1);
+  const [selectedWeek, setSelectedWeek] = React.useState(1)
   const [seasons, setSeasons] = React.useState(null)
   const [selectedSeason, setSelectedSeason] = React.useState(0)
   const [weekSelectOptions, setWeekSelectOptions] = React.useState([])
@@ -167,81 +168,19 @@ const KarmaRankings = () => {
     setSelectedAnime(selection)
   }
   
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        if (ls.get('modernCardStyle') === null) {
-          ls('modernCardStyle', true)
-        }
-        setModernCardStyle(ls.get('modernCardStyle'))
-        const seasons = (await SeasonService.getSeasons()).data
-        const wks = (await WeekService.getWeeksBySeason(seasons[0].season, seasons[0].year)).data
-        const results = (await ResultsService.getResultsByWeek(wks[1].id)).data
-        setResultData(results)
-        setWeeks(wks)
-        setSeasons(seasons)
-        setSelectedWeek(1)
-        createWeekSelectOptions(wks)
-        createSeasonSelectOptions(seasons)
-        setRenderedResults(createResults(results, setAnimeSelection))
-      } catch (err) {
-        console.log(err)
-      }
-    }
-    fetchData()
-  }, [])
+  const [karmaGraphParams, setKarmaGraphParams] = React.useState(null)
+  const openKarmaGraphModal = (seasonId, showId) => {
+    setKarmaGraphParams({seasonId, showId})
+  }
 
-  useEffect(() => {
-    
-    async function fetchData() {
-      try {
-        const results = (await ResultsService.getResultsByWeek(weeks[selectedWeek].id)).data
-        setResultData(results)
-        setRenderedResults(createResults(results, setAnimeSelection))
-      } catch (err) {
-        console.log(err)
-      }
-    }
-    if (weeks) {
-      if (selectedWeek < weeks.length && selectedWeek >= 0) {
-        fetchData()
-      } else if (selectedWeek === weeks.length) {
-        setSelectedWeek(weeks.length)
-      } else {
-        setSelectedWeek(0)
-      }
-    }
-  }, [weeks, selectedWeek, setSelectedWeek, modernCardStyle])
-
+  const [rpScoreGraphParams, setRpScoreGraphParams] = React.useState(null)
+  const openRpGraphModal = (seasonId, showId) => {
+    setRpScoreGraphParams({seasonId, showId})
+  }
 
   
-  useEffect(() => {
-    
-    async function fetchData() {
-      try {
-        if (seasons) {
-          const season = seasons[selectedSeason]
-          const wks = (await WeekService.getWeeksBySeason(season.season, season.year)).data
-          const results = (await ResultsService.getResultsByWeek(wks[0].id)).data
-          setResultData(results)
-          setWeeks(wks)
-          if (selectedSeason === 0) setSelectedWeek(1)
-          else setSelectedWeek(0)
-          createWeekSelectOptions(wks)
-          setRenderedResults(createResults(results, setAnimeSelection))
-        }
-      } catch (err) {
-        console.log(err)
-      }
-    }
-    fetchData()
-  }, [selectedSeason])
-  
-
-  const createWeekSelectOptions = async (weeks) => {
+  const createWeekSelectOptions = React.useCallback(async (weeks) => {
     const weekSelectOptions = weeks.map((week, index) => {
-      const start = moment(week.start_dt, 'YYYY-MM-DD HH:mm:ss').format('MMM Do, YYYY')
-      const end = moment(week.end_dt, 'YYYY-MM-DD HH:mm:ss').format('MMM Do, YYYY')
       if (index === 0 && selectedSeason === 0) {
         return isMobile ? <option
           key={index}
@@ -262,7 +201,7 @@ const KarmaRankings = () => {
       }
     })
     setWeekSelectOptions(weekSelectOptions)
-  }
+  }, [selectedSeason])
 
   const createSeasonSelectOptions = async (seasons) => {
     const seasonSelectOptions = seasons.map((season, index) => {
@@ -281,6 +220,62 @@ const KarmaRankings = () => {
     setSeasonSelectOptions(seasonSelectOptions)
   }
 
+  
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        if (ls.get('modernCardStyle') === null) {
+          ls('modernCardStyle', true)
+        }
+        setModernCardStyle(ls.get('modernCardStyle'))
+        const seasons = (await SeasonService.getSeasons()).data
+        const wks = (await WeekService.getWeeksBySeason(seasons[0].season, seasons[0].year)).data
+        const results = (await ResultsService.getResultsByWeek(wks[1].id)).data
+        setWeeks(wks)
+        setSeasons(seasons)
+        createWeekSelectOptions(wks)
+        createSeasonSelectOptions(seasons)
+        setRenderedResults(createResults(results, setAnimeSelection, openKarmaGraphModal, openRpGraphModal))
+      } catch (err) {
+        console.log(err)
+      }
+    }
+    fetchData()
+  }, [])
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const results = (await ResultsService.getResultsByWeek(weeks[selectedSeason === 0 ? 1 : 0].id)).data
+        setRenderedResults(createResults(results, setAnimeSelection, openKarmaGraphModal, openRpGraphModal))
+      } catch (err) {
+        console.log(err)
+      }
+    }
+    if (weeks) {
+      fetchData()
+    }
+  }, [weeks, selectedSeason])
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        if (seasons) {
+          const season = seasons[selectedSeason]
+          const wks = (await WeekService.getWeeksBySeason(season.season, season.year)).data
+          const results = (await ResultsService.getResultsByWeek(wks[0].id)).data
+          setWeeks(wks)
+          if (selectedSeason === 0) setSelectedWeek(1)
+          else setSelectedWeek(0)
+          createWeekSelectOptions(wks)
+          setRenderedResults(createResults(results, setAnimeSelection, openKarmaGraphModal, openRpGraphModal))
+        }
+      } catch (err) {
+        console.log(err)
+      }
+    }
+    fetchData()
+  }, [selectedSeason])
 
   useKey('ArrowLeft', () => {
     setSelectedWeek(prevState => prevState + 1)
@@ -308,6 +303,18 @@ const KarmaRankings = () => {
           selectedAnime={selectedAnime}
         />
       }
+      {
+        karmaGraphParams && 
+        <KarmaGraphModal
+          params={karmaGraphParams}
+        />
+      }
+      {
+        rpScoreGraphParams && 
+        <RpGraphModal
+          params={rpScoreGraphParams}
+        />
+      }
       <Grid
         container
         justify="center"
@@ -317,7 +324,6 @@ const KarmaRankings = () => {
         <Grid
           container
           justify="center"
-          xs={12}
         >
           <Grid
             container

@@ -3,7 +3,6 @@ import React from 'react'
 import { makeStyles } from '@material-ui/styles'
 // eslint-disable-next-line
 import { Grid, Typography, Paper } from '@material-ui/core'
-import { isMobile, isMobileOnly } from 'react-device-detect'
 import clsx from 'clsx'
 
 const useStyles = makeStyles(theme => ({
@@ -51,7 +50,7 @@ const Legend = () => {
           item
           xs={12}
         >
-          <img src="https://cdn.animetrics.co/animetrics/legend.png" className={classes.root} />
+          <img alt="legend" src="https://cdn.animetrics.co/animetrics/legend.png" className={classes.root} />
         </Grid>
       </Grid>
     </div>

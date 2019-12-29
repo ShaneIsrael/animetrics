@@ -19,7 +19,7 @@ import LazyLoad from 'react-lazy-load'
 import ls from 'local-storage'
 
 import clsx from 'clsx'
-import { deepOrange, deepPurple, green, lightGreen, yellow, lightBlue } from '@material-ui/core/colors'
+import { deepOrange, deepPurple, lightBlue } from '@material-ui/core/colors'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -224,6 +224,8 @@ const AnimeRankingResult = (props) => {
     pollScore,
     pollScorePrevious,
     setAnimeSelection,
+    openKarmaGraphModal,
+    openRpGraphModal,
   } = props
   
   const posChange = pos - posPrevious
@@ -244,6 +246,8 @@ const AnimeRankingResult = (props) => {
   const malScoreDirection = !malScorePrevious || malScore === malScorePrevious ? 'none' : malScore < malScorePrevious ? 'down' : 'up'
   const ralScoreDirection = !ralScorePrevious || ralScore === ralScorePrevious ? 'none' : ralScore < ralScorePrevious ? 'down' : 'up'
   
+  const seasonId = result.seasonId
+  const showId = result.show.id
 
   const scoreChangeIcon = scoreChangeDirection === 'up' 
     ? <KeyboardArrowUpIcon className={classes.orangeColor}/> 
@@ -496,6 +500,7 @@ const AnimeRankingResult = (props) => {
                             className={clsx({[desktop.squareChip]: true, [classes.rankColor]: true})}
                             label={score}
                             variant="outlined"
+                            onClick={() => openKarmaGraphModal(seasonId, showId)}
                           />
                         </LightTooltip>
                       </Grid>
@@ -511,6 +516,7 @@ const AnimeRankingResult = (props) => {
                             className={clsx({[desktop.squareChip]: true})}
                             label={pollScore > 0 ? pollScore.toFixed(2) : '-----'}
                             variant="outlined"
+                            onClick={() => openRpGraphModal(seasonId, showId)}
                           />
                         </LightTooltip>
                       </Grid>

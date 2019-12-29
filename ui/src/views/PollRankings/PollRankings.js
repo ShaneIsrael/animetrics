@@ -6,8 +6,7 @@ import { makeStyles } from '@material-ui/styles'
 import Typography from '@material-ui/core/Typography'
 import Box from '@material-ui/core/Box'
 // eslint-disable-next-line
-import { Grid, Paper, InputLabel, FormControl, Select, MenuItem } from '@material-ui/core'
-import moment from 'moment'
+import { Grid, Paper, FormControl, Select, MenuItem } from '@material-ui/core'
 import { AnimePollRanking } from './components'
 import { WeekService, ResultsService, SeasonService } from '../../services'
 import clsx from 'clsx'
@@ -104,71 +103,8 @@ const PollRankings = () => {
   const [weekSelectOptions, setWeekSelectOptions] = React.useState([])
   const [renderedPollResults, setRenderedPollResults] = React.useState([])
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const seasons = (await SeasonService.getSeasons()).data
-        const wks = (await WeekService.getWeeksBySeason(seasons[0].season, seasons[0].year)).data
-        const pollResults = (await ResultsService.getRedditPollResultsByWeek(wks[1].id)).data
-        setWeeks(wks)
-        setSelectedWeek(1)
-        setSeasons(seasons)
-        createWeekSelectOptions(wks)
-        createSeasonSelectOptions(seasons)
-        setRenderedPollResults(createPollResults(pollResults))
-      } catch (err) {
-        console.log(err)
-      }
-    }
-    fetchData()
-  }, [])
-
-  useEffect(() => {
-    
-    async function fetchData() {
-      try {
-        const pollResults = (await ResultsService.getRedditPollResultsByWeek(weeks[selectedWeek].id)).data
-        setRenderedPollResults(createPollResults(pollResults))
-      } catch (err) {
-        console.log(err)
-      }
-    }
-    if (weeks) {
-      if (selectedWeek < weeks.length && selectedWeek >= 0) {
-        fetchData()
-      } else if (selectedWeek === weeks.length) {
-        setSelectedWeek(weeks.length)
-      } else {
-        setSelectedWeek(0)
-      }
-    }
-  }, [weeks, selectedWeek, setSelectedWeek])
-
-  useEffect(() => {
-    
-    async function fetchData() {
-      try {
-        if (seasons) {
-          const season = seasons[selectedSeason]
-          const wks = (await WeekService.getWeeksBySeason(season.season, season.year)).data
-          const pollResults = (await ResultsService.getRedditPollResultsByWeek(wks[0].id)).data
-          setWeeks(wks)
-          if (selectedSeason === 0) setSelectedWeek(1)
-          else setSelectedWeek(0)
-          createWeekSelectOptions(wks)
-          setRenderedPollResults(createPollResults(pollResults))
-        }
-      } catch (err) {
-        console.log(err)
-      }
-    }
-    fetchData()
-  }, [selectedSeason])
-
-  const createWeekSelectOptions = async (weeks) => {
+  const createWeekSelectOptions = React.useCallback(async (weeks) => {
     const weekSelectOptions = weeks.map((week, index) => {
-      const start = moment(week.start_dt, 'YYYY-MM-DD HH:mm:ss').format('MMM Do, YYYY')
-      const end = moment(week.end_dt, 'YYYY-MM-DD HH:mm:ss').format('MMM Do, YYYY')
       if (index === 0 && selectedSeason === 0) {
         return isMobile ? <option
           key={index}
@@ -193,9 +129,9 @@ const PollRankings = () => {
       }
     })
     setWeekSelectOptions(weekSelectOptions)
-  }
+  }, [selectedSeason])
 
-  const createSeasonSelectOptions = async (seasons) => {
+  const createSeasonSelectOptions = React.useCallback(async (seasons) => {
     const seasonSelectOptions = seasons.map((season, index) => {
       return isMobile 
       ? 
@@ -210,7 +146,60 @@ const PollRankings = () => {
       ><center>{season.season.replace(/^\w/, c => c.toUpperCase())} of {season.year}</center></MenuItem>
     })
     setSeasonSelectOptions(seasonSelectOptions)
-  }
+  }, [])
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const seasons = (await SeasonService.getSeasons()).data
+        const wks = (await WeekService.getWeeksBySeason(seasons[0].season, seasons[0].year)).data
+        const pollResults = (await ResultsService.getRedditPollResultsByWeek(wks[1].id)).data
+        setWeeks(wks)
+        // setSelectedWeek(1)
+        setSeasons(seasons)
+        createWeekSelectOptions(wks)
+        createSeasonSelectOptions(seasons)
+        setRenderedPollResults(createPollResults(pollResults))
+      } catch (err) {
+        console.log(err)
+      }
+    }
+    fetchData()
+  }, [])
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const pollResults = (await ResultsService.getRedditPollResultsByWeek(weeks[selectedSeason === 0 ? 1 : 0].id)).data
+        setRenderedPollResults(createPollResults(pollResults))
+      } catch (err) {
+        console.log(err)
+      }
+    }
+    if (weeks) {
+      fetchData()
+    }
+  }, [weeks, selectedSeason])
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        if (seasons) {
+          const season = seasons[selectedSeason]
+          const wks = (await WeekService.getWeeksBySeason(season.season, season.year)).data
+          const pollResults = (await ResultsService.getRedditPollResultsByWeek(wks[0].id)).data
+          setWeeks(wks)
+          if (selectedSeason === 0) setSelectedWeek(1)
+          else setSelectedWeek(0)
+          createWeekSelectOptions(wks)
+          setRenderedPollResults(createPollResults(pollResults))
+        }
+      } catch (err) {
+        console.log(err)
+      }
+    }
+    fetchData()
+  }, [selectedSeason])
 
   useKey('ArrowLeft', () => {
     setSelectedWeek(prevState => prevState + 1)

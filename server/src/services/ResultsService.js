@@ -120,6 +120,7 @@ service.getResultsByWeek = async (id) => {
   const resultObjects = {}
   for (const rl of resultLinks) {
     resultObjects[rl.showId] = {
+      seasonId: week.seasonId,
       show: rl.Show.dataValues,
       assets: rl.Show.Assets,
       result: rl.EpisodeDiscussionResult.dataValues,
