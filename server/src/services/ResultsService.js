@@ -88,6 +88,7 @@ service.getRedditPollResultsByWeek = async (id) => {
     if (previous) previous.position = pPos
     pPos = 0
     results.push({
+      seasonId: week.seasonId,
       show: cr.Show.dataValues,
       discussion: cr.EpisodeDiscussion.dataValues,
       assets: cr.Show.Assets,
