@@ -54,11 +54,12 @@ export default function DiscussionsTable(props) {
   const { discussions, query, fetchHandler } = props
 
   const [page, setPage] = React.useState(0)
-  const [rowsPerPage, setRowsPerPage] = React.useState(25)
   const [rows, setRows] = React.useState([])
 
   const columns = isMobileOnly ? mobileColumns : desktopColumns
 
+  const rowsPerPage = 25
+  
   const createViewButton = React.useCallback(href => {
     return (
       <Button

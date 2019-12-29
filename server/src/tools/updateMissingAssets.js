@@ -30,7 +30,6 @@ async function init() {
       await fetchAssets.createBannerFromAssetPoster(asset)
     }
   } catch (err) {
-    console.log(err)
     logger.error(err)
   }
 }

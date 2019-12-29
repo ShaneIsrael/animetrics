@@ -79,7 +79,7 @@ const RecentDiscussions = () => {
               label="Series Title"
               onChange={(event) => setDiscussionQuery(event.target.value)}
               placeholder={'Sword Art Online'}
-              spellcheck="false"
+              spellCheck="false"
               variant="outlined"
             />
           </form>
