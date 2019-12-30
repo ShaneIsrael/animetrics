@@ -1,4 +1,6 @@
 const appRoot = require('app-root-path')
+require('winston-papertrail').Papertrail
+
 const { transports, createLogger, format } = require('winston')
 
 // define the custom settings for each transport (file, console)
@@ -42,6 +44,13 @@ const logger = createLogger({
     new transports.File(options.file),
     new transports.File(options.errorFile),
     new transports.Console(options.console),
+    new transports.Papertrail({
+      host: 'logs5.papertrailapp.com',
+      port: 28660,
+      colorize: true,
+      timestamp: true,
+      handleExceptions: true,
+    })
   ],
   exitOnError: false, // do not exit on handled exceptions
 })
