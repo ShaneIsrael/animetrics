@@ -3,7 +3,7 @@ const moment = require('moment')
 const { findAnime } = require('../services')
 const fetchDiscussions = require('../fetch/fetchDiscussions')
 const cpoll = require('../tools/calculatePoll')
-
+const logger = require('../logger')
 const { Show, Week, Season, EpisodeResultLink, EpisodeDiscussion, EpisodeDiscussionResult, Op} = require('../models')
 
 async function init() {
@@ -151,32 +151,7 @@ async function init() {
 
 
     // fix shield hero preair bug
-    const erl = await EpisodeResultLink.findOne({
-      where: {
-        id: 1602
-      },
-      include: [EpisodeDiscussionResult]
-    })
-    erl.EpisodeDiscussionResult.destroy()
-    erl.destroy()
-
-    const results = await EpisodeDiscussionResult.findAll({
-      where: {
-        ralScore: 0
-      },
-      include: [Show]
-    })
-
-    const total = results.length
-    let current = 1
-    for (const res of results) {
-      const score = (await cpoll.calculateRedditMalRating(res.Show.id))[0]
-      console.log(`${current}/${total}settings score to: ${score}`)
-      res.ralScore = score
-      res.save()
-      current ++
-    }
-
-    console.log(results.length)
+    logger.info('test log')
+    logger.error('test error')
 }
 init()

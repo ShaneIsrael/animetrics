@@ -1,7 +1,8 @@
 const appRoot = require('app-root-path')
-require('winston-papertrail').Papertrail
-
+const Syslog = require('winston-syslog').Syslog
 const { transports, createLogger, format } = require('winston')
+
+const hostname = require('os').hostname()
 
 // define the custom settings for each transport (file, console)
 const options = {
@@ -41,15 +42,16 @@ const logger = createLogger({
     format.json(),
   ),
   transports: [
-    new transports.File(options.file),
-    new transports.File(options.errorFile),
     new transports.Console(options.console),
-    new transports.Papertrail({
+    new Syslog({
       host: 'logs5.papertrailapp.com',
       port: 28660,
+      app_name: 'animetrics',
+      localhost: hostname,
       colorize: true,
       timestamp: true,
       handleExceptions: true,
+      level: 'info'
     })
   ],
   exitOnError: false, // do not exit on handled exceptions
