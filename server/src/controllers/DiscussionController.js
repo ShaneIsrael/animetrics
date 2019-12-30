@@ -35,6 +35,7 @@ controller.getDiscussionsByPage = async (req, res, next) => {
     if (isNaN(page)) throw new Error('page must be a number')
     if (isNaN(size)) throw new Error('size must be a number')
     if (typeof query !== 'string') throw new Error('query must be a string')
+    if (size > 25) size = 25
     
     const discussions = await getDiscussionsByPage(page, size, query)
     res.status(200).send(discussions)
