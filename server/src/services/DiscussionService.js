@@ -90,19 +90,19 @@ service.getDiscussionsByPage = async (page, size, query) => {
     let altTitle
     let seriesName
     let englishTitle
+
     if (show) {
       showTitle = show.title
       altTitle = show.alt_title
       seriesName = show.seriesName
       englishTitle = show.english_title
     }
-    const or = [
-      { post_title: { [Op.like]: `%${query}%` } },
-      { post_title: { [Op.like]: `%${showTitle}%` } },
-      { post_title: { [Op.like]: `%${altTitle}%` } },
-      { post_title: { [Op.like]: `%${seriesName}%` } },
-      { post_title: { [Op.like]: `%${englishTitle}%` } },
-    ]
+
+    const or = [{ post_title: { [Op.like]: `%${query}%` } }]
+    if (showTitle) or.push({ post_title: { [Op.like]: `%${showTitle}%` } })
+    if (englishTitle) or.push({ post_title: { [Op.like]: `%${englishTitle}%` } })
+    if (seriesName) or.push({ post_title: { [Op.like]: `%${seriesName}%` } })
+    if (altTitle) or.push({ post_title: { [Op.like]: `%${altTitle}%` } })
 
     discussions = await EpisodeDiscussion.findAll({
       where: {
