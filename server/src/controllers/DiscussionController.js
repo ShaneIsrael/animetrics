@@ -31,7 +31,8 @@ controller.getRecentDiscussions = async (req, res, next) => {
  */
 controller.getDiscussionsByPage = async (req, res, next) => {
   try {
-    const { page, size, query } = req.query
+    const { page, query } = req.query
+    let { size } = req.query
     if (isNaN(page)) throw new Error('page must be a number')
     if (isNaN(size)) throw new Error('size must be a number')
     if (typeof query !== 'string') throw new Error('query must be a string')
