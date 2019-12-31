@@ -241,7 +241,7 @@ const AnimePollRanking = (props) => {
           <CardHeader
             className={classes.cardHeader}
             avatar={
-              <LazyLoad debounce={true} offsetVertical={400} width={50}><Avatar className={classes.avatarMobile} src={avatar} /></LazyLoad>
+              <LazyLoad debounce={true} offsetVertical={400} width={50} key={avatar}><Avatar className={classes.avatarMobile} src={avatar} /></LazyLoad>
             }
             title={current.show.english_title ? current.show.english_title : current.show.title}
             subheader={`Episode ${current.discussion.episode}`}
@@ -282,7 +282,7 @@ const AnimePollRanking = (props) => {
           <CardHeader
             className={desktop.cardHeader}
             avatar={
-              <LazyLoad debounce={true} offsetVertical={400} width={80}><Avatar className={desktop.avatar} src={avatar} /></LazyLoad>
+              <LazyLoad debounce={true} offsetVertical={400} width={80} key={avatar}><Avatar className={desktop.avatar} src={avatar} /></LazyLoad>
             }
             title={current.show.english_title ? current.show.english_title : current.show.title}
             titleTypographyProps={{variant: 'h6', component: 'h6'}}

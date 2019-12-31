@@ -46,6 +46,7 @@ export default function DiscussionCard(props) {
             loadWidth={250}
             src={poster ? `https://cdn.animetrics.co/${poster}` : missingPosterUrl}
             alt="Poster art"
+            key={poster}
           />
         </CardMedia>
         <CardContent className={classes.cardContent}>
