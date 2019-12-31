@@ -317,6 +317,7 @@ const AnimeRankingResult = (props) => {
                 src={posterUrl}
                 alt="Poster art"
                 className={mobile.cover}
+                key={posterUrl}
               />
             </CardMedia>
             <div className={mobile.details}>
@@ -405,6 +406,7 @@ const AnimeRankingResult = (props) => {
                   src={posterUrl}
                   alt="Poster art"
                   className={desktop.cover}
+                  key={posterUrl}
                 />
               </CardMedia>
             </div>

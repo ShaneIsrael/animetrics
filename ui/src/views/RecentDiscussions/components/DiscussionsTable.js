@@ -77,6 +77,7 @@ export default function DiscussionsTable(props) {
       <Avatar
         className={classes.avatar}
         src={`https://cdn.animetrics.co/${url}`}
+        key={url}
       />
     )
   }, [classes.avatar])
