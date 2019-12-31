@@ -95,10 +95,10 @@ async function init() {
         logger.info('--- Starting Discussion Populate Job ---')
         try {
           await getDiscussionsAndPopulate()
+          await generateDiscussionResults()
           await updateTvDbIds()
           await updatePosters()
           await fetchAssets.fetch()
-          await generateDiscussionResults()
           await pollFixer.init()
         } catch (err) {
           logger.error(err)
