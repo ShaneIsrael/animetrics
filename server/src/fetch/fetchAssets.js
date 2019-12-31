@@ -202,7 +202,7 @@ module.exports = {
       })
       for (const asset of assets) {
         if (!asset.s3_poster) await createS3Poster(asset)
-        if (!asset.s3_banner) await createBanner(asset)
+        if (!asset.s3_banner) await createBanner(asset).catch(e => console.log(e))
         if (!asset.s3_avatar) await createAvatar(asset)
         asset.s3_bucket = 'animetrics'
         asset.save()
