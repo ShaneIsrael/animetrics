@@ -40,11 +40,12 @@ export default function LazyLoadImage(props) {
       offsetVertical={verticalOffset ? verticalOffset : 400}
       width={width}
     >
-      {loaded ?
+      <div>
         <img style={{display: `${loaded ? 'block' : 'none'}`}} className={loaded ? className : ''} alt={alt} width={width} src={src} onLoad={() => setLoaded(true)}/>
-        :
-        defaultComponent
-      }
+        {!loaded &&
+          defaultComponent
+        }
+      </div>
     </LazyLoad>
   )
 }
