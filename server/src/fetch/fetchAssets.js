@@ -29,6 +29,7 @@ function createWorkingDir(imageName) {
 
 const cropBanner = (width, height, fileToCrop, savePath, saveName) => new Promise(async (resolve, reject) => {
   logger.info('Creating new banner from asset poster...')
+  console.log(fileToCrop)
   const pyProg = await spawn('python3', [config.detectFacePath, fileToCrop, config.detectFaceConfPath])
   const bannerSavePath = `${savePath}/${saveName}_banner.jpg`
   const jsonLoc = `${fileToCrop.split('.')[0]}.json`
@@ -149,6 +150,9 @@ async function createBanner(asset) {
     timeout: 5000,
   })
 
+  console.log(filename)
+  console.log(imageDir)
+  console.log(imageName)
   const path = await cropBanner(454, 80, filename, imageDir, imageName)
   if (path) {
     // sleep 500 miliseconds so that files get closed before trying to upload
@@ -202,7 +206,7 @@ module.exports = {
       })
       for (const asset of assets) {
         if (!asset.s3_poster) await createS3Poster(asset)
-        if (!asset.s3_banner) await createBanner(asset).catch(e => console.log(e))
+        if (!asset.s3_banner) await createBanner(asset)
         if (!asset.s3_avatar) await createAvatar(asset)
         asset.s3_bucket = 'animetrics'
         asset.save()
