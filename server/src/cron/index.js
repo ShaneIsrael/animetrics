@@ -94,8 +94,8 @@ async function init() {
       cron.schedule('0 */15 * * * *', async () => {
         logger.info('--- Starting Discussion Populate Job ---')
         try {
-          await getDiscussionsAndPopulate()
           await generateDiscussionResults()
+          await getDiscussionsAndPopulate()
           await updateTvDbIds()
           await updatePosters()
           await fetchAssets.fetch()
