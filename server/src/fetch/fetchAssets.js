@@ -30,6 +30,7 @@ function createWorkingDir(imageName) {
 const cropBanner = (width, height, fileToCrop, savePath, saveName) => new Promise(async (resolve, reject) => {
   logger.info('Creating new banner from asset poster...')
   console.log(fileToCrop)
+  await sleep(2000)
   const pyProg = await spawn('python3', [config.detectFacePath, fileToCrop, config.detectFaceConfPath])
   const bannerSavePath = `${savePath}/${saveName}_banner.jpg`
   const jsonLoc = `${fileToCrop.split('.')[0]}.json`
