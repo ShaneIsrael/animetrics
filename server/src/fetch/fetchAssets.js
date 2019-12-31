@@ -29,8 +29,6 @@ function createWorkingDir(imageName) {
 
 const cropBanner = (width, height, fileToCrop, savePath, saveName) => new Promise(async (resolve, reject) => {
   logger.info('Creating new banner from asset poster...')
-  console.log(fileToCrop)
-  await sleep(2000)
   const pyProg = await spawn('python3', [config.detectFacePath, fileToCrop, config.detectFaceConfPath])
   const bannerSavePath = `${savePath}/${saveName}_banner.jpg`
   const jsonLoc = `${fileToCrop.split('.')[0]}.json`
@@ -151,9 +149,6 @@ async function createBanner(asset) {
     timeout: 5000,
   })
 
-  console.log(filename)
-  console.log(imageDir)
-  console.log(imageName)
   const path = await cropBanner(454, 80, filename, imageDir, imageName)
   if (path) {
     // sleep 500 miliseconds so that files get closed before trying to upload
