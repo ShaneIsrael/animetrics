@@ -15,8 +15,8 @@ import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown'
 import ForwardIcon from '@material-ui/icons/Forward'
 import RemoveIcon from '@material-ui/icons/Remove'
 import Zoom from '@material-ui/core/Zoom'
-import LazyLoad from 'react-lazy-load'
 import ls from 'local-storage'
+import { LazyLoadImage } from 'components'
 
 import clsx from 'clsx'
 import { deepOrange, deepPurple, lightBlue } from '@material-ui/core/colors'
@@ -310,17 +310,14 @@ const AnimeRankingResult = (props) => {
             <CardMedia
               title="Show poster art"
             >
-              <LazyLoad
-                debounce={false}
-                offsetVertical={400}
+              <LazyLoadImage
+                verticalOffset={400}
                 width={125}
-              >
-                <img
-                  alt="poster art"
-                  className={mobile.cover}
-                  src={posterUrl}
-                />
-              </LazyLoad>
+                loadHeight={183}
+                src={posterUrl}
+                alt="Poster art"
+                className={mobile.cover}
+              />
             </CardMedia>
             <div className={mobile.details}>
               <CardContent className={mobile.content}>
@@ -401,17 +398,14 @@ const AnimeRankingResult = (props) => {
               <CardMedia
                 title="Poster Art"
               >
-                <LazyLoad
-                  debounce={false}
-                  offsetVertical={400}
-                  width={desktop.cover}
-                >
-                  <img
-                    alt="poster art"
-                    className={desktop.cover}
-                    src={posterUrl}
-                  />
-                </LazyLoad>
+                <LazyLoadImage
+                  verticalOffset={400}
+                  width={170}
+                  loadHeight={250}
+                  src={posterUrl}
+                  alt="Poster art"
+                  className={desktop.cover}
+                />
               </CardMedia>
             </div>
             <div className={desktop.details}>

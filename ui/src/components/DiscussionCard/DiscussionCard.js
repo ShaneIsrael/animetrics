@@ -1,11 +1,11 @@
-import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Card from '@material-ui/core/Card';
-import CardActionArea from '@material-ui/core/CardActionArea';
-import CardContent from '@material-ui/core/CardContent';
-import CardMedia from '@material-ui/core/CardMedia';
-import Typography from '@material-ui/core/Typography';
-import LazyLoad from 'react-lazy-load'
+import React from 'react'
+import { makeStyles } from '@material-ui/core/styles'
+import Card from '@material-ui/core/Card'
+import CardActionArea from '@material-ui/core/CardActionArea'
+import CardContent from '@material-ui/core/CardContent'
+import CardMedia from '@material-ui/core/CardMedia'
+import Typography from '@material-ui/core/Typography'
+import { LazyLoadImage } from 'components'
 
 const useStyles = makeStyles(() => ({
   card: {
@@ -30,6 +30,7 @@ export default function DiscussionCard(props) {
   const classes = useStyles();
 
   const { title, episode, poster, href } = props
+
   return (
     <Card className={classes.card}>
       <CardActionArea onClick={() => window.open(href, '_blank')}>
@@ -38,13 +39,14 @@ export default function DiscussionCard(props) {
           alt="Discussion Card"
           title={title}
         >
-          <LazyLoad
-            debounce={false}
-            offsetVertical={400}
+          <LazyLoadImage
+            verticalOffset={400}
             width={250}
-          >
-            <img alt="poster art" width={250} src={poster ? `https://cdn.animetrics.co/${poster}` : missingPosterUrl} />
-          </LazyLoad>
+            loadHeight={360}
+            loadWidth={250}
+            src={poster ? `https://cdn.animetrics.co/${poster}` : missingPosterUrl}
+            alt="Poster art"
+          />
         </CardMedia>
         <CardContent className={classes.cardContent}>
           <Typography className={classes.cardContentTitle} gutterBottom variant="h6">
