@@ -17,7 +17,7 @@ import HelpIcon from '@material-ui/icons/Help'
 import WarningIcon from '@material-ui/icons/Warning'
 import RateReviewIcon from '@material-ui/icons/RateReview'
 import LocalCafeIcon from '@material-ui/icons/LocalCafe'
-import Filter5Icon from '@material-ui/icons/Filter5'
+import Filter9PlusIcon from '@material-ui/icons/Filter9Plus'
 
 import FeedbackDialog from '../../../../components/Dialog/FeedbackDialog'
 import IssueDialog from '../../../../components/Dialog/IssueDialog'
@@ -28,7 +28,7 @@ const categories = [
     children: [
       { id: 'Karma Rankings', path: '/karma-rankings', icon: <ScoreIcon />},
       { id: 'Poll Rankings', path: '/poll-rankings', icon: <PollIcon /> },
-      { id: 'Top 5 Charts', path: '/top-10', icon: <Filter5Icon />},
+      { id: 'Top 10 Charts', path: '/top-ten', icon: <Filter9PlusIcon />},
       { id: 'Discussion Finder', path: '/discussions', icon: <ForumIcon /> },
     ],
   },

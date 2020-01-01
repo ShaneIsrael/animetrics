@@ -13,6 +13,7 @@ import {
   NotFound as NotFoundView,
   Legend as LegendView,
   UnderConstruction as UnderConstructionView,
+  TopTen as TopTenView
 } from './views'
 
 const Routes = () => {
@@ -42,10 +43,10 @@ const Routes = () => {
         path="/poll-rankings"
       />
       <RouteWithLayout
-        component={UnderConstructionView}
+        component={TopTenView}
         exact
         layout={MainLayout}
-        path="/top-10"
+        path="/top-ten"
       />
       <RouteWithLayout
         component={RecentDiscussionsView}
