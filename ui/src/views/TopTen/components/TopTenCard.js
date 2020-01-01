@@ -33,7 +33,7 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: 'rgba(0, 0, 0, 0.4)',
     borderRadius: 0,
     width: 450,
-    height: 200,
+    height: 205,
     margin: theme.spacing(1)
   },
   details: {
@@ -122,7 +122,7 @@ const TopFiveCard = (props) => {
           <LazyLoadImage
             verticalOffset={400}
             width={140}
-            loadHeight={200}
+            loadHeight={205}
             src={`https://cdn.animetrics.co/${poster}`}
             alt="Poster art"
             className={classes.cover}

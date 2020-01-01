@@ -11,7 +11,8 @@ service.getYearlyTopTenAnimeByKarma = async (year) => {
   const results = await EpisodeDiscussion.findAll({
     where: {
       post_created_dt: {
-        [Op.gte]: moment().year(2019).format('YYYY-MM-DD')
+        [Op.gte]: moment().year(year).format('YYYY-MM-DD'),
+        [Op.lte]: moment().year(year).format('YYYY-12-31'),
       }
     },
     include: [{ model: EpisodeDiscussionResult, include: [{ model: Show, attributes: ['title', 'english_title', 'mal_id'], include: [Asset] }] }]
@@ -61,7 +62,8 @@ service.getYearlyTopTenAnimeByRedditScore = async (year) => {
   const results = await EpisodeDiscussion.findAll({
     where: {
       post_created_dt: {
-        [Op.gte]: moment().year(2019).format('YYYY-MM-DD')
+        [Op.gte]: moment().year(year).format('YYYY-MM-DD'),
+        [Op.lte]: moment().year(year).format('YYYY-12-31'),
       }
     },
     include: [RedditPollResult, { model: EpisodeDiscussionResult, include: [{ model: Show, attributes: ['title', 'english_title', 'mal_id'], include: [Asset]}] }]
@@ -112,7 +114,8 @@ service.getYearlyTopTenAnimeByRedditAnimeListScore = async (year) => {
   const results = await EpisodeDiscussion.findAll({
     where: {
       post_created_dt: {
-        [Op.gte]: moment().year(2019).format('YYYY-MM-DD')
+        [Op.gte]: moment().year(year).format('YYYY-MM-DD'),
+        [Op.lte]: moment().year(year).format('YYYY-12-31'),
       }
     },
     include: [{ model: EpisodeDiscussionResult, include: [{ model: Show, attributes: ['title', 'english_title', 'mal_id'], include: [Asset]}] }]
