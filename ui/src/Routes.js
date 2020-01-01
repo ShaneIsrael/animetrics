@@ -11,7 +11,8 @@ import {
   RecentDiscussions as RecentDiscussionsView,
   Overrides as OverridesView,
   NotFound as NotFoundView,
-  Legend as LegendView
+  Legend as LegendView,
+  UnderConstruction as UnderConstructionView,
 } from './views'
 
 const Routes = () => {
@@ -39,6 +40,12 @@ const Routes = () => {
         exact
         layout={MainLayout}
         path="/poll-rankings"
+      />
+      <RouteWithLayout
+        component={UnderConstructionView}
+        exact
+        layout={MainLayout}
+        path="/top-10"
       />
       <RouteWithLayout
         component={RecentDiscussionsView}
