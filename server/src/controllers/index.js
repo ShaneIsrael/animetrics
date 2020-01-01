@@ -8,6 +8,8 @@ const AssetController = require('./AssetController')
 const DiscussionController = require('./DiscussionController')
 const SeasonController = require('./SeasonController')
 const DialogController = require('./DialogController')
+const TopTenController = require('./TopTenController')
+
 module.exports = {
   ...WeekController,
   ...ResultsController,
@@ -19,4 +21,5 @@ module.exports = {
   ...DiscussionController,
   ...SeasonController,
   ...DialogController,
+  ...TopTenController,
 }

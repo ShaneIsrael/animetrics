@@ -11,6 +11,7 @@ const ShowService = require('./ShowService')
 const DiscussionService = require('./DiscussionService')
 const SeasonService = require('./SeasonService')
 const DialogService = require('./DialogService')
+const TopTenService = require('./TopTenService')
 
 module.exports = {
   ...WeekService,
@@ -26,4 +27,5 @@ module.exports = {
   ...DiscussionService,
   ...SeasonService,
   ...DialogService,
+  ...TopTenService,
 }
