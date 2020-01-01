@@ -28,7 +28,7 @@ const categories = [
     children: [
       { id: 'Karma Rankings', path: '/karma-rankings', icon: <ScoreIcon />},
       { id: 'Poll Rankings', path: '/poll-rankings', icon: <PollIcon /> },
-      { id: 'Top 10 Charts', path: '/top-ten', icon: <Filter9PlusIcon />},
+      { id: 'Top 10 Anime', path: '/top-ten', icon: <Filter9PlusIcon />},
       { id: 'Discussion Finder', path: '/discussions', icon: <ForumIcon /> },
     ],
   },
