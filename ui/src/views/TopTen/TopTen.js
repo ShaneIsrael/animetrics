@@ -20,9 +20,9 @@ const useStyles = makeStyles(theme => ({
     minWidth: 120,
   },
   paperWrapper: {
-    padding: 10,
+    padding: isMobile ? 5 : 10,
     width: '100%',
-    maxWidth: 700
+    maxWidth: isMobile ? 400 : 700
   },
 }))
 
@@ -90,7 +90,7 @@ const TopFive = () => {
       <Grid
         container
         justify="center"
-        spacing={2}
+        // spacing={2}
       >
 
         <Grid
@@ -99,7 +99,7 @@ const TopFive = () => {
         >
           <Grid
             container
-            justify="center">
+            justify={isMobile ? 'flex-start' : 'center'}>
             <Grid item>
               <div>
                 <FormControl 

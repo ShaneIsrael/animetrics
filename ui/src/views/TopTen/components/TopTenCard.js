@@ -1,6 +1,7 @@
 import React from 'react'
 import { makeStyles, withStyles } from '@material-ui/styles'
 import { Grid, Card, CardContent, Typography, CardMedia, Tooltip } from '@material-ui/core'
+import {isMobile} from 'react-device-detect'
 import Chip from '@material-ui/core/Chip'
 import ScoreIcon from '@material-ui/icons/Score'
 import PollIcon from '@material-ui/icons/Poll'
@@ -32,7 +33,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     backgroundColor: 'rgba(0, 0, 0, 0.4)',
     borderRadius: 0,
-    width: 450,
+    maxWidth: 450,
     height: 205,
     margin: theme.spacing(1)
   },
@@ -65,7 +66,7 @@ const useStyles = makeStyles(theme => ({
   },
   titleFont: {
     lineHeight: 1,
-    fontSize: 18
+    fontSize: isMobile ? 14 : 18
   },
   positionChip: {
     borderRadius: 0,
