@@ -51,8 +51,8 @@ async function updateSeriesInformation(id) {
       if (!show.airsDayOfWeek && info.broadcast) {
         const airDay = info.broadcast.match(/\b((mon|tues|wed(nes)?|thur(s)?|fri|sat(ur)?|sun)(days)?(day)?)\b/gi)
       	if (airDay) {
-	  show.airsDayOfWeek = airDay[0]
-	}
+          show.airsDayOfWeek = airDay[0]
+        }
       }
       show.tvdb_id = -1
     }
