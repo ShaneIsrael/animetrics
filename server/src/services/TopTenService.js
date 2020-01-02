@@ -143,7 +143,7 @@ service.getYearlyTopTenAnimeByRedditAnimeListScore = async (year) => {
   const scoreResult = []
   for (const show of Object.keys(animeResults)) {
     const result = animeResults[show]
-    if (result.scoreEntries > 0) {
+    if (result.scoreEntries > 5) {
       scoreResult.push({
         show: result.show,
         poster: result.show.Assets ? result.show.Assets[0].s3_poster : null,
