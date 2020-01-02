@@ -15,7 +15,8 @@ module.exports = {
     if (_.difference(keys, ['Excellent', 'Great', 'Good', 'Bad', 'Mediocre']).length === 0) {
       let weighted = 0
       for (const key of keys) {
-        const value = poll[key]
+        let value = poll[key]
+        value = value.replace(',', '')
         total += Number(value)
         switch (key) {
         case 'Excellent':
@@ -43,15 +44,17 @@ module.exports = {
     if (_.difference(keys, ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']).length === 0) {
       let weighted = 0
       for (const key of keys) {
-        const value = poll[key]
-        total += Number(value)
-        weighted += value * (key/10)
+        let value = poll[key]
+        value = value.replace(',', '')
+        total = total + Number(value)
+        weighted = weighted + (Number(value) * (Number(key)/10))
       }
       return [((weighted / total) * 10).toFixed(2), total, 'weighted']
     }
     if (_.difference(keys, ['Dislike', 'Like']).length === 0) {
       for (const key of keys) {
-        const value = poll[key]
+        let value = poll[key]
+        value = value.replace(',', '')
         total += Number(value)
       }
       return [((poll.Like / total) * 10).toFixed(2), total, 'simple']
