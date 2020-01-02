@@ -90,12 +90,12 @@ service.digestDiscussionPost = async (post, ignoreFlair) => {
   const showTitle = malDetails.title
 
   // Lookup show in the database
-  let showRow = await Show.findOne({ where: { title: malDetails.title } })
+  let showRow = await Show.findOne({ where: { title: malDetails.title, season: season } })
   if (!showRow && malDetails.title_english) {
-    showRow = await Show.findOne({ where: { english_title: malDetails.title_english } })
+    showRow = await Show.findOne({ where: { english_title: malDetails.title_english, season: season } })
   }
   if (!showRow && malDetails.title_synonyms) {
-    showRow = await Show.findOne({ where: { alt_title: malDetails.title_synonyms[0] } })
+    showRow = await Show.findOne({ where: { alt_title: malDetails.title_synonyms[0], season: season } })
   }
 
   if (!showRow) {
@@ -106,6 +106,7 @@ service.digestDiscussionPost = async (post, ignoreFlair) => {
       alt_title: malDetails.title_synonyms ? malDetails.title_synonyms[0] : null,
       english_title: malDetails.english_title,
       mal_id: malId,
+      season: season,
     })
   }
   let discussion = await EpisodeDiscussion.findOne({

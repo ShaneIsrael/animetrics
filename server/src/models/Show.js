@@ -28,6 +28,9 @@ module.exports = (connection, Sequelize) => connection.define(
     synopsis: {
       type: Sequelize.STRING,
     },
+    season: {
+      type: Sequelize.INTEGER,
+    },
     airsDayOfWeek: {
       type: Sequelize.STRING,
     },
