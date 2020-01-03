@@ -1,7 +1,7 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/styles'
 import clsx from 'clsx'
-import {isMobile} from 'react-device-detect'
+import {isMobile, isMobileOnly} from 'react-device-detect'
 // eslint-disable-next-line
 import { Grid, Paper, FormControl, Select, MenuItem, Typography } from '@material-ui/core'
 
@@ -20,9 +20,9 @@ const useStyles = makeStyles(theme => ({
     minWidth: 120,
   },
   paperWrapper: {
-    padding: isMobile ? 5 : 10,
+    padding: isMobileOnly ? 5 : 10,
     width: '100%',
-    maxWidth: isMobile ? 400 : 700
+    maxWidth: isMobileOnly ? 400 : 700
   },
 }))
 
@@ -99,7 +99,7 @@ const TopFive = () => {
         >
           <Grid
             container
-            justify={isMobile ? 'flex-start' : 'center'}>
+            justify={isMobileOnly ? 'flex-start' : 'center'}>
             <Grid item>
               <div>
                 <FormControl 

@@ -2,7 +2,7 @@
 import React, {useEffect} from 'react'
 import PropTypes from 'prop-types'
 import clsx from 'clsx'
-import {isMobile} from 'react-device-detect'
+import {isMobileOnly, isMobile} from 'react-device-detect'
 import { makeStyles, withStyles } from '@material-ui/styles'
 import Box from '@material-ui/core/Box'
 import ls from 'local-storage'
@@ -388,7 +388,7 @@ const KarmaRankings = () => {
                 elevation={10}
                 square
               >
-                {!isMobile &&
+                {!isMobileOnly &&
                   <Typography component="div">
                     <Grid component="label" container alignItems="center" spacing={1}>
                       <Grid item>Classic</Grid>

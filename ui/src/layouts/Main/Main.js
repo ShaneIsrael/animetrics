@@ -4,7 +4,7 @@ import clsx from 'clsx'
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Hidden from '@material-ui/core/Hidden';
 import { makeStyles } from '@material-ui/styles'
-import {isMobile} from 'react-device-detect'
+import {isMobileOnly} from 'react-device-detect'
 import { Sidebar, Header } from './components'
 
 const drawerWidth = 200
@@ -26,11 +26,11 @@ const useStyles = makeStyles(theme => ({
   },
   main: {
     flex: 1,
-    padding: isMobile ? 4 : theme.spacing(2),
+    padding: isMobileOnly ? 4 : theme.spacing(2),
     background: '#111b29',
   },
   footer: {
-    padding: isMobile ? 4 : theme.spacing(2),
+    padding: isMobileOnly ? 4 : theme.spacing(2),
     background: '#eaeff1',
   },
 }))
