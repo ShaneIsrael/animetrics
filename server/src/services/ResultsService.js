@@ -18,6 +18,12 @@ const { findAnime } = require('../services/MALService')
 const fetchDiscussions = require('../fetch/fetchDiscussions')
 const cpoll = require('../tools/calculatePoll')
 
+moment.updateLocale('en', {
+  week: {
+    dow: 5,
+  },
+})
+
 const sleep = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds))
 
 async function scrapePollData(url) {
@@ -235,6 +241,52 @@ service.updateRedditAnimeListScore = async (result) => {
   const [ralScore] = await cpoll.calculateRedditMalRating(result.Show.id)
   result.ralScore = ralScore
   return result.save()
+}
+
+
+service.getResultsByOrderAndWeek = async (order, wk) => {
+  const weekStartDt = moment(wk).utc().startOf('week').format('YYYY-MM-DD 00:00:00')
+  const week = await Week.findOne({ where: { start_dt: weekStartDt } })
+  if (!week) {
+    return []
+  }
+  const resultLinks = await EpisodeResultLink.findAll({ where: { weekId: week.id, episodeDiscussionResultId: { [Op.ne]: null } }, include: [{ model: Show, include: [{ model: Asset, raw: true }] }, { model: EpisodeDiscussion, include: [RedditPollResult] }, { model: EpisodeDiscussionResult, include: [MALSnapshot] }] })
+
+  const results = {}
+  for (const r of resultLinks) {
+    const show = r.Show
+    const epResult = r.EpisodeDiscussionResult
+    const mal = r.EpisodeDiscussionResult.MALSnapshot
+    const asset = r.Show.Asset
+    const discussion = r.EpisodeDiscussion
+    const redditPoll = r.EpisodeDiscussion.RedditPollResult
+    results.push({
+      title: show.title,
+      malScore: mal.score,
+      ralScore: epResult.ralScore,
+      ups: epResult.ups,
+      comment_count: epResult.comment_count,
+      redditPollScore: redditPoll.score,
+      redditPollVotes: redditPoll.votes,
+      discussion_href: discussion.post_url,
+      poster_art: asset[0].s3_poster,
+    })
+  }
+  if (order === 'karma') {
+    results.sort((a, b) => a.ups - b.ups)
+  }
+  if (order === 'poll') {
+    results.sort((a, b) => a.redditPollScore - b.redditPollScore)
+  }
+
+  const topLevelAsTitle = {}
+  let index = 1
+  for (const r of results) {
+    topLevelAsTitle[index] = r
+    index += 1
+  }
+
+  return topLevelAsTitle
 }
 
 module.exports = service
