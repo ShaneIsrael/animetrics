@@ -183,9 +183,9 @@ const KarmaRankings = () => {
     if (!weeks || weeks.length === 0) {
       weekSelectOptions.push(
         isMobile ? <option
-                      key={index}
-                      value={index}>Current Week</option> 
-                  : <MenuItem key={index} value={0}>Current Week</MenuItem>
+                      key={0}
+                      value={0}>Current Week</option> 
+                  : <MenuItem key={0} value={0}>Current Week</MenuItem>
       )
     } else {
       weekSelectOptions = weeks.map((week, index) => {
