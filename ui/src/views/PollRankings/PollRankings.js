@@ -173,7 +173,7 @@ const PollRankings = () => {
         setSeasons(seasons)
         createWeekSelectOptions(wks)
         createSeasonSelectOptions(seasons)
-        if (wks) {
+        if (wks && wks.length > 0) {
           const pollResults = (await ResultsService.getRedditPollResultsByWeek(wks[wks.length > 1 ? 1 : 0].id)).data
           if (pollResults) {
             setRenderedPollResults(createPollResults(pollResults, openRpGraphModal))
@@ -195,7 +195,7 @@ const PollRankings = () => {
         console.log(err)
       }
     }
-    if (weeks) {
+    if (weeks && weeks.length > 0) {
       fetchData()
     }
   }, [weeks, selectedSeason])
@@ -206,12 +206,15 @@ const PollRankings = () => {
         if (seasons) {
           const season = seasons[selectedSeason]
           const wks = (await WeekService.getWeeksBySeason(season.season, season.year)).data
-          const pollResults = (await ResultsService.getRedditPollResultsByWeek(wks[0].id)).data
           setWeeks(wks)
+          createWeekSelectOptions(wks)
           if (selectedSeason === 0 && wks.length > 1) setSelectedWeek(1)
           else setSelectedWeek(0)
-          createWeekSelectOptions(wks)
-          setRenderedPollResults(createPollResults(pollResults, openRpGraphModal))
+
+          if (wks && wks.length > 0) {
+            const pollResults = (await ResultsService.getRedditPollResultsByWeek(wks[0].id)).data
+            setRenderedPollResults(createPollResults(pollResults, openRpGraphModal))
+          }
         }
       } catch (err) {
         console.log(err)
