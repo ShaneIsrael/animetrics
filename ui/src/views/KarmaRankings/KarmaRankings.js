@@ -154,7 +154,7 @@ const KarmaRankings = () => {
   // eslint-disable-next-line
   const inputLabel = React.useRef(null);
   const [weeks, setWeeks] = React.useState(null)
-  const [selectedWeek, setSelectedWeek] = React.useState(1)
+  const [selectedWeek, setSelectedWeek] = React.useState(0)
   const [seasons, setSeasons] = React.useState(null)
   const [selectedSeason, setSelectedSeason] = React.useState(0)
   const [weekSelectOptions, setWeekSelectOptions] = React.useState([])
