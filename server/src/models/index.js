@@ -86,5 +86,8 @@ db.OverrideHistory.belongsTo(db.Token)
 db.Season.hasMany(db.Week)
 db.Week.belongsTo(db.Season)
 
+db.EpisodeDiscussion.hasOne(db.EpisodeDiscussionResult)
+db.EpisodeDiscussion.hasOne(db.EpisodeResultLink)
+
 
 module.exports = db;
