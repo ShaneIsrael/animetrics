@@ -264,7 +264,7 @@ service.getResultsByOrderAndWeek = async (order, wk) => {
     results.push({
       title: show.title,
       malScore: mal.score,
-      ralScore: epResult.ralScore,
+      ralScore: Number(epResult.ralScore),
       ups: epResult.ups,
       comment_count: epResult.comment_count,
       redditPollScore: redditPoll.score,
