@@ -80,6 +80,7 @@ service.digestDiscussionPost = async (post, ignoreFlair) => {
   const pollUrl = parsePollUrl(post.selftext)
   const malDetails = await findAnime(malId)
 
+  console.log(malDetails)
   if (!malDetails || !episode) {
     logger.error(`Could not parse discussion [${post.id}] malId=${malId} episode=${episode}`)
     return
@@ -94,7 +95,7 @@ service.digestDiscussionPost = async (post, ignoreFlair) => {
   if (!showRow && malDetails.title_english) {
     showRow = await Show.findOne({ where: { english_title: malDetails.title_english, season: season } })
   }
-  if (!showRow && malDetails.title_synonyms) {
+  if (!showRow && malDetails.title_synonyms && malDetails.title_synonyms.length > 0) {
     showRow = await Show.findOne({ where: { alt_title: malDetails.title_synonyms[0], season: season } })
   }
 
@@ -103,7 +104,7 @@ service.digestDiscussionPost = async (post, ignoreFlair) => {
     logger.info(`Creating new show: title=${showTitle} altTitle=${malDetails.title_synonyms ? malDetails.title_synonyms[0] : null} englishTitle=${malDetails.english_title} malId=${malId}`)
     showRow = await Show.create({
       title: showTitle,
-      alt_title: malDetails.title_synonyms ? malDetails.title_synonyms[0] : null,
+      alt_title: malDetails.title_synonyms && malDetails.title_synonyms.length > 0 ? malDetails.title_synonyms[0] : null,
       english_title: malDetails.english_title,
       mal_id: malId,
       season: season,
