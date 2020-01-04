@@ -209,66 +209,17 @@ const { Show, Asset, MALSnapshot, RedditPollResult, Week, Season, EpisodeResultL
 // updateMissingPolls()
 
 async function fixMyHeroAcademia() {
-  const show = await Show.findOne({
+  const discussions = await EpisodeDiscussion.findAll({
     where: {
-      title: "Boku no Hero Academia 3rd Season"
-    }
+      showId: 430,
+    },
+    order: [['post_created_dt', 'ASC']]
   })
-  const weeks = await Week.findAll()
-  for(const week of weeks) {
-    const discussions = await EpisodeDiscussion.findAll({
-      where: {
-        weekId: week.id,
-        showId: show.id,
-        season: 4,
-      },
-      include: [{model: Show}, EpisodeResultLink, EpisodeDiscussionResult, RedditPollResult]
-    })
-    for(const d of discussions) {
-      // idsToUpdate.push(d.showId)
-      d.showId = 439
-      d.EpisodeResultLink.showId = 439
-      d.EpisodeDiscussionResult.showId = 439
-      d.RedditPollResult.showId = 439
-      const assets = await Asset.findAll({
-        where: {
-          showId: show.id,
-          season: 4
-        }
-      })
-      for (const asset of assets) {
-        asset.showId = 439
-        asset.save()
-      }
-      d.save()
-      d.EpisodeResultLink.save()
-      d.EpisodeDiscussionResult.save()
-      d.RedditPollResult.save()
-    }
-    const snapshots = await MALSnapshot.findAll({
-      where: {
-        weekId: week.id,
-        showId: show.id
-      }
-    })
-    for (const snapshot of snapshots) {
-      snapshot.showId = 439
-      snapshot.save()
-    }
+  let index = 1
+  for(const discussion of discussions) {
+    discussion.episode = index
+    index+=1
+    discussion.save()
   }
 }
 fixMyHeroAcademia()
-
-async function createAsset() {
-  const assetExists = await Asset.findOne({
-    where: { showId: 430 },
-  })
-  if (!assetExists) {
-    console.log('creating asset')
-    await Asset.create({
-      showId: 430,
-      season: 3,
-    })
-  }
-}
-createAsset()
