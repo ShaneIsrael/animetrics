@@ -226,10 +226,10 @@ async function fixMyHeroAcademia() {
     })
     for(const d of discussions) {
       // idsToUpdate.push(d.showId)
-      d.showId = 432
-      d.EpisodeResultLink.showId = 432
-      d.EpisodeDiscussionResult.showId = 432
-      d.RedditPollResult.showId = 432
+      d.showId = 439
+      d.EpisodeResultLink.showId = 439
+      d.EpisodeDiscussionResult.showId = 439
+      d.RedditPollResult.showId = 439
       const assets = await Asset.findAll({
         where: {
           showId: show.id,
@@ -237,7 +237,7 @@ async function fixMyHeroAcademia() {
         }
       })
       for (const asset of assets) {
-        asset.showId = 432
+        asset.showId = 439
         asset.save()
       }
       d.save()
@@ -252,12 +252,12 @@ async function fixMyHeroAcademia() {
       }
     })
     for (const snapshot of snapshots) {
-      snapshot.showId = 432
+      snapshot.showId = 439
       snapshot.save()
     }
   }
 }
-// fixMyHeroAcademia()
+fixMyHeroAcademia()
 
 async function createAsset() {
   const assetExists = await Asset.findOne({
