@@ -105,7 +105,7 @@ service.digestDiscussionPost = async (post, ignoreFlair) => {
     showRow = await Show.create({
       title: showTitle,
       alt_title: malDetails.title_synonyms && malDetails.title_synonyms.length > 0 ? malDetails.title_synonyms[0] : null,
-      english_title: malDetails.english_title,
+      english_title: malDetails.title_english,
       mal_id: malId,
       season: season,
     })
