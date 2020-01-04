@@ -45,8 +45,6 @@ service.getDiscussionsByPage = async (page, size, query) => {
   const offset = page * size
   const limit = size
 
-  let discussions
-
   const shows = await Show.findAll({
     where: {
       [Op.or]: [
@@ -73,30 +71,13 @@ service.getDiscussionsByPage = async (page, size, query) => {
       ],
     },
   })
-  // let showTitle
-  // let altTitle
-  // let seriesName
-  // let englishTitle
-
-  // if (show) {
-  //   showTitle = show.title
-  //   altTitle = show.alt_title
-  //   seriesName = show.seriesName
-  //   englishTitle = show.english_title
-  // }
-
-  // const or = [{ post_title: { [Op.like]: `%${query}%` } }]
-  // if (showTitle) or.push({ post_title: { [Op.like]: `%${showTitle}%` } })
-  // if (englishTitle) or.push({ post_title: { [Op.like]: `%${englishTitle}%` } })
-  // if (seriesName) or.push({ post_title: { [Op.like]: `%${seriesName}%` } })
-  // if (altTitle) or.push({ post_title: { [Op.like]: `%${altTitle}%` } })
 
   let showIds = []
   for (const show of shows) {
     showIds.push(show.id)
   }
 
-  discussions = await EpisodeDiscussion.findAll({
+  const discussions = await EpisodeDiscussion.findAll({
     where: {
       showId: {
         [Op.in]: showIds
