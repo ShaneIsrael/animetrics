@@ -195,7 +195,7 @@ const PollRankings = () => {
           const wks = (await WeekService.getWeeksBySeason(season.season, season.year)).data
           const pollResults = (await ResultsService.getRedditPollResultsByWeek(wks[0].id)).data
           setWeeks(wks)
-          if (selectedSeason === 0) setSelectedWeek(1)
+          if (selectedSeason === 0 && wks.length > 1) setSelectedWeek(1)
           else setSelectedWeek(0)
           createWeekSelectOptions(wks)
           setRenderedPollResults(createPollResults(pollResults, openRpGraphModal))
@@ -317,7 +317,7 @@ const PollRankings = () => {
                   spacing={1}
                 >
                   {renderedPollResults}
-                  {renderedPollResults.length === 0 &&
+                  {renderedPollResults && renderedPollResults.length === 0 &&
                   <Alert
                     message="There are currently 0 results for this week. The first results should appear 48 hours after the week begins. Please check back later."
                     variant="info"
