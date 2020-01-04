@@ -19,14 +19,14 @@ module.exports = {
       author: 'AutoLovepon',
       after: '7d',
       size: 500,
-      fields: 'id,title,score,num_comments,url,selftext,created_utc,',
+      fields: 'id,title,score,num_comments,url,selftext,created_utc,author',
     })
     return posts
   },
   async fetchById(id) {
     const post = await ps.searchById(id, {
       subreddit: 'anime',
-      fields: 'id,title,score,num_comments,url,selftext,created_utc,',
+      fields: 'id,title,score,num_comments,url,selftext,created_utc,author',
     })
     return post[0]
   },
@@ -52,7 +52,7 @@ module.exports = {
         after: `${after}d`,
         before: `${before}d`,
         size: 500,
-        fields: 'id,title,score,num_comments,url,selftext,created_utc,',
+        fields: 'id,title,score,num_comments,url,selftext,created_utc,author',
       })
       total = [...total, ...posts]
       lastIncrement = left >= increment ? increment : left
@@ -65,7 +65,7 @@ module.exports = {
       .getSubreddit('anime')
       .search({
         query: '%episode%discussion',
-        limit: 200,
+        limit: 1000,
         time: 'week',
         sort: 'relevance',
       })

@@ -69,6 +69,7 @@ function parsePollUrl(text) {
  * @param {Object} post A reddit discussion post object
  */
 service.digestDiscussionPost = async (post, ignoreFlair) => {
+  if (post.author.name !== 'AutoLovepon') return
   if (!ignoreFlair && post.link_flair_text && post.link_flair_text !== 'Episode') return
   if (post.title.indexOf('Megathread') !== -1) return
   if (post.title.indexOf('Episode') === -1) return
