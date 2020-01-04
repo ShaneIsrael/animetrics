@@ -47,74 +47,67 @@ service.getDiscussionsByPage = async (page, size, query) => {
 
   let discussions
 
+  const show = await Show.findAll({
+    where: {
+      [Op.or]: [
+        {
+          title: {
+            [Op.like]: `%${query}%`,
+          },
+        },
+        {
+          alt_title: {
+            [Op.like]: `%${query}%`,
+          },
+        },
+        {
+          english_title: {
+            [Op.like]: `%${query}%`,
+          },
+        },
+        {
+          seriesName: {
+            [Op.like]: `%${query}%`,
+          },
+        },
+      ],
+    },
+  })
+  // let showTitle
+  // let altTitle
+  // let seriesName
+  // let englishTitle
+
+  // if (show) {
+  //   showTitle = show.title
+  //   altTitle = show.alt_title
+  //   seriesName = show.seriesName
+  //   englishTitle = show.english_title
+  // }
+
+  // const or = [{ post_title: { [Op.like]: `%${query}%` } }]
+  // if (showTitle) or.push({ post_title: { [Op.like]: `%${showTitle}%` } })
+  // if (englishTitle) or.push({ post_title: { [Op.like]: `%${englishTitle}%` } })
+  // if (seriesName) or.push({ post_title: { [Op.like]: `%${seriesName}%` } })
+  // if (altTitle) or.push({ post_title: { [Op.like]: `%${altTitle}%` } })
+
+  let showIds = []
+  for (show of shows) {
+    showIds.push(show.id)
+  }
+
   discussions = await EpisodeDiscussion.findAll({
     where: {
-      post_title: {
-        [Op.like]: `%${query}%`,
+      showId: {
+        [Op.in]: showIds
       },
     },
     order: [['post_created_dt', 'DESC']],
+    group: ['post_title'],
     include: [{ model: Show, include: [Asset] }],
     offset,
     limit,
   })
-
-  if (discussions.length === 0) {
-    const show = await Show.findOne({
-      where: {
-        [Op.or]: [
-          {
-            title: {
-              [Op.like]: `%${query}%`,
-            },
-          },
-          {
-            alt_title: {
-              [Op.like]: `%${query}%`,
-            },
-          },
-          {
-            english_title: {
-              [Op.like]: `%${query}%`,
-            },
-          },
-          {
-            seriesName: {
-              [Op.like]: `%${query}%`,
-            },
-          },
-        ],
-      },
-    })
-    let showTitle
-    let altTitle
-    let seriesName
-    let englishTitle
-
-    if (show) {
-      showTitle = show.title
-      altTitle = show.alt_title
-      seriesName = show.seriesName
-      englishTitle = show.english_title
-    }
-
-    const or = [{ post_title: { [Op.like]: `%${query}%` } }]
-    if (showTitle) or.push({ post_title: { [Op.like]: `%${showTitle}%` } })
-    if (englishTitle) or.push({ post_title: { [Op.like]: `%${englishTitle}%` } })
-    if (seriesName) or.push({ post_title: { [Op.like]: `%${seriesName}%` } })
-    if (altTitle) or.push({ post_title: { [Op.like]: `%${altTitle}%` } })
-
-    discussions = await EpisodeDiscussion.findAll({
-      where: {
-        [Op.or]: or,
-      },
-      order: [['post_created_dt', 'DESC']],
-      include: [{ model: Show, include: [Asset] }],
-      offset,
-      limit,
-    })
-  }
-
   return discussions
 }
 
