@@ -243,7 +243,7 @@ const KarmaRankings = () => {
         setSeasons(seasons)
         createWeekSelectOptions(wks)
         createSeasonSelectOptions(seasons)
-        if (wks) {
+        if (wks && wks.length > 0) {
           const results = (await ResultsService.getResultsByWeek(wks[wks.length > 1 ? 1 : 0].id)).data
           setRenderedResults(createResults(results, setAnimeSelection, openKarmaGraphModal, openRpGraphModal))
         }
@@ -263,7 +263,7 @@ const KarmaRankings = () => {
         console.log(err)
       }
     }
-    if (weeks) {
+    if (weeks && weeks.length > 0) {
       fetchData()
     }
   }, [weeks, selectedSeason])
@@ -274,12 +274,14 @@ const KarmaRankings = () => {
         if (seasons) {
           const season = seasons[selectedSeason]
           const wks = (await WeekService.getWeeksBySeason(season.season, season.year)).data
-          const results = (await ResultsService.getResultsByWeek(wks[0].id)).data
           setWeeks(wks)
+          createWeekSelectOptions(wks)
           if (selectedSeason === 0 && wks.length > 1) setSelectedWeek(1)
           else setSelectedWeek(0)
-          createWeekSelectOptions(wks)
-          setRenderedResults(createResults(results, setAnimeSelection, openKarmaGraphModal, openRpGraphModal))
+          if (wks && wks.length > 0) {
+            const results = (await ResultsService.getResultsByWeek(wks[0].id)).data
+            setRenderedResults(createResults(results, setAnimeSelection, openKarmaGraphModal, openRpGraphModal))
+          }
         }
       } catch (err) {
         console.log(err)
