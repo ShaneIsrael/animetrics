@@ -245,21 +245,22 @@ service.updateRedditAnimeListScore = async (result) => {
 
 
 service.getResultsByOrderAndWeek = async (order, wk) => {
-  const weekStartDt = moment(wk).utc().startOf('week').format('YYYY-MM-DD 00:00:00')
+  const weekStartDt = moment(wk).utc().startOf('week').format()
   const week = await Week.findOne({ where: { start_dt: weekStartDt } })
   if (!week) {
     return []
   }
   const resultLinks = await EpisodeResultLink.findAll({ where: { weekId: week.id, episodeDiscussionResultId: { [Op.ne]: null } }, include: [{ model: Show, include: [{ model: Asset, raw: true }] }, { model: EpisodeDiscussion, include: [RedditPollResult] }, { model: EpisodeDiscussionResult, include: [MALSnapshot] }] })
 
-  const results = {}
+  const results = []
   for (const r of resultLinks) {
     const show = r.Show
     const epResult = r.EpisodeDiscussionResult
     const mal = r.EpisodeDiscussionResult.MALSnapshot
-    const asset = r.Show.Asset
+    const assets = r.Show.Assets
     const discussion = r.EpisodeDiscussion
     const redditPoll = r.EpisodeDiscussion.RedditPollResult
+    if (order === 'poll' && redditPoll.votes < 50) continue
     results.push({
       title: show.title,
       malScore: mal.score,
@@ -269,14 +270,14 @@ service.getResultsByOrderAndWeek = async (order, wk) => {
       redditPollScore: redditPoll.score,
       redditPollVotes: redditPoll.votes,
       discussion_href: discussion.post_url,
-      poster_art: asset[0].s3_poster,
+      poster_art: `cdn.animetrics.com/${assets[0].s3_poster}`,
     })
   }
   if (order === 'karma') {
-    results.sort((a, b) => a.ups - b.ups)
+    results.sort((a, b) => b.ups - a.ups)
   }
   if (order === 'poll') {
-    results.sort((a, b) => a.redditPollScore - b.redditPollScore)
+    results.sort((a, b) => b.redditPollScore - a.redditPollScore)
   }
 
   const topLevelAsTitle = {}
