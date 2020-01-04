@@ -264,7 +264,7 @@ const KarmaRankings = () => {
           const wks = (await WeekService.getWeeksBySeason(season.season, season.year)).data
           const results = (await ResultsService.getResultsByWeek(wks[0].id)).data
           setWeeks(wks)
-          if (selectedSeason === 0) setSelectedWeek(1)
+          if (selectedSeason === 0 && wks.length > 1) setSelectedWeek(1)
           else setSelectedWeek(0)
           createWeekSelectOptions(wks)
           setRenderedResults(createResults(results, setAnimeSelection, openKarmaGraphModal, openRpGraphModal))
