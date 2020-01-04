@@ -80,7 +80,6 @@ service.digestDiscussionPost = async (post, ignoreFlair) => {
   const pollUrl = parsePollUrl(post.selftext)
   const malDetails = await findAnime(malId)
 
-  console.log(malDetails)
   if (!malDetails || !episode) {
     logger.error(`Could not parse discussion [${post.id}] malId=${malId} episode=${episode}`)
     return
