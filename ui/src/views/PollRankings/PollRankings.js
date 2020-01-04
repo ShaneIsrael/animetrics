@@ -159,7 +159,7 @@ const PollRankings = () => {
       try {
         const seasons = (await SeasonService.getSeasons()).data
         const wks = (await WeekService.getWeeksBySeason(seasons[0].season, seasons[0].year)).data
-        const pollResults = (await ResultsService.getRedditPollResultsByWeek(wks[1].id)).data
+        const pollResults = (await ResultsService.getRedditPollResultsByWeek(wks[wks.length > 1 ? 1 : 0].id)).data
         setWeeks(wks)
         // setSelectedWeek(1)
         setSeasons(seasons)
