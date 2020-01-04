@@ -229,12 +229,14 @@ const KarmaRankings = () => {
         setModernCardStyle(ls.get('modernCardStyle'))
         const seasons = (await SeasonService.getSeasons()).data
         const wks = (await WeekService.getWeeksBySeason(seasons[0].season, seasons[0].year)).data
-        const results = (await ResultsService.getResultsByWeek(wks[wks.length > 1 ? 1 : 0].id)).data
         setWeeks(wks)
         setSeasons(seasons)
         createWeekSelectOptions(wks)
         createSeasonSelectOptions(seasons)
-        setRenderedResults(createResults(results, setAnimeSelection, openKarmaGraphModal, openRpGraphModal))
+        if (wks) {
+          const results = (await ResultsService.getResultsByWeek(wks[wks.length > 1 ? 1 : 0].id)).data
+          setRenderedResults(createResults(results, setAnimeSelection, openKarmaGraphModal, openRpGraphModal))
+        }
       } catch (err) {
         console.log(err)
       }
