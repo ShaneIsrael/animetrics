@@ -248,7 +248,7 @@ service.getResultsByOrderAndWeek = async (order, wk) => {
   const weekStartDt = moment(wk).utc().startOf('week').format()
   const week = await Week.findOne({ where: { start_dt: weekStartDt } })
   if (!week) {
-    return []
+    return "A valid week does not exist for this date, it might not have been created yet."
   }
   const resultLinks = await EpisodeResultLink.findAll({ where: { weekId: week.id, episodeDiscussionResultId: { [Op.ne]: null } }, include: [{ model: Show, include: [{ model: Asset, raw: true }] }, { model: EpisodeDiscussion, include: [RedditPollResult] }, { model: EpisodeDiscussionResult, include: [MALSnapshot] }] })
 
