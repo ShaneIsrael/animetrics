@@ -257,4 +257,18 @@ async function fixMyHeroAcademia() {
     }
   }
 }
-fixMyHeroAcademia()
+// fixMyHeroAcademia()
+
+async function createAsset() {
+  const assetExists = await Asset.findOne({
+    where: { showId: 430 },
+  })
+  if (!assetExists) {
+    console.log('creating asset')
+    await Asset.create({
+      showId: 430,
+      season: 3,
+    })
+  }
+}
+createAsset()
