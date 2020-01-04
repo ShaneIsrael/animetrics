@@ -208,21 +208,53 @@ const { Show, Asset, MALSnapshot, RedditPollResult, Week, Season, EpisodeResultL
 // }
 // updateMissingPolls()
 
-async function updateEnglishTitles() {
-  const shows = await Show.findAll({
+async function fixMyHeroAcademia() {
+  const show = await Show.findOne({
     where: {
-      english_title: null
+      title: "Boku no Hero Academia 3rd Season"
     }
   })
-  for(const show of shows) {
-    if (show.mal_id) {
-      const malDetails = await findAnime(show.mal_id)
-      show.english_title = malDetails.title_english
-      if (show.english_title) {
-        console.log(`udpated: ${show.english_title}`)
-        show.save()
+  const weeks = await Week.findAll()
+  for(const week of weeks) {
+    const discussions = await EpisodeDiscussion.findAll({
+      where: {
+        weekId: week.id,
+        showId: show.id,
+        season: 4,
+      },
+      include: [{model: Show}, EpisodeResultLink, EpisodeDiscussionResult, RedditPollResult]
+    })
+    for(const d of discussions) {
+      // idsToUpdate.push(d.showId)
+      d.showId = 432
+      d.EpisodeResultLink.showId = 432
+      d.EpisodeDiscussionResult.showId = 432
+      d.RedditPollResult.showId = 432
+      const assets = await Asset.findAll({
+        where: {
+          showId: show.id,
+          season: 4
+        }
+      })
+      for (const asset of assets) {
+        asset.showId = 432
+        asset.save()
       }
+      d.save()
+      d.EpisodeResultLink.save()
+      d.EpisodeDiscussionResult.save()
+      d.RedditPollResult.save()
+    }
+    const snapshots = await MALSnapshot.findAll({
+      where: {
+        weekId: week.id,
+        showId: show.id
+      }
+    })
+    for (const snapshot of snapshots) {
+      snapshot.showId = 432
+      snapshot.save()
     }
   }
 }
-updateEnglishTitles()
+fixMyHeroAcademia()
