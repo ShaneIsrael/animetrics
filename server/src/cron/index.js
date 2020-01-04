@@ -56,11 +56,9 @@ async function generateDiscussionResults() {
   }
 }
 async function getDiscussionsAndPopulate() {
-  let discussions = await fetchDiscussions.fetch()
-  if (discussions.length === 0) {
-    logger.info('No results via PushShift, attempting Reddit API search...')
-    discussions = await fetchDiscussions.fetchReddit()
-  }
+  const psDiscussions = await fetchDiscussions.fetch()
+  const rApiDiscussions = await fetchDiscussions.fetchReddit()
+  const discussions = psDiscussions.concat(rApiDiscussions)
   if (discussions) {
     for (const discussion of discussions) {
       const createdDt = moment.utc(discussion.created_utc)
