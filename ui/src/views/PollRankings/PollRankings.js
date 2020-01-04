@@ -96,7 +96,7 @@ const PollRankings = () => {
   // eslint-disable-next-line
   const inputLabel = React.useRef(null);
   const [weeks, setWeeks] = React.useState(null)
-  const [selectedWeek, setSelectedWeek] = React.useState(1)
+  const [selectedWeek, setSelectedWeek] = React.useState(0)
   const [seasons, setSeasons] = React.useState(null)
   const [selectedSeason, setSelectedSeason] = React.useState(0)
   const [seasonSelectOptions, setSeasonSelectOptions] = React.useState([])
@@ -317,7 +317,7 @@ const PollRankings = () => {
                   spacing={1}
                 >
                   {renderedPollResults}
-                  {renderedPollResults && renderedPollResults.length === 0 &&
+                  {(!renderedPollResults || renderedPollResults.length === 0) &&
                   <Alert
                     message="There are currently 0 results for this week. The first results should appear 48 hours after the week begins. Please check back later."
                     variant="info"
