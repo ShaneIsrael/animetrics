@@ -65,8 +65,8 @@ module.exports = {
       .getSubreddit('anime')
       .search({
         query: '%episode%discussion',
-        limit: 100,
-        time: 'day',
+        limit: 200,
+        time: 'week',
         sort: 'relevance',
       })
     return posts
