@@ -189,7 +189,7 @@ const PollRankings = () => {
   useEffect(() => {
     async function fetchData() {
       try {
-        const pollResults = (await ResultsService.getRedditPollResultsByWeek(weeks[selectedSeason === 0 ? 1 : 0].id)).data
+        const pollResults = (await ResultsService.getRedditPollResultsByWeek(weeks[selectedSeason === 0 && weeks.length > 1 ? 1 : 0].id)).data
         setRenderedPollResults(createPollResults(pollResults, openRpGraphModal))
       } catch (err) {
         console.log(err)
