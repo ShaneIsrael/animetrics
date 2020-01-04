@@ -110,30 +110,40 @@ const PollRankings = () => {
   }
 
   const createWeekSelectOptions = React.useCallback(async (weeks) => {
-    const weekSelectOptions = weeks.map((week, index) => {
-      if (index === 0 && selectedSeason === 0) {
-        return isMobile ? <option
-          key={index}
-          value={index}
-        >Current Week</option> 
-          : <MenuItem
-            key={index}
-            value={0}
-          >Current Week</MenuItem>
-      } else {
-        return isMobile 
-          ? 
-          <option
+    let weekSelectOptions = []
+    if (!weeks || weeks.length === 0) {
+      weekSelectOptions.push(
+        isMobile ? <option
+                      key={index}
+                      value={index}>Current Week</option> 
+                  : <MenuItem key={index} value={0}>Current Week</MenuItem>
+      )
+    } else {
+      weekSelectOptions = weeks.map((week, index) => {
+        if (index === 0 && selectedSeason === 0) {
+          return isMobile ? <option
             key={index}
             value={index}
-          >Week {weeks.length - index}</option>
-          :
-          <MenuItem
-            key={index}
-            value={index}
-          ><center>Week {weeks.length - index}</center></MenuItem>
-      }
-    })
+          >Current Week</option> 
+            : <MenuItem
+              key={index}
+              value={0}
+            >Current Week</MenuItem>
+        } else {
+          return isMobile 
+            ? 
+            <option
+              key={index}
+              value={index}
+            >Week {weeks.length - index}</option>
+            :
+            <MenuItem
+              key={index}
+              value={index}
+            ><center>Week {weeks.length - index}</center></MenuItem>
+        }
+      })
+    }
     setWeekSelectOptions(weekSelectOptions)
   }, [selectedSeason])
 
