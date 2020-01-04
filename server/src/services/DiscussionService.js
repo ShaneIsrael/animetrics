@@ -47,7 +47,7 @@ service.getDiscussionsByPage = async (page, size, query) => {
 
   let discussions
 
-  const show = await Show.findAll({
+  const shows = await Show.findAll({
     where: {
       [Op.or]: [
         {
