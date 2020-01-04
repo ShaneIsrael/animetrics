@@ -172,38 +172,57 @@ const { Show, Asset, MALSnapshot, RedditPollResult, Week, Season, EpisodeResultL
 // }
 // updateShowDetails()
 
-async function updateMissingPolls() {
-  const results = await Show.findOne({
-    where: {
-      title: {
-        [Op.like]: "%Shingeki no Kyojin Season 3%"
-      }
-    },
-    include: [{model: EpisodeDiscussion, include: [RedditPollResult]}]
-  })
+// async function updateMissingPolls() {
+//   const results = await Show.findOne({
+//     where: {
+//       title: {
+//         [Op.like]: "%Shingeki no Kyojin Season 3%"
+//       }
+//     },
+//     include: [{model: EpisodeDiscussion, include: [RedditPollResult]}]
+//   })
 
-  const polls = await RedditPollResult.findAll({
+//   const polls = await RedditPollResult.findAll({
+//     where: {
+//       [Op.or]: [
+//         {
+//           score: NaN,
+//         },
+//         {
+//           score: null,
+//         }
+//       ]
+//     }
+//   })
+//   for (const poll of polls) {
+//     const score = await cpoll.calculateRating(poll.poll)
+//     console.log(poll.poll)
+//     if (score) {
+//       console.log(score)
+//       poll.score = score[0]
+//       poll.votes = score[1]
+//     } else {
+//       console.log(poll.poll)
+//     }
+//   }
+// }
+// updateMissingPolls()
+
+async function updateEnglishTitles() {
+  const shows = await Show.findAll({
     where: {
-      [Op.or]: [
-        {
-          score: NaN,
-        },
-        {
-          score: null,
-        }
-      ]
+      english_title: null
     }
   })
-  for (const poll of polls) {
-    const score = await cpoll.calculateRating(poll.poll)
-    console.log(poll.poll)
-    if (score) {
-      console.log(score)
-      poll.score = score[0]
-      poll.votes = score[1]
-    } else {
-      console.log(poll.poll)
+  for(const show of shows) {
+    if (show.mal_id) {
+      const malDetails = await findAnime(show.mal_id)
+      show.english_title = malDetails.title_english
+      if (show.english_title) {
+        console.log(`udpated: ${show.english_title}`)
+        show.save()
+      }
     }
   }
 }
-updateMissingPolls()
+updateEnglishTitles()
