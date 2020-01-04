@@ -17,7 +17,7 @@ module.exports = {
     const posts = await ps.search('episode%discussion', {
       subreddit: 'anime',
       author: 'AutoLovepon',
-      after: '1d',
+      after: '7d',
       size: 500,
       fields: 'id,title,score,num_comments,url,selftext,created_utc,',
     })
