@@ -270,6 +270,8 @@ service.getResultsByOrderAndWeek = async (order, wk) => {
       redditPollScore: redditPoll.score,
       redditPollVotes: redditPoll.votes,
       discussion_href: discussion.post_url,
+      result_created_dt: epResult.createdAt,
+      discussion_created_dt: discussion.post_created_dt,
       poster_art: `cdn.animetrics.com/${assets[0].s3_poster}`,
     })
   }
