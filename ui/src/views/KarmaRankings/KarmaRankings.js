@@ -257,8 +257,7 @@ const KarmaRankings = () => {
   useEffect(() => {
     async function fetchData() {
       try {
-        console.log(weeks)
-        const results = (await ResultsService.getResultsByWeek(weeks[selectedSeason === 0 ? 1 : 0].id)).data
+        const results = (await ResultsService.getResultsByWeek(weeks[selectedSeason === 0 && weeks.length > 1 ? 1 : 0].id)).data
         setRenderedResults(createResults(results, setAnimeSelection, openKarmaGraphModal, openRpGraphModal))
       } catch (err) {
         console.log(err)
