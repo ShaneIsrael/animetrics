@@ -92,7 +92,7 @@ service.getDiscussionsByPage = async (page, size, query) => {
   // if (altTitle) or.push({ post_title: { [Op.like]: `%${altTitle}%` } })
 
   let showIds = []
-  for (show of shows) {
+  for (const show of shows) {
     showIds.push(show.id)
   }
 
