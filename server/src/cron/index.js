@@ -56,7 +56,11 @@ async function generateDiscussionResults() {
   }
 }
 async function getDiscussionsAndPopulate() {
-  const discussions = await fetchDiscussions.fetch()
+  let discussions = await fetchDiscussions.fetch()
+  if (discussions.length === 0) {
+    logger.info('No results via PushShift, attempting Reddit API search...')
+    discussions = await fetchDiscussions.fetchReddit()
+  }
   if (discussions) {
     for (const discussion of discussions) {
       const createdDt = moment.utc(discussion.created_utc)
@@ -66,6 +70,7 @@ async function getDiscussionsAndPopulate() {
       if (createdDt.isSameOrBefore(dt15MinsAgo)) {
         logger.info(`digesting ${discussion.title}`)
         await digestDiscussionPost(discussion)
+        logger.info(`finishing digesting ${discussion.title}`)
       } else {
         logger.info(`skipping ${discussion.title}`)
       }
