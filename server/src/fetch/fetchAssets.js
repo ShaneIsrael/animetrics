@@ -11,7 +11,6 @@ const {
 } = require('../models')
 const { environment, spaces } = require('../config')
 const config = require('../config')[environment].assets
-const spaces = require('../config').spaces
 const logger = require('../logger')
 const AssetService = require('../services/AssetService')
 
