@@ -31,6 +31,9 @@ module.exports = (connection, Sequelize) => connection.define(
     s3_poster: {
       type: Sequelize.STRING,
     },
+    s3_poster_compressed: {
+      type: Sequelize.STRING,
+    },
     s3_bucket: {
       type: Sequelize.STRING,
     },
