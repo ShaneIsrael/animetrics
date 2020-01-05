@@ -135,7 +135,7 @@ async function createS3Poster(asset) {
 
   let url
   if (asset.poster_art.indexOf('anime_assets/') === -1) url = `https://www.thetvdb.com/banners/${asset.poster_art}`
-  else url = `cdn.animetrics.co/${asset.poster_art}`
+  else url = `https://cdn.animetrics.co/${asset.poster_art}`
   const { filename } = await download.image({
     url,
     dest: imageDir,
@@ -257,7 +257,7 @@ module.exports = {
     
       let url
       if (asset.poster_art.indexOf('anime_assets/') === -1) url = `https://www.thetvdb.com/banners/${asset.poster_art}`
-      else url = `cdn.animetrics.co/${asset.poster_art}`
+      else url = `https://cdn.animetrics.co/${asset.poster_art}`
       const { filename } = await download.image({
         url,
         dest: imageDir,
