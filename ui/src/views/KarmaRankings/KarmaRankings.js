@@ -361,7 +361,7 @@ const KarmaRankings = () => {
         >
           <Grid
             container
-            justify="center">
+            justify={isMobileOnly ? 'flex-start' : 'center'}>
             <Grid item>
               <div>
                 <FormControl 

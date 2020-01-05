@@ -171,7 +171,7 @@ export default function DetailsCard(props) {
             <CardMedia
               component="img"
               alt="Selected Anime Details"
-              height="500"
+              height="200"
               image={posterUrl}
               title={title}
             />
