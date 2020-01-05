@@ -278,6 +278,10 @@ const PollRankings = () => {
           justify="center"
           xs={12}
         >
+          <Alert
+            variant="motd"
+            message="You can click on the Poll score to view a change over time graph."
+          />
           <Grid
             container
             justify="center">
