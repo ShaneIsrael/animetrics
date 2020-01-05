@@ -1,6 +1,6 @@
 const service = {}
 const moment = require('moment')
-const { findAnime } = require('../services')
+const { findAnime, rawTvDbSearch, authTvDb } = require('../services')
 const fetchDiscussions = require('../fetch/fetchDiscussions')
 const cpoll = require('../tools/calculatePoll')
 const logger = require('../logger')
@@ -209,17 +209,16 @@ const { Show, Asset, MALSnapshot, RedditPollResult, Week, Season, EpisodeResultL
 // updateMissingPolls()
 
 async function fixMyHeroAcademia() {
-  const discussions = await EpisodeDiscussion.findAll({
-    where: {
-      showId: 430,
+  try {
+  await authTvDb()
+  const resp = (await rawTvDbSearch('/search/series', {
+    params: {
+      name: 'Eizouken ni wa Te wo Dasu na!',
     },
-    order: [['post_created_dt', 'ASC']]
-  })
-  let index = 1
-  for(const discussion of discussions) {
-    discussion.episode = index
-    index+=1
-    discussion.save()
+  })).data.data
+    console.log(resp)
+  } catch (err) {
+    console.log(err)
   }
 }
 fixMyHeroAcademia()
