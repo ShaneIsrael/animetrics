@@ -26,6 +26,7 @@
     "sequelize": "^5.21.2",
     "snoowrap": "^1.20.0",
     "sqlite3": "^4.1.0",
+    "twilio": "^3.39.1",
     "uuid": "^3.3.3",
     "winston": "^3.2.1",
     "winston-syslog": "^2.3.0"

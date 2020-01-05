@@ -12,6 +12,7 @@ const DiscussionService = require('./DiscussionService')
 const SeasonService = require('./SeasonService')
 const DialogService = require('./DialogService')
 const TopTenService = require('./TopTenService')
+const TwilioService = require('./TwilioService')
 
 module.exports = {
   ...WeekService,
@@ -28,4 +29,5 @@ module.exports = {
   ...SeasonService,
   ...DialogService,
   ...TopTenService,
+  ...TwilioService
 }

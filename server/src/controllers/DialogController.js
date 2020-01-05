@@ -1,6 +1,6 @@
 /* eslint-disable no-restricted-globals */
 const moment = require('moment')
-const { submitFeedback, submitIssue } = require('../services')
+const { submitFeedback, submitIssue, messageAdmin } = require('../services')
 const { Dialog, Op } = require('../models')
 const logger = require('../logger')
 const controller = {}
@@ -28,6 +28,11 @@ controller.submitFeedback = async (req, res, next) => {
       return res.status(429).send('You have reached the maximum number of requests you can submit. Please try again later.')
     }
     await submitFeedback(feedback, req.ip)
+    await messageAdmin(
+      `-- Feedback --\n` +
+      `-- ${req.ip} --\n` +
+      `${feedback}`
+    )
     return res.status(200).send()
   } catch (err) {
     return next(err)
@@ -61,6 +66,11 @@ controller.submitIssue = async (req, res, next) => {
       return res.status(429).send('You have reached the maximum number of requests you can submit. Please try again later.')
     }
     await submitIssue(type, description, req.ip)
+    await messageAdmin(
+      `-- Issue --\n` +
+      `-- ${req.ip} --\n` +
+      `${description}`
+    )
     return res.status(200).send()
   } catch (err) {
     return next(err)
