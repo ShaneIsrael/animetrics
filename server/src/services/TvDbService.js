@@ -26,6 +26,10 @@ async function get(url, options) {
   return resp
 }
 
+service.rawTvDbSearch = (url, options) => {
+  return get(url, options)
+}
+
 async function updateSeriesInformation(id) {
   const show = await Show.findByPk(id)
   logger.info(`updating ${show.id}`)
@@ -112,7 +116,7 @@ async function search(t, original, attempt) {
       }
       // Sometimes theres a pointless 'no' after first word. Ex: Boku no Hero Academia
       if (attempt === 5) {
-        title = title.replace(' no', '')
+        title = title.replace(' no ', '')
         const r = await search(title, original, (attempt += 1));
         return r;
       }
@@ -171,22 +175,37 @@ service.updateTvDbIds = async () => {
     if (!result && show.english_title) result = await search(show.english_title, show.english_title, 0)
     if (!result && show.alt_title) result = await search(show.alt_title, show.alt_title, 0);
     const match = {};
+    const titlesToMatchFor = []
+    if (show.title) titlesToMatchFor.push(show.title.toLowerCase())
+    if (show.alt_title) titlesToMatchFor.push(show.alt_title.toLowerCase())
+    if (show.english_title) titlesToMatchFor.push(show.english_title.toLowerCase())
+
     if (result && result.data) {
+      // check shows that are labeled as Continuing first
+      result.data.data.sort((a, b) => {
+        if (a.status === 'Continuing' && b.status === 'Continuing') return 0
+        if (a.status === 'Continuing' && b.status !== 'Continuing') return -1
+        else return 1
+       })
       for (const re of result.data.data) {
-        if (re.status === 'Continuing' && re.slug.indexOf(show.title.toLowerCase()) >= 0) {
+        if (titlesToMatchFor.indexOf(re.seriesName.toLowerCase()) >= 0) {
           match.id = re.id
           match.result = re
           break
-        } else if (show.alt_title) {
-          if (show.title.toLowerCase().indexOf(re.seriesName.toLowerCase()) >= 0 || show.alt_title.toLowerCase().indexOf(re.seriesName.toLowerCase()) >= 0) {
-            match.id = re.id
-            match.result = re
-            break
+        } 
+        if (titlesToMatchFor.indexOf(re.slug.replace(/-/g, ' ').toLowerCase()) >= 0) {
+          match.id = re.id
+          match.result = re
+          break
+        }
+        if (re.aliases && re.aliases.length > 0) {
+          for (const alias of re.aliases) {
+            if (titlesToMatchFor.indexOf(alias.toLowerCase()) >= 0) {
+              match.id = re.id
+              match.result = re
+              break
+            }
           }
-        } else if (show.title.toLowerCase().indexOf(re.seriesName.toLowerCase()) >= 0) {
-          match.id = re.id
-          match.result = re
-          break
         }
       }
       if (match.id) {
