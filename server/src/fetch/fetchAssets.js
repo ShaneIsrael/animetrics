@@ -247,6 +247,9 @@ module.exports = {
   async compressAll() {
     const assets = await Asset.findAll({
       where: {
+        s3_poster: {
+          [Op.ne]: null
+        },
         s3_poster_compressed: null
       }
     })
