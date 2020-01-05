@@ -155,6 +155,32 @@ async function createS3Poster(asset) {
   await rimraf.sync(imageDir)
 }
 
+async function createS3PosterCompressed(asset) {
+  logger.info('Creating Compressed S3 Poster from asset poster...')
+  const imageName = uuidv4()
+  const imageDir = createWorkingDir(imageName)
+
+  let url
+  if (asset.poster_art.indexOf('anime_assets/') === -1) url = `https://www.thetvdb.com/banners/${asset.poster_art}`
+  else url = `${spaces.edge}/${asset.poster_art}`
+  const { filename } = await download.image({
+    url,
+    dest: imageDir,
+    timeout: 5000,
+  })
+
+  if (filename) {
+    // sleep 500 miliseconds so that files get closed before trying to upload
+    await sleep(500)
+    const compressed = await compress(filename)
+    const s3CompressedResp = await AssetService.uploadFileToS3(compressed, `anime_assets/${imageName}_poster_rs.jpg`)
+    asset.s3_poster_compressed = s3CompressedResp.Key
+    asset.save()
+  }
+
+  await rimraf.sync(imageDir)
+}
+
 async function createBanner(asset) {
   const imageName = uuidv4()
   const imageDir = createWorkingDir(imageName)
@@ -218,6 +244,7 @@ module.exports = {
       })
       for (const asset of assets) {
         if (!asset.s3_poster) await createS3Poster(asset)
+        if (!asset.s3_poster_compressed) await createS3PosterCompressed(asset)
         if (!asset.s3_banner) await createBanner(asset)
         if (!asset.s3_avatar) await createAvatar(asset)
         asset.s3_bucket = 'animetrics'
@@ -229,10 +256,14 @@ module.exports = {
   },
   async fetchByAsset(asset) {
     if (!asset.s3_poster) await createS3Poster(asset)
+    if (!asset.s3_poster_compressed) await createS3PosterCompressed(asset)
     if (!asset.s3_banner) await createBanner(asset)
     if (!asset.s3_avatar) await createAvatar(asset)
     asset.s3_bucket = 'animetrics'
     asset.save()
+  },
+  async createS3PosterCompressed(asset) {
+    await createS3PosterCompressed(asset)
   },
   async createS3Poster(asset) {
     await createS3Poster(asset)
@@ -254,28 +285,8 @@ module.exports = {
     })
     let index = 1
     for (asset of assets) {
-      const imageName = uuidv4()
-      const imageDir = createWorkingDir(imageName)
-    
-      let url
-      if (asset.poster_art.indexOf('anime_assets/') === -1) url = `https://www.thetvdb.com/banners/${asset.poster_art}`
-      else url = `${spaces.edge}/${asset.poster_art}`
-      const { filename } = await download.image({
-        url,
-        dest: imageDir,
-        timeout: 5000,
-      })
-      
       logger.info(`compressing ${index}/${assets.length}`)
-      if (filename) {
-        // sleep 500 miliseconds so that files get closed before trying to upload
-        await sleep(500)
-        const compressed = await compress(filename)
-        const s3CompressedResp = await AssetService.uploadFileToS3(compressed, `anime_assets/${imageName}_poster.jpg`)
-        asset.s3_poster_compressed = s3CompressedResp.Key
-        asset.save()
-      }
-      await rimraf.sync(imageDir)
+      await createS3PosterCompressed(asset)
       index+=1
     }
   },
