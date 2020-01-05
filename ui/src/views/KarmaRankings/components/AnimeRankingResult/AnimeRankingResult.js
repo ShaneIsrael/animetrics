@@ -229,7 +229,7 @@ const AnimeRankingResult = (props) => {
   }
 
   const modernCardStyle = ls.get('modernCardStyle')
-  const posterUrl = result.assets && result.assets[0].s3_poster ? `https://cdn.animetrics.co/${result.assets[0].s3_poster}` : 'https://cdn.animetrics.co/animetrics/missing_poster_art.png'
+  const posterUrl = result.assets && result.assets[0].s3_poster_compressed ? `https://cdn.animetrics.co/${result.assets[0].s3_poster_compressed}` : 'https://cdn.animetrics.co/animetrics/missing_poster_art.png'
   return (
     <Grid
       item

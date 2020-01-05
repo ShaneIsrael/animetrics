@@ -43,7 +43,7 @@ service.getYearlyTopTenAnimeByKarma = async (year) => {
     const result = animeResults[show]
     karmaResult.push({
       show: result.show,
-      poster: result.show.Assets ? result.show.Assets[0].s3_poster : null,
+      poster: result.show.Assets ? result.show.Assets[0].s3_poster_compressed ? result.show.Assets[0].s3_poster_compressed : result.show.Assets[0].s3_poster : null,
       avg: result.totalKarma / result.karmaEntries,
       total: result.totalKarma,
       entries: result.karmaEntries
@@ -94,7 +94,7 @@ service.getYearlyTopTenAnimeByRedditScore = async (year) => {
     if (result.scoreEntries > 10) {
       scoreResult.push({
         show: result.show,
-        poster: result.show.Assets ? result.show.Assets[0].s3_poster : null,
+        poster: result.show.Assets ? result.show.Assets[0].s3_poster_compressed ? result.show.Assets[0].s3_poster_compressed : result.show.Assets[0].s3_poster : null,
         avg: result.totalScore / result.scoreEntries,
         total: result.totalScore,
         entries: result.scoreEntries
@@ -146,7 +146,7 @@ service.getYearlyTopTenAnimeByRedditAnimeListScore = async (year) => {
     if (result.scoreEntries > 5) {
       scoreResult.push({
         show: result.show,
-        poster: result.show.Assets ? result.show.Assets[0].s3_poster : null,
+        poster: result.show.Assets ? result.show.Assets[0].s3_poster_compressed ? result.show.Assets[0].s3_poster_compressed : result.show.Assets[0].s3_poster : null,
         avg: result.totalScore / result.scoreEntries,
         total: result.totalScore,
         entries: result.scoreEntries

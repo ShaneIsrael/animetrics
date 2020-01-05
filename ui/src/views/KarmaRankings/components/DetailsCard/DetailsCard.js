@@ -117,7 +117,7 @@ export default function DetailsCard(props) {
   }
 
   const title = details && details.show.seriesName
-  const posterUrl = selectedAnime.assets && selectedAnime.assets[0].s3_poster ? `https://cdn.animetrics.co/${selectedAnime.assets[0].s3_poster}` : 'https://cdn.animetrics.co/animetrics/missing_poster_art.png'
+  const posterUrl = selectedAnime.assets && selectedAnime.assets[0].s3_poster_compressed ? `https://cdn.animetrics.co/${selectedAnime.assets[0].s3_poster_compressed}` : 'https://cdn.animetrics.co/animetrics/missing_poster_art.png'
   const cardRender = (
     <div>
       <Hidden

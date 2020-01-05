@@ -2,6 +2,7 @@ const service = {}
 const moment = require('moment')
 const { findAnime, rawTvDbSearch, authTvDb } = require('../services')
 const fetchDiscussions = require('../fetch/fetchDiscussions')
+const fetchAssets = require('../fetch/fetchAssets')
 const cpoll = require('../tools/calculatePoll')
 const logger = require('../logger')
 const { Show, Asset, MALSnapshot, RedditPollResult, Week, Season, EpisodeResultLink, EpisodeDiscussion, EpisodeDiscussionResult, RedditUserScore, Op} = require('../models')
@@ -210,13 +211,7 @@ const { Show, Asset, MALSnapshot, RedditPollResult, Week, Season, EpisodeResultL
 
 async function fixMyHeroAcademia() {
   try {
-  await authTvDb()
-  const resp = (await rawTvDbSearch('/search/series', {
-    params: {
-      name: 'Eizouken ni wa Te wo Dasu na!',
-    },
-  })).data.data
-    console.log(resp)
+    await fetchAssets.compressAll()
   } catch (err) {
     console.log(err)
   }

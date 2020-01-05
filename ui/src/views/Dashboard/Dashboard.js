@@ -215,7 +215,7 @@ const Dashboard = () => {
             </Grid>
             <Grid container justify="center">
               {recentDiscussions && recentDiscussions.map((elem, index) => {
-                return <DiscussionCard title={elem.Show.english_title ? elem.Show.english_title : elem.Show.title} episode={elem.episode} poster={elem.Show.Assets[0].s3_poster} href={elem.post_url} key={index}/>
+                return <DiscussionCard title={elem.Show.english_title ? elem.Show.english_title : elem.Show.title} episode={elem.episode} poster={elem.Show.Assets[0].s3_poster_compressed} href={elem.post_url} key={index}/>
               })}
             </Grid>
           </div>
@@ -231,7 +231,7 @@ const Dashboard = () => {
             </Grid>
             <Grid container justify="center">
               {recentDiscussions && recentDiscussions.map((elem, index) => {
-                return <DiscussionCard title={elem.Show.english_title ? elem.Show.english_title : elem.Show.title} episode={elem.episode} poster={elem.Show.Assets[0].s3_poster} href={elem.post_url} key={index}/>
+                return <DiscussionCard title={elem.Show.english_title ? elem.Show.english_title : elem.Show.title} episode={elem.episode} poster={elem.Show.Assets[0].s3_poster_compressed} href={elem.post_url} key={index}/>
               })}
             </Grid>
           </div>
