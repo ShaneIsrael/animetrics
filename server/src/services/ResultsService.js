@@ -272,7 +272,7 @@ service.getResultsByOrderAndWeek = async (order, wk) => {
       discussion_href: discussion.post_url,
       result_created_dt: epResult.createdAt,
       discussion_created_dt: discussion.post_created_dt,
-      poster_art: `cdn.animetrics.com/${assets[0].s3_poster}`,
+      poster_art: `cdn.animetrics.com/${assets[0].s3_poster_compressed ? assets[0].s3_poster_compressed : assets[0].s3_poster}`,
     })
   }
   if (order === 'karma') {

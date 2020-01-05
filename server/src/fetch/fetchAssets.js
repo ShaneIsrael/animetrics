@@ -117,6 +117,17 @@ const cropAvatar = (fileToCrop, savePath, saveName) => new Promise(async (resolv
   }
 })
 
+const compress = (filepath) => new Promise((resolve, reject) => {
+  gm(filepath)
+    .compress('JPEG')
+    .write(filepath, (err) => {
+      if (err) {
+        return reject(err)
+      }
+      return resolve(filepath)
+    })
+})
+
 async function createS3Poster(asset) {
   logger.info('Creating S3 Poster from asset poster...')
   const imageName = uuidv4()
@@ -133,6 +144,9 @@ async function createS3Poster(asset) {
     await sleep(500)
     const s3Resp = await AssetService.uploadFileToS3(filename, `anime_assets/${imageName}_poster.jpg`)
     asset.s3_poster = s3Resp.Key
+    const compressed = await compress(filename)
+    const s3CompressedResp = await AssetService.uploadFileToS3(compressed, `anime_assets/${imageName}_poster_rs.jpg`)
+    asset.s3_poster_compressed = s3CompressedResp.Key
     asset.save()
   }
 
@@ -226,5 +240,35 @@ module.exports = {
   },
   async createAvatarFromAssetPoster(asset) {
     await createAvatar(asset)
-  }
+  },
+  async compressAll() {
+    const assets = await Asset.findAll({
+      where: {
+        s3_poster_compressed: null
+      }
+    })
+    let index = 1
+    for (asset of assets) {
+      const imageName = uuidv4()
+      const imageDir = createWorkingDir(imageName)
+    
+      const { filename } = await download.image({
+        url: `https://www.thetvdb.com/banners/${asset.poster_art}`,
+        dest: imageDir,
+        timeout: 5000,
+      })
+      
+      logger.info(`compressing ${index}/${assets.length}`)
+      if (filename) {
+        // sleep 500 miliseconds so that files get closed before trying to upload
+        await sleep(500)
+        const compressed = await compress(filename)
+        const s3CompressedResp = await AssetService.uploadFileToS3(compressed, `anime_assets/${imageName}_poster.jpg`)
+        asset.s3_poster_compressed = s3CompressedResp.Key
+        asset.save()
+      }
+      await rimraf.sync(imageDir)
+      index+=1
+    }
+  },
 }
