@@ -9,7 +9,7 @@ const {
   Asset,
   Op,
 } = require('../models')
-const { environment } = require('../config')
+const { environment, spaces } = require('../config')
 const config = require('../config')[environment].assets
 const spaces = require('../config').spaces
 const logger = require('../logger')
@@ -135,7 +135,7 @@ async function createS3Poster(asset) {
 
   let url
   if (asset.poster_art.indexOf('anime_assets/') === -1) url = `https://www.thetvdb.com/banners/${asset.poster_art}`
-  else url = `https://cdn.animetrics.co/${asset.poster_art}`
+  else url = `${spaces.edge}/${asset.poster_art}`
   const { filename } = await download.image({
     url,
     dest: imageDir,
@@ -257,7 +257,7 @@ module.exports = {
     
       let url
       if (asset.poster_art.indexOf('anime_assets/') === -1) url = `https://www.thetvdb.com/banners/${asset.poster_art}`
-      else url = `https://animetrics.sfo2.digitaloceanspaces.com/${asset.poster_art}`
+      else url = `${spaces.edge}/${asset.poster_art}`
       const { filename } = await download.image({
         url,
         dest: imageDir,
