@@ -1,6 +1,6 @@
 import React from 'react'
 import { makeStyles, withStyles } from '@material-ui/styles'
-import { Grid, Paper, Hidden, Card, CardContent, Typography, CardMedia, Avatar, Tooltip } from '@material-ui/core'
+import { Grid, Paper, Card, CardContent, Typography, CardMedia, Avatar, Tooltip } from '@material-ui/core'
 import Chip from '@material-ui/core/Chip'
 import ResultPosition from './ResultPosition/ResultPosition'
 import ResultDetails from './ResultDetails/ResultDetails'
@@ -9,7 +9,6 @@ import ResultScores from './ResultScores/ResultScores'
 import ScoreIcon from '@material-ui/icons/Score'
 import ForumIcon from '@material-ui/icons/Forum';
 import PollIcon from '@material-ui/icons/Poll'
-import SlideshowIcon from '@material-ui/icons/Slideshow'
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp'
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown'
 import ForwardIcon from '@material-ui/icons/Forward'
@@ -17,6 +16,7 @@ import RemoveIcon from '@material-ui/icons/Remove'
 import Zoom from '@material-ui/core/Zoom'
 import ls from 'local-storage'
 import { LazyLoadImage } from 'components'
+import {isMobileOnly} from 'react-device-detect'
 
 import clsx from 'clsx'
 import { deepOrange, deepPurple, lightBlue } from '@material-ui/core/colors'
@@ -25,6 +25,9 @@ const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
     minWidth: 550,
+  },
+  cardContentRoot: {
+    padding: isMobileOnly ? 8 : 16
   },
   paper: {
     margin: 'auto',
@@ -57,78 +60,14 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const mobileStyles = makeStyles(theme => ({
-  mobileWidth: {
-    maxWidth: 500
-  },
-  card: {
-    display: 'flex',
-    position: 'relative',
-    backgroundColor: 'rgba(0, 0, 0, 0.4)',
-    borderRadius: 0,
-    width: 330,
-    height: 180,
-  },
-  details: {
-    display: 'flex',
-    flexDirection: 'column',
-    width: '100%',
-  },
-  content: {
-    flex: '1 0 auto',
-    padding: 8,
-  },
-  cover: {
-    width: 125,
-    // marginTop: 24,
-  },
-  mobileTitleFont: {
-    fontSize: 14,
-  },
-  squareChip: {
-    borderRadius: 0,
-    margin: theme.spacing(0.5)
-  },
-  chip: {
-    borderRadius: 5,
-    margin: theme.spacing(0.5)
-  },
-  chipPositionFont: {
-    fontSize: 18,
-    fontWeight: 600
-  },
-  episode: {
-    position: 'absolute',
-    backgroundColor: 'rgba(0, 0, 0, 0.8)',
-  },
-  episodePosChip: {
-    marginLeft: 0,
-    marginTop: 0,
-    marginRight: 0,
-    borderRadius: 0,
-    borderColor: '#fff'
-  },
-  episodeChip: {
-    marginLeft: 0,
-    marginTop: 0,
-    marginBottom: 0,
-    marginRight: 0,
-  },
-
-  episodeColor: {
-    color: '#fff',
-    borderColor: '#fff',
-    backgroundColor: 'rgba(255,255,255,0.2)'
-  }
-}))
 
 const desktopStyles = makeStyles(theme => ({
   card: {
     display: 'flex',
     backgroundColor: 'rgba(0, 0, 0, 0.4)',
     borderRadius: 0,
-    width: 560,
-    height: 250
+    maxWidth: 560,
+    maxHeight: 240,
   },
   details: {
     display: 'flex',
@@ -139,7 +78,7 @@ const desktopStyles = makeStyles(theme => ({
     flex: '1 0 auto',
   },
   cover: {
-    width: 170,
+    width: isMobileOnly ? 105 : 170,
   },
   hr: {
     marginTop: 5,
@@ -148,39 +87,50 @@ const desktopStyles = makeStyles(theme => ({
   controls: {
     display: 'flex',
     alignItems: 'center',
-    paddingLeft: theme.spacing(1),
-    paddingBottom: theme.spacing(1),
+    paddingLeft: isMobileOnly ? 0 : theme.spacing(1),
+    paddingBottom: isMobileOnly ? 0 : theme.spacing(1),
   },
   squareChip: {
     borderRadius: 0,
-    margin: theme.spacing(0.5),
+    marginLeft: isMobileOnly ? 5 : theme.spacing(.5),
+    // marginRight: isMobileOnly ? 20 : theme.spacing(.5),
+    marginBottom: isMobileOnly ? 1 : theme.spacing(.5),
+    marginTop: isMobileOnly ? 0 : theme.spacing(.5),
     minWidth: 80,
-    height: 31,
+    height: isMobileOnly ? 28 : 31,
   },
   titleFont: {
-    lineHeight: 1
+    lineHeight: 1,
+    fontSize: isMobileOnly ? 14 : 18
+  },
+  episodeFont: {
+    fontSize: isMobileOnly ? 14 : 16
   },
   positionChip: {
     borderRadius: 0,
-    margin: theme.spacing(0.5),
+    margin: isMobileOnly ? 0 : theme.spacing(.5),
     fontSize: 28,
     width: 70,
-    height: 70,
+    height: isMobileOnly ? 50 : 70,
   },
   positionChangeChip: {
     borderRadius: 0,
-    margin: theme.spacing(0.5),
+    margin: isMobileOnly ? 0 : theme.spacing(0.5),
+    marginTop: isMobileOnly ? 2 : theme.spacing(0.5),
+    marginBottom: isMobileOnly ? 1 : theme.spacing(0.5),
     width: 70,
+    height: isMobileOnly ? 34 : 31
   },
   chip: {
     borderRadius: 5,
-    margin: theme.spacing(0.5)
+    margin: isMobileOnly ? 10 : theme.spacing(0.5)
   },
   chipRalMal: {
-    width: 121,
+    width: isMobileOnly ? 117 : 123,
+    margin: isMobileOnly ? 0 : theme.spacing(0.5),
   },
   chipContainer: {
-    height: 39
+    // height: 39
   },
   statsContainer: {
     paddingTop: 5,
@@ -203,7 +153,6 @@ const LightTooltip = withStyles(theme => ({
 //eslint-disable-next-line react/jsx-max-props-per-line
 const AnimeRankingResult = (props) => {
   const classes = useStyles()
-  const mobile = mobileStyles()
   const desktop = desktopStyles()
 
   let {
@@ -286,110 +235,6 @@ const AnimeRankingResult = (props) => {
       item
       xs={12}
     >
-
-      <Hidden
-        implementation="js"
-        mdUp
-      >
-        <div
-          onClick={() => handleSelection(result.result.id, result.show.id, result.assets, title)}
-          style={{flexGrow: 0, cursor: 'pointer'}}
-        >
-          <Card
-            className={mobile.card}
-            style={{float: 'left'}}
-          >
-            <div className={mobile.episode}>
-              <Chip
-                className={clsx({[mobile.episodePosChip]: true, [mobile.chipPositionFont]: true, [classes.orangeColor]: posDirection === 'up', [classes.purpleColor]: posDirection === 'down'})}
-                label={pos + 1}
-                size="small"
-                variant="outlined"
-              />
-            </div>
-            <CardMedia
-              title="Show poster art"
-            >
-              <LazyLoadImage
-                verticalOffset={400}
-                width={125}
-                loadHeight={183}
-                src={posterUrl}
-                alt="Poster art"
-                className={mobile.cover}
-                key={posterUrl}
-              />
-            </CardMedia>
-            <div className={mobile.details}>
-              <CardContent className={mobile.content}>
-                <Typography
-                  className={mobile.mobileTitleFont}
-                  component="h6"
-                  display={'inline'}
-                  variant="h6"
-                >
-                  {title}
-                </Typography>
-                <hr/>
-                <Grid container>
-                  <Chip
-                    avatar={<ScoreIcon className={clsx({[classes.orangeColor]: scoreChangeDirection === 'up', [classes.purpleColor]: scoreChangeDirection === 'down'})}/>}
-                    className={clsx({[mobile.squareChip]: true, [classes.orangeColor]: scoreChangeDirection === 'up', [classes.purpleColor]: scoreChangeDirection === 'down'})}
-                    label={score}
-                    size="small"
-                    variant="outlined"
-                  />
-                  <Chip
-                    avatar={<PollIcon className={clsx({[classes.orangeColor]: redditPollScoreDirection === 'up', [classes.purpleColor]: redditPollScoreDirection === 'down'})}/>}
-                    className={clsx({[mobile.squareChip]: true, [classes.orangeColor]: redditPollScoreDirection === 'up', [classes.purpleColor]: redditPollScoreDirection === 'down'})}
-                    label={pollScore}
-                    size="small"
-                    variant="outlined"
-                  />
-                  <Chip
-                    avatar={<SlideshowIcon/>}
-                    className={clsx({[mobile.squareChip]: true})}
-                    label={episode}
-                    size="small"
-                    variant="outlined"
-                  />
-                  <Chip
-                    avatar={<ForumIcon/>}
-                    className={clsx({[mobile.squareChip]: true})}
-                    label={commentCount}
-                    size="small"
-                    variant="outlined"
-                  />
-                  <Chip
-                    avatar={<Avatar
-                      className={clsx({[classes.orangeColor]: malScoreDirection === 'up', [classes.purpleColor]: malScoreDirection === 'down'})}
-                      variant="square"
-                    >M</Avatar>}
-                    className={clsx({[mobile.squareChip]: true, [classes.orangeColor]: malScoreDirection === 'up', [classes.purpleColor]: malScoreDirection === 'down'})}
-                    label={malScore > 0 ? malScore : '-----'}
-                    size="small"
-                    variant="outlined"
-                  />
-                  <Chip
-                    avatar={<Avatar
-                      className={clsx({[classes.orangeColor]: ralScoreDirection === 'up', [classes.purpleColor]: ralScoreDirection === 'down'})}
-                      variant="square"
-                    >R</Avatar>}
-                    className={clsx({[mobile.squareChip]: true, [classes.orangeColor]: ralScoreDirection === 'up', [classes.purpleColor]: ralScoreDirection === 'down'})}
-                    label={ralScore > 0 ? ralScore : '-----'}
-                    size="small"
-                    variant="outlined"
-                  />
-                </Grid>
-              </CardContent>
-            </div>
-          </Card>
-        </div>
-      </Hidden>
-      <Hidden
-        implementation="js"
-        smDown
-      >
         {modernCardStyle &&
           <Card className={clsx(desktop.card)}>
             <div
@@ -401,8 +246,7 @@ const AnimeRankingResult = (props) => {
               >
                 <LazyLoadImage
                   verticalOffset={400}
-                  width={170}
-                  loadHeight={250}
+                  width={isMobileOnly ? 105 : 170}
                   src={posterUrl}
                   alt="Poster art"
                   className={desktop.cover}
@@ -411,12 +255,12 @@ const AnimeRankingResult = (props) => {
               </CardMedia>
             </div>
             <div className={desktop.details}>
-              <CardContent>
+              <CardContent className={classes.cardContentRoot}>
                 <Grid container>
                   <Grid container>
                     <Grid
                       item
-                      xs={9}
+                      xs={isMobileOnly ? 7 : 9}
                     >
                       <Typography
                         className={desktop.titleFont}
@@ -428,9 +272,10 @@ const AnimeRankingResult = (props) => {
                     </Grid>
                     <Grid
                       item
-                      xs={3}
+                      xs={isMobileOnly ? 5 : 3}
                     >
                       <Typography
+                        className={desktop.episodeFont}
                         align="right"
                         color="primary"
                         variant="subtitle1"
@@ -448,10 +293,12 @@ const AnimeRankingResult = (props) => {
                   <Grid
                     className={desktop.statsContainer}
                     container
+                    item
+                    xs={isMobileOnly ? 11 : 9}
                   >
                     <Grid
                       item
-                      xs={3}
+                      xs
                     >
                       <LightTooltip
                         enterDelay={500}
@@ -481,8 +328,8 @@ const AnimeRankingResult = (props) => {
                     </Grid>
                     <Grid
                       item
-                      style={{marginLeft: -10}}
-                      xs={3}
+                      style={{marginLeft: isMobileOnly ? 0 : -10}}
+                      xs={4}
                     >
                       <Grid className={desktop.chipContainer}>
                         <LightTooltip
@@ -535,7 +382,7 @@ const AnimeRankingResult = (props) => {
                     </Grid>
                     <Grid
                       item
-                      xs={3}
+                      xs
                     >
                       <Grid className={desktop.chipContainer}>
                         <LightTooltip
@@ -586,7 +433,7 @@ const AnimeRankingResult = (props) => {
                     <Grid container>
                       <Grid
                         item
-                        xs={10}
+                        xs={12}
                       >
                         <LightTooltip
                           enterDelay={500}
@@ -667,7 +514,6 @@ const AnimeRankingResult = (props) => {
             </div>
           </Grid>
         }
-      </Hidden>
     </Grid>
 
   )

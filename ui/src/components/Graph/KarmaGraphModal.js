@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
 import Backdrop from '@material-ui/core/Backdrop';
 import Fade from '@material-ui/core/Fade';
-
+import {isMobileOnly} from 'react-device-detect'
 import { Paper, Grid } from "@material-ui/core";
 import {
   Chart,
@@ -21,7 +21,7 @@ import { ValueScale, HoverState } from '@devexpress/dx-react-chart';
 const generateData = (dataPoints) => {
   const data = []
   for (const dp of dataPoints) {
-    data.push({ episode: `EP ${dp.episode}`, karma: dp.karma })
+    data.push({ episode: isMobileOnly ? dp.episode : `EP ${dp.episode}`, karma: dp.karma })
   }
   return data;
 }
@@ -123,13 +123,13 @@ export default function KarmaGraphModal(props) {
           >
             <Fade in={open}>
               <Paper>
-                <Chart data={data} width={650} height={500}>
+                <Chart data={data} width={isMobileOnly ? 350 : 650} height={isMobileOnly ? 350 : 650}>
                   <ValueScale modifyDomain={() => minMax} />
                   <ArgumentAxis showGrid showLabels />
                   <ValueAxis />
                   <HoverState />
                   <Title
-                    text="Karma Over Time"
+                    text="Karma Score"
                     textComponent={Text}
                   />
                   <SplineSeries valueField="karma" argumentField="episode" />
