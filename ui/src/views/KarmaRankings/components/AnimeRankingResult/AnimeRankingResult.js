@@ -247,6 +247,7 @@ const AnimeRankingResult = (props) => {
                 <LazyLoadImage
                   verticalOffset={400}
                   width={isMobileOnly ? 105 : 170}
+                  loadHeight={isMobileOnly ? 130 : 200}
                   src={posterUrl}
                   alt="Poster art"
                   className={desktop.cover}
