@@ -6,10 +6,11 @@ import CheckCircleIcon from '@material-ui/icons/CheckCircle'
 import ErrorIcon from '@material-ui/icons/Error'
 import InfoIcon from '@material-ui/icons/Info'
 import CloseIcon from '@material-ui/icons/Close'
-import { amber, green } from '@material-ui/core/colors'
+import { amber, green, yellow } from '@material-ui/core/colors'
 import IconButton from '@material-ui/core/IconButton'
 import SnackbarContent from '@material-ui/core/SnackbarContent'
 import WarningIcon from '@material-ui/icons/Warning'
+import EmojiObjectsIcon from '@material-ui/icons/EmojiObjects'
 import { makeStyles } from '@material-ui/core/styles'
 import { Collapse, CircularProgress, Snackbar } from '@material-ui/core'
 
@@ -18,6 +19,7 @@ const variantIcon = {
   warning: WarningIcon,
   error: ErrorIcon,
   info: InfoIcon,
+  motd: EmojiObjectsIcon,
   loading: function() {
     return <CircularProgress
       color="inherit"
@@ -42,6 +44,9 @@ const useStyles1 = makeStyles((theme) => ({
   },
   warning: {
     backgroundColor: amber[700]
+  },
+  motd: {
+    backgroundColor: yellow[400]
   },
   loading: {
     backgroundColor: theme.palette.primary.main,
@@ -98,7 +103,7 @@ MySnackbarContentWrapper.propTypes = {
   message: PropTypes.string,
   onClose: PropTypes.func,
   closeable: PropTypes.bool,
-  variant: PropTypes.oneOf(['error', 'info', 'success', 'warning', 'loading']).isRequired
+  variant: PropTypes.oneOf(['error', 'info', 'success', 'warning', 'loading', 'motd']).isRequired
 }
 
 const alertStyles = makeStyles((theme) => ({
@@ -138,6 +143,7 @@ export default function Alert(props) {
         message={message}
         onClose={handleClose}
         variant={variant ? variant : 'info'}
+        closeable={variant === 'motd'}
       />
     </Snackbar>
   )

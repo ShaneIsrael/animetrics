@@ -354,7 +354,10 @@ const KarmaRankings = () => {
         justify="center"
         spacing={2}
       >
-
+      <Alert
+          variant="motd"
+          message="You can click on the Karma and Poll scores to view a change over time graph."
+        />
         <Grid
           container
           justify="center"
