@@ -92,11 +92,11 @@ const desktopStyles = makeStyles(theme => ({
   },
   squareChip: {
     borderRadius: 0,
-    marginLeft: isMobileOnly ? 5 : theme.spacing(.5),
-    // marginRight: isMobileOnly ? 20 : theme.spacing(.5),
-    marginBottom: isMobileOnly ? 1 : theme.spacing(.5),
-    marginTop: isMobileOnly ? 0 : theme.spacing(.5),
+    marginLeft: isMobileOnly ? 5 : theme.spacing(0),
+    marginBottom: isMobileOnly ? 1 : theme.spacing(0.75),
+    marginTop: isMobileOnly ? 0 : theme.spacing(0),
     minWidth: 80,
+    width: '95%',
     height: isMobileOnly ? 28 : 31,
   },
   titleFont: {
@@ -108,16 +108,16 @@ const desktopStyles = makeStyles(theme => ({
   },
   positionChip: {
     borderRadius: 0,
-    margin: isMobileOnly ? 0 : theme.spacing(.5),
+    margin: isMobileOnly ? 0 : theme.spacing(0),
     fontSize: 28,
     width: 70,
     height: isMobileOnly ? 50 : 70,
   },
   positionChangeChip: {
     borderRadius: 0,
-    margin: isMobileOnly ? 0 : theme.spacing(0.5),
+    margin: isMobileOnly ? 0 : theme.spacing(0),
     marginTop: isMobileOnly ? 2 : theme.spacing(0.5),
-    marginBottom: isMobileOnly ? 1 : theme.spacing(0.5),
+    marginBottom: isMobileOnly ? 1 : theme.spacing(0),
     width: 70,
     height: isMobileOnly ? 34 : 31
   },
@@ -126,8 +126,9 @@ const desktopStyles = makeStyles(theme => ({
     margin: isMobileOnly ? 10 : theme.spacing(0.5)
   },
   chipRalMal: {
-    width: isMobileOnly ? 117 : 123,
-    margin: isMobileOnly ? 0 : theme.spacing(0.5),
+    width: isMobileOnly ? '100%' : '90%',
+    margin: isMobileOnly ? 0 : theme.spacing(0),
+    marginTop: isMobileOnly ? 0 : theme.spacing(0)
   },
   chipContainer: {
     // height: 39
@@ -261,7 +262,7 @@ const AnimeRankingResult = (props) => {
                   <Grid container>
                     <Grid
                       item
-                      xs={isMobileOnly ? 7 : 9}
+                      xs={isMobileOnly ? 8 : 9}
                     >
                       <Typography
                         className={desktop.titleFont}
@@ -273,7 +274,7 @@ const AnimeRankingResult = (props) => {
                     </Grid>
                     <Grid
                       item
-                      xs={isMobileOnly ? 5 : 3}
+                      xs={isMobileOnly ? 4 : 3}
                     >
                       <Typography
                         className={desktop.episodeFont}
@@ -295,11 +296,11 @@ const AnimeRankingResult = (props) => {
                     className={desktop.statsContainer}
                     container
                     item
-                    xs={isMobileOnly ? 11 : 9}
+                    xs={isMobileOnly ? 12 : 12}
                   >
                     <Grid
                       item
-                      xs
+                      xs={3}
                     >
                       <LightTooltip
                         enterDelay={500}
@@ -328,64 +329,60 @@ const AnimeRankingResult = (props) => {
                       </LightTooltip>
                     </Grid>
                     <Grid
-                      item
+                      container
                       style={{marginLeft: isMobileOnly ? 0 : -10}}
-                      xs={4}
+                      xs={isMobileOnly ? 4 : 3}
                     >
-                      <Grid className={desktop.chipContainer}>
-                        <LightTooltip
-                          enterDelay={500}
-                          placement={scoreChangeIcon ? 'top':'right'}
-                          title="Karma Score"
-                          TransitionComponent={Zoom}
-                        >
-                          <Chip
-                            avatar={<ScoreIcon />}
-                            className={clsx({[desktop.squareChip]: true, [classes.rankColor]: true})}
-                            label={score}
-                            variant="outlined"
-                            onClick={() => openKarmaGraphModal(seasonId, showId)}
-                          />
-                        </LightTooltip>
+                        <Grid item xs>
+                          <LightTooltip
+                            enterDelay={500}
+                            placement={scoreChangeIcon ? 'top':'right'}
+                            title="Karma Score"
+                            TransitionComponent={Zoom}
+                          >
+                            <Chip
+                              avatar={<ScoreIcon />}
+                              className={clsx({[desktop.squareChip]: true, [classes.rankColor]: true})}
+                              label={score}
+                              variant="outlined"
+                              onClick={() => openKarmaGraphModal(seasonId, showId)}
+                            />
+                          </LightTooltip>
+                        </Grid>
+                        <Grid item xs>
+                          <LightTooltip
+                            enterDelay={500}
+                            placement={redditPollScoreIcon ? 'top':'right'}
+                            title="Episode Poll Score"
+                            TransitionComponent={Zoom}
+                          >
+                            <Chip
+                              avatar={<PollIcon className={clsx({[classes.orangeColor]: redditPollScoreDirection === 'up', [classes.purpleColor]: redditPollScoreDirection === 'down'})}/>}
+                              className={clsx({[desktop.squareChip]: true})}
+                              label={pollScore > 0 ? pollScore.toFixed(2) : '-----'}
+                              variant="outlined"
+                              onClick={() => openRpGraphModal(seasonId, showId)}
+                            />
+                          </LightTooltip>
+                        </Grid>
+                        <Grid item xs>
+                          <LightTooltip
+                            enterDelay={500}
+                            placement={commentCountChangeIcon ? 'top':'right'}
+                            title="Discussion Comment Count"
+                            TransitionComponent={Zoom}
+                          >
+                            <Chip
+                              avatar={<ForumIcon/>}
+                              className={clsx({[desktop.squareChip]: true})}
+                              label={commentCount}
+                              variant="outlined"
+                            />
+                          </LightTooltip>
+                        </Grid>
                       </Grid>
-                      <Grid className={desktop.chipContainer}>
-                        <LightTooltip
-                          enterDelay={500}
-                          placement={redditPollScoreIcon ? 'top':'right'}
-                          title="Episode Poll Score"
-                          TransitionComponent={Zoom}
-                        >
-                          <Chip
-                            avatar={<PollIcon className={clsx({[classes.orangeColor]: redditPollScoreDirection === 'up', [classes.purpleColor]: redditPollScoreDirection === 'down'})}/>}
-                            className={clsx({[desktop.squareChip]: true})}
-                            label={pollScore > 0 ? pollScore.toFixed(2) : '-----'}
-                            variant="outlined"
-                            onClick={() => openRpGraphModal(seasonId, showId)}
-                          />
-                        </LightTooltip>
-                      </Grid>
-                      <Grid className={desktop.chipContainer}>
-                        <LightTooltip
-                          enterDelay={500}
-                          placement={commentCountChangeIcon ? 'top':'right'}
-                          title="Discussion Comment Count"
-                          TransitionComponent={Zoom}
-                        >
-                          <Chip
-                            avatar={<ForumIcon/>}
-                            className={clsx({[desktop.squareChip]: true})}
-                            label={commentCount}
-                            variant="outlined"
-                          />
-                        </LightTooltip>
-                      </Grid>
-
-                    </Grid>
-                    <Grid
-                      item
-                      xs
-                    >
-                      <Grid className={desktop.chipContainer}>
+                    <Grid container xs={isMobileOnly ? 4 : 3}>
+                      <Grid item xs>
                         <LightTooltip
                           enterDelay={500}
                           placement="right"
@@ -400,7 +397,7 @@ const AnimeRankingResult = (props) => {
                           />
                         </LightTooltip>
                       </Grid>
-                      <Grid className={desktop.chipContainer}>
+                      <Grid item xs>
                         <LightTooltip
                           enterDelay={500}
                           placement="right"
@@ -415,7 +412,7 @@ const AnimeRankingResult = (props) => {
                           />
                         </LightTooltip>
                       </Grid>
-                      <Grid className={desktop.chipContainer}>
+                      <Grid item xs>
                         <LightTooltip
                           enterDelay={500}
                           placement="right"
@@ -431,10 +428,10 @@ const AnimeRankingResult = (props) => {
                         </LightTooltip>
                       </Grid>
                     </Grid>
-                    <Grid container>
+                    <Grid container xs={isMobileOnly ? 11 : 9}>
                       <Grid
                         item
-                        xs={12}
+                        xs
                       >
                         <LightTooltip
                           enterDelay={500}
@@ -452,6 +449,11 @@ const AnimeRankingResult = (props) => {
                             variant="outlined"
                           />
                         </LightTooltip>
+                      </Grid>
+                      <Grid
+                        item
+                        xs
+                      >
                         <LightTooltip
                           enterDelay={500}
                           placement="bottom"
