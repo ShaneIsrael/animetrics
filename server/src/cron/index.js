@@ -1,5 +1,6 @@
 const cron = require('node-cron')
 const moment = require('moment')
+const Anilist = require('anilist-node')
 const logger = require('../logger')
 const { environment } = require('../config')
 const {
@@ -13,6 +14,8 @@ const fetchAssets = require('../fetch/fetchAssets')
 const fetchUsers = require('../fetch/fetchRedditMalUsers')
 const pollFixer = require('../tools/pollFixer')
 
+const anilistClient = new Anilist()
+
 async function updatePosters() {
   logger.info('updating posters')
   const assets = await Asset.findAll({
@@ -22,8 +25,15 @@ async function updatePosters() {
     include: [Show],
   })
   for (const asset of assets) {
-    if (asset.Show.tvdb_id && asset.Show.tvdb_id !== -1) {
-      const art = await getSeriesPoster(asset.Show.tvdb_id)
+    let art
+    if (!art && asset.Show.anilist_id) {
+      const resp = await anilistClient.media.anime(asset.Show.anilist_id)
+      art = resp.coverImage.large ? resp.coverImage.large : resp.coverImage.medium
+    }
+    if (!art && asset.Show.tvdb_id && asset.Show.tvdb_id !== -1) {
+      art = await getSeriesPoster(asset.Show.tvdb_id)
+    }
+    if (art) {
       asset.poster_art = art
       asset.save()
     }

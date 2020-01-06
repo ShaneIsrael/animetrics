@@ -12,6 +12,9 @@ module.exports = (connection, Sequelize) => connection.define(
     tvdb_id: {
       type: Sequelize.STRING,
     },
+    anilist_id: {
+      type: Sequelize.STRING,
+    },
     title: {
       type: Sequelize.STRING,
       allowNull: false,

@@ -234,6 +234,9 @@ module.exports = {
               s3_poster: null,
             },
             {
+              s3_poster_compressed: null,
+            },
+            {
               s3_banner: null,
             },
             {
