@@ -1,5 +1,7 @@
 const service = {}
 const moment = require('moment')
+const Anilist = require('anilist-node')
+
 const { findAnime } = require('./MALService')
 const utils = require('../tools/utils')
 const {
@@ -13,6 +15,7 @@ const {
 } = require('../models')
 
 const logger = require('../logger')
+const anilistClient = new Anilist()
 
 moment.updateLocale('en', {
   week: {
@@ -20,12 +23,24 @@ moment.updateLocale('en', {
   },
 })
 
+function getAnilistUrl(text) {
+  const url = text.match(/https?:\/\/(www\.)?(\w*anilist\w*)\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]anime\/[0-9]*)/gm)
+  return url ? url[0] : null
+}
+
+function parseAnilistId(post) {
+  const anilistUrl = getAnilistUrl(post.selftext)
+  if (anilistUrl) {
+    const anilistId = anilistUrl.match(/([0-9]\d+)/g)
+    return anilistId ? anilistId[0] : null
+  }
+  return null
+}
 
 function getMyAnimeListUrl(text) {
   const url = text.match(/https?:\/\/(www\.)?(\w*myanimelist\w*)\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]anime\/[0-9]*)/gm)
   return url ? url[0] : null
 }
-
 
 function parseMalId(post) {
   const myAnimeListUrl = getMyAnimeListUrl(post.selftext)
@@ -76,10 +91,12 @@ service.digestDiscussionPost = async (post, ignoreFlair) => {
   // logger.info(`Digesting: ${post.title}`)
 
   const malId = parseMalId(post)
+  const anilistId = parseAnilistId(post)
   const episode = parseEpisode(post)
   const season = parseSeason(post)
   const pollUrl = parsePollUrl(post.selftext)
   const malDetails = await findAnime(malId)
+  const anilistDetails = await anilistClient.media.anime(anilistId)
 
   if (!malDetails || !episode) {
     logger.error(`Could not parse discussion [${post.id}] malId=${malId} episode=${episode}`)
@@ -107,6 +124,7 @@ service.digestDiscussionPost = async (post, ignoreFlair) => {
       alt_title: malDetails.title_synonyms && malDetails.title_synonyms.length > 0 ? malDetails.title_synonyms[0] : null,
       english_title: malDetails.title_english,
       mal_id: malId,
+      anilist_id: anilistId,
       season: season,
     })
   }
@@ -164,10 +182,18 @@ service.digestDiscussionPost = async (post, ignoreFlair) => {
     where: { showId: discussion.showId },
   })
   if (!assetExists) {
-    await Asset.create({
-      showId: discussion.showId,
-      season: discussion.season,
-    })
+    if (anilistDetails) {
+      await Asset.create({
+        showId: discussion.showId,
+        season: discussion.season,
+        poster_art: anilistDetails.coverImage.large ? anilistDetails.coverImage.large : anilistDetails.coverImage.medium,
+      })
+    } else {
+      await Asset.create({
+        showId: discussion.showId,
+        season: discussion.season,
+      })
+    }
   }
 }
 

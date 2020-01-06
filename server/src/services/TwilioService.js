@@ -1,3 +1,4 @@
+/* eslint-disable linebreak-style */
 const config = require('../config').twilio
 const Twilio = require('twilio')
 const logger = require('../logger')
@@ -14,7 +15,7 @@ service.messageAdmin = async (body) => {
     await twilio.messages.create({
       from: config.contacts.animetrics,
       to: config.contacts.admin,
-      body
+      body,
     })
     return true
   } catch (err) {
