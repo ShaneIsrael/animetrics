@@ -133,7 +133,8 @@ async function createS3Poster(asset) {
   const imageDir = createWorkingDir(imageName)
 
   let url
-  if (asset.poster_art.indexOf('anime_assets/') === -1) url = `https://www.thetvdb.com/banners/${asset.poster_art}`
+  if (asset.poster_art.indexOf('anilist') >= 0) url = asset.poster_art
+  else if (asset.poster_art.indexOf('anime_assets/') === -1) url = `https://www.thetvdb.com/banners/${asset.poster_art}`
   else url = `${spaces.edge}/${asset.poster_art}`
   const { filename } = await download.image({
     url,
@@ -161,7 +162,8 @@ async function createS3PosterCompressed(asset) {
   const imageDir = createWorkingDir(imageName)
 
   let url
-  if (asset.poster_art.indexOf('anime_assets/') === -1) url = `https://www.thetvdb.com/banners/${asset.poster_art}`
+  if (asset.poster_art.indexOf('anilist') >= 0) url = asset.poster_art
+  else if (asset.poster_art.indexOf('anime_assets/') === -1) url = `https://www.thetvdb.com/banners/${asset.poster_art}`
   else url = `${spaces.edge}/${asset.poster_art}`
   const { filename } = await download.image({
     url,
