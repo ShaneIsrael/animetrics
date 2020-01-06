@@ -34,14 +34,18 @@ async function fixMyHeroAcademia() {
       },
       include: [EpisodeDiscussion],
     })
+    let index = 1
     for (const show of shows) {
-      const post = await fetchDiscussions.getSubmission(show.EpisodeDiscussions[0].post_id)
-      if (post) {
-        const id = parseAnilistId(post)
-        // show.anilist_id = id
-        // show.save()
-        console.log(id)
+      console.log(`updating ${index}/${shows.length}`)
+      if (show.EpisodeDiscussions) {
+        const post = await fetchDiscussions.getSubmission(show.EpisodeDiscussions[0].post_id)
+        if (post) {
+          const id = parseAnilistId(post)
+          show.anilist_id = id
+          show.save()
+        }
       }
+      index += 1
     }
   } catch (err) {
     console.log(err)
