@@ -41,8 +41,12 @@ async function fixMyHeroAcademia() {
         const post = await fetchDiscussions.getSubmission(show.EpisodeDiscussions[0].post_id)
         if (post) {
           const id = parseAnilistId(post)
-          show.anilist_id = id
-          show.save()
+          if (!id) {
+            console.log(`could not find an id for show: ${show.title}`)
+          } else {
+            show.anilist_id = id
+            show.save()
+          }
         }
       }
       index += 1
