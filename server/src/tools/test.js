@@ -37,7 +37,7 @@ async function fixMyHeroAcademia() {
     let index = 1
     for (const show of shows) {
       console.log(`updating ${index}/${shows.length}`)
-      if (show.EpisodeDiscussions) {
+      if (show.EpisodeDiscussions.length > 0) {
         const post = await fetchDiscussions.getSubmission(show.EpisodeDiscussions[0].post_id)
         if (post) {
           const id = parseAnilistId(post)
