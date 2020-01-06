@@ -35,7 +35,7 @@ async function fixMyHeroAcademia() {
       include: [EpisodeDiscussion],
     })
     for (const show of shows) {
-      const post = await fetchDiscussions.getSubmission(show.post_id)
+      const post = await fetchDiscussions.getSubmission(show.EpisodeDiscussions[0].post_id)
       if (post) {
         const id = parseAnilistId(post)
         // show.anilist_id = id
