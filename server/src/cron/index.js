@@ -25,17 +25,22 @@ async function updatePosters() {
     include: [Show],
   })
   for (const asset of assets) {
-    let art
-    if (!art && asset.Show.anilist_id) {
-      const resp = await anilistClient.media.anime(asset.Show.anilist_id)
-      art = resp.coverImage.large ? resp.coverImage.large : resp.coverImage.medium
+    try {
+      let art
+      if (!art && asset.Show.anilist_id) {
+        const resp = await anilistClient.media.anime(asset.Show.anilist_id)
+        art = resp.coverImage.large ? resp.coverImage.large : resp.coverImage.medium
+      }
+      if (!art && asset.Show.tvdb_id && asset.Show.tvdb_id !== -1) {
+        art = await getSeriesPoster(asset.Show.tvdb_id)
+      }
+      if (art) {
+        asset.poster_art = art
+        asset.save()
+      }
     }
-    if (!art && asset.Show.tvdb_id && asset.Show.tvdb_id !== -1) {
-      art = await getSeriesPoster(asset.Show.tvdb_id)
-    }
-    if (art) {
-      asset.poster_art = art
-      asset.save()
+    catch (err) {
+      logger.error(err)
     }
   }
 }
@@ -76,9 +81,13 @@ async function getDiscussionsAndPopulate() {
       // don't process if the discussion isn't at least 15 minutes old. This is to help prevent getting
       // discussions made by non-mods that get deleted.
       if (createdDt.isSameOrBefore(dt15MinsAgo)) {
-        logger.info(`digesting ${discussion.title}`)
-        await digestDiscussionPost(discussion)
-        logger.info(`finishing digesting ${discussion.title}`)
+        try {
+          logger.info(`digesting ${discussion.title}`)
+          await digestDiscussionPost(discussion)
+          logger.info(`finishing digesting ${discussion.title}`)
+        } catch (err) {
+          logger.error(err)
+        }
       } else {
         logger.info(`skipping ${discussion.title}`)
       }
@@ -90,7 +99,11 @@ async function updateRalScores() {
   const results = await EpisodeDiscussionResult.findAll({ where: { ralScore: null } })
   if (results) {
     for (const result of results) {
-      await updateRedditAnimeListScore(result)
+      try {
+        await updateRedditAnimeListScore(result)
+      } catch (err) {
+        logger.error(err)
+      }
     }
   }
 }
@@ -106,36 +119,12 @@ async function init() {
       // Every 15 minutes | Get Episode Discussions and populate data
       cron.schedule('0 */15 * * * *', async () => {
         logger.info('--- Starting Discussion Populate Job ---')
-        try {
-          await generateDiscussionResults()
-        } catch (err) {
-          logger.error(err)
-        }
-        try {
-          await getDiscussionsAndPopulate()
-        } catch (err) {
-          logger.error(err)
-        }
-        try {
-          await updateTvDbIds()
-        } catch (err) {
-          logger.error(err)
-        }
-        try {
-          await updatePosters()
-        } catch (err) {
-          logger.error(err)
-        }
-        try {
-          await fetchAssets.fetch()
-        } catch (err) {
-          logger.error(err)
-        }
-        try {
-          await pollFixer.init()
-        } catch (err) {
-          logger.error(err)
-        }
+        await generateDiscussionResults()
+        await getDiscussionsAndPopulate()
+        await updateTvDbIds()
+        await updatePosters()
+        await fetchAssets.fetch()
+        await pollFixer.init()
       })
       // Every Hour | Check for unset ral scores and update them
       cron.schedule('0 0 * * * *', async () => {
