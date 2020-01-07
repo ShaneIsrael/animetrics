@@ -123,9 +123,10 @@ service.digestDiscussionPost = async (post, ignoreFlair) => {
       title: showTitle,
       alt_title: malDetails.title_synonyms && malDetails.title_synonyms.length > 0 ? malDetails.title_synonyms[0] : null,
       english_title: malDetails.title_english,
+      synopsis: malDetails.synopsis,
       mal_id: malId,
       anilist_id: anilistId,
-      season: season,
+      season,
     })
   }
   let discussion = await EpisodeDiscussion.findOne({

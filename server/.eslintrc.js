@@ -15,6 +15,7 @@ module.exports = {
     'no-restricted-syntax': 'off',
     'no-underscore-dangle': 'off',
     'no-await-in-loop': 'off',
+    'linebreak-style': 'off',
     'import/no-dynamic-require': 'off',
     'implicit-arrow-linebreak': 'off',
     'no-unused-expressions': [
