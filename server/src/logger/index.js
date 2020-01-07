@@ -35,12 +35,30 @@ const options = {
   },
 }
 
+const enumerateErrorFormat = format(info => {
+  if (info.message instanceof Error) {
+    info.message = Object.assign({
+      message: info.message.message,
+      stack: info.message.stack
+    }, info.message);
+  }
+
+  if (info instanceof Error) {
+    return Object.assign({
+      message: info.message,
+      stack: info.stack
+    }, info);
+  }
+
+  return info;
+})
+
 // instantiate a new Winston Logger with the settings defined above
 const logger = createLogger({
   format: format.combine(
     format.timestamp(),
+    enumerateErrorFormat(),
     format.json(),
-    format.errors({ stack: true })
   ),
   transports: [
     new transports.Console(options.console),
