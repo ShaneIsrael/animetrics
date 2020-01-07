@@ -28,31 +28,9 @@ function parseAnilistId(post) {
 
 async function fixMyHeroAcademia() {
   try {
-    const shows = await Show.findAll({
-      where: {
-        anilist_id: null
-      },
-      include: [EpisodeDiscussion],
-    })
-    let index = 1
-    for (const show of shows) {
-      console.log(`updating ${index}/${shows.length}`)
-      if (show.EpisodeDiscussions.length > 0) {
-        const post = await fetchDiscussions.getSubmission(show.EpisodeDiscussions[0].post_id)
-        if (post) {
-          const id = parseAnilistId(post)
-          if (!id) {
-            console.log(`could not find an id for show: ${show.title}`)
-          } else {
-            show.anilist_id = id
-            show.save()
-          }
-        }
-      }
-      index += 1
-    }
+    throw new Error('omg an error happened line 31')
   } catch (err) {
-    console.log(err)
+    logger.error(err)
   }
 }
 fixMyHeroAcademia()

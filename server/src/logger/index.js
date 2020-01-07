@@ -40,6 +40,7 @@ const logger = createLogger({
   format: format.combine(
     format.timestamp(),
     format.json(),
+    format.errors({ stack: true })
   ),
   transports: [
     new transports.Console(options.console),
