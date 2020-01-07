@@ -1,8 +1,9 @@
 const appRoot = require('app-root-path')
 const Syslog = require('winston-syslog').Syslog
 const { transports, createLogger, format } = require('winston')
-
+const Sentry = require('winston-sentry-log')
 const hostname = require('os').hostname()
+const config = require('../config').sentry
 
 // define the custom settings for each transport (file, console)
 const options = {
@@ -33,6 +34,10 @@ const options = {
     colorize: true,
     timestamp: true,
   },
+  sentry: {
+    dsn: config.dsn,
+    level: "info"
+  }
 }
 
 const enumerateErrorFormat = format(info => {
@@ -71,7 +76,8 @@ const logger = createLogger({
       timestamp: true,
       handleExceptions: true,
       level: 'info'
-    })
+    }),
+    new Sentry(options.sentry)
   ],
   exitOnError: false, // do not exit on handled exceptions
 })
