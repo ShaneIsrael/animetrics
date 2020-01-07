@@ -65,7 +65,7 @@ const cropBanner = (width, height, fileToCrop, savePath, saveName) => new Promis
   } else {
     gm(fileToCrop)
       .gravity('NorthWest')
-      .crop(width, height, 0, 333 - (height / 2))
+      .crop(width, height, 0, (height / 2))
       .write(bannerSavePath, (err) => {
         if (err) {
           return reject(err)
@@ -105,8 +105,8 @@ const cropAvatar = (fileToCrop, savePath, saveName) => new Promise(async (resolv
       })
   } else {
     gm(fileToCrop)
-      .gravity('NorthWest')
-      .crop(100, 100, (680 / 2) - 100, (1000 / 2) - 100)
+      .gravity('center')
+      .crop(100, 100)
       .write(avatarSavePath, (err) => {
         if (err) {
           return reject(err)
