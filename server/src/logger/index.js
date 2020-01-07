@@ -36,25 +36,26 @@ const options = {
   },
   sentry: {
     dsn: config.dsn,
-    level: 'error'
-  }
+    level: 'error',
+  },
 }
 
 const enumerateErrorFormat = format(info => {
   if (info.message instanceof Error) {
-    info.message = Object.assign({
+    info.message = {
       message: info.message.message,
-      stack: info.message.stack
-    }, info.message);
+      stack: info.message.stack,
+      ...info.message,
+    }
   }
 
   if (info instanceof Error) {
-    return Object.assign({
+    return {
       message: info.message,
-      stack: info.stack
-    }, info);
+      stack: info.stack,
+      ...info,
+    }
   }
-
   return info;
 })
 
@@ -75,9 +76,9 @@ const logger = createLogger({
       colorize: true,
       timestamp: true,
       handleExceptions: true,
-      level: 'info'
+      level: 'info',
     }),
-    new Sentry(options.sentry)
+    new Sentry(options.sentry),
   ],
   exitOnError: false, // do not exit on handled exceptions
 })
