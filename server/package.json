@@ -30,7 +30,7 @@
     "twilio": "^3.39.1",
     "uuid": "^3.3.3",
     "winston": "^3.2.1",
-    "winston-sentry-log": "^1.0.11",
+    "winston-sentry-raven-transport": "^1.2.0",
     "winston-syslog": "^2.3.0"
   },
   "scripts": {

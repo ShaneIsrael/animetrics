@@ -1,7 +1,7 @@
 const appRoot = require('app-root-path')
 const Syslog = require('winston-syslog').Syslog
 const { transports, createLogger, format } = require('winston')
-const Sentry = require('winston-sentry-log')
+const Sentry = require('winston-sentry-raven-transport')
 const hostname = require('os').hostname()
 const config = require('../config').sentry
 
