@@ -105,7 +105,7 @@ const cropAvatar = (fileToCrop, savePath, saveName) => new Promise(async (resolv
       })
   } else {
     gm(fileToCrop)
-      .gravity('center')
+      .gravity('Center')
       .crop(100, 100)
       .write(avatarSavePath, (err) => {
         if (err) {
