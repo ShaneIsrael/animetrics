@@ -247,14 +247,25 @@ module.exports = {
           ],
         },
       })
+      const promises = []
       for (const asset of assets) {
-        if (!asset.s3_poster) await createS3Poster(asset)
-        if (!asset.s3_poster_compressed) await createS3PosterCompressed(asset)
-        if (!asset.s3_banner) await createBanner(asset)
-        if (!asset.s3_avatar) await createAvatar(asset)
-        asset.s3_bucket = 'animetrics'
-        asset.save()
+        promises.push(
+          new Promise(async (resolve, reject) => {
+            try {
+              if (!asset.s3_poster) await createS3Poster(asset)
+              if (!asset.s3_poster_compressed) await createS3PosterCompressed(asset)
+              if (!asset.s3_banner) await createBanner(asset)
+              if (!asset.s3_avatar) await createAvatar(asset)
+              asset.s3_bucket = 'animetrics'
+              asset.save()
+            } catch (err) {
+              logger.error(`failed fetching and creating assets for id: ${asset.id}, err: ${err.message}`)
+            }
+            resolve()
+          })
+        )
       }
+      await Promise.all(promises)
     } catch (err) {
       logger.error(err)
     }
