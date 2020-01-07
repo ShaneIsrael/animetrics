@@ -170,54 +170,58 @@ service.updateTvDbIds = async () => {
   logger.info('updating tvdb ids')
   const shows = await Show.findAll({ where: { tvdb_id: null } });
   for (const show of shows) {
-    logger.info(`Attempting to update TVDB ID for showId=${show.id} title=${show.title}`)
-    let result = await search(show.title, show.title, 0);
-    if (!result && show.english_title) result = await search(show.english_title, show.english_title, 0)
-    if (!result && show.alt_title) result = await search(show.alt_title, show.alt_title, 0);
-    const match = {};
-    const titlesToMatchFor = []
-    if (show.title) titlesToMatchFor.push(show.title.toLowerCase())
-    if (show.alt_title) titlesToMatchFor.push(show.alt_title.toLowerCase())
-    if (show.english_title) titlesToMatchFor.push(show.english_title.toLowerCase())
+    try {
+      logger.info(`Attempting to update TVDB ID for showId=${show.id} title=${show.title}`)
+      let result = await search(show.title, show.title, 0);
+      if (!result && show.english_title) result = await search(show.english_title, show.english_title, 0)
+      if (!result && show.alt_title) result = await search(show.alt_title, show.alt_title, 0);
+      const match = {};
+      const titlesToMatchFor = []
+      if (show.title) titlesToMatchFor.push(show.title.toLowerCase())
+      if (show.alt_title) titlesToMatchFor.push(show.alt_title.toLowerCase())
+      if (show.english_title) titlesToMatchFor.push(show.english_title.toLowerCase())
 
-    if (result && result.data) {
-      // check shows that are labeled as Continuing first
-      result.data.data.sort((a, b) => {
-        if (a.status === 'Continuing' && b.status === 'Continuing') return 0
-        if (a.status === 'Continuing' && b.status !== 'Continuing') return -1
-        else return 1
-       })
-      for (const re of result.data.data) {
-        if (titlesToMatchFor.indexOf(re.seriesName.toLowerCase()) >= 0) {
-          match.id = re.id
-          match.result = re
-          break
-        } 
-        if (titlesToMatchFor.indexOf(re.slug.replace(/-/g, ' ').toLowerCase()) >= 0) {
-          match.id = re.id
-          match.result = re
-          break
-        }
-        if (re.aliases && re.aliases.length > 0) {
-          for (const alias of re.aliases) {
-            if (titlesToMatchFor.indexOf(alias.toLowerCase()) >= 0) {
-              match.id = re.id
-              match.result = re
-              break
+      if (result && result.data) {
+        // check shows that are labeled as Continuing first
+        result.data.data.sort((a, b) => {
+          if (a.status === 'Continuing' && b.status === 'Continuing') return 0
+          if (a.status === 'Continuing' && b.status !== 'Continuing') return -1
+          else return 1
+        })
+        for (const re of result.data.data) {
+          if (titlesToMatchFor.indexOf(re.seriesName.toLowerCase()) >= 0) {
+            match.id = re.id
+            match.result = re
+            break
+          } 
+          if (titlesToMatchFor.indexOf(re.slug.replace(/-/g, ' ').toLowerCase()) >= 0) {
+            match.id = re.id
+            match.result = re
+            break
+          }
+          if (re.aliases && re.aliases.length > 0) {
+            for (const alias of re.aliases) {
+              if (titlesToMatchFor.indexOf(alias.toLowerCase()) >= 0) {
+                match.id = re.id
+                match.result = re
+                break
+              }
             }
           }
         }
+        if (match.id) {
+          logger.info(`Found tvdb match: ${match.result.seriesName} --> ${show.title}`)
+          show.tvdb_id = match.id
+        } else {
+          logger.info(`NO TVDB MATCH, using first found: ${result.data.data[0].seriesName}`)
+          show.tvdb_id = result.data.data[0].id
+        }
+        show.save()
       }
-      if (match.id) {
-        logger.info(`Found tvdb match: ${match.result.seriesName} --> ${show.title}`)
-        show.tvdb_id = match.id
-      } else {
-        logger.info(`NO TVDB MATCH, using first found: ${result.data.data[0].seriesName}`)
-        show.tvdb_id = result.data.data[0].id
-      }
-      show.save()
+      await updateSeriesInformation(show.id)
+    } catch (err) {
+      logger.error(err)
     }
-    await updateSeriesInformation(show.id)
   }
 }
 
