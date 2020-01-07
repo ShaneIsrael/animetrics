@@ -36,7 +36,7 @@ const options = {
   },
   sentry: {
     dsn: config.dsn,
-    level: "info"
+    level: 'error'
   }
 }
 
