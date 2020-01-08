@@ -1,13 +1,15 @@
 const service = {}
-const moment = require('moment')
-const { findAnime, rawTvDbSearch, authTvDb } = require('../services')
-const fetchDiscussions = require('../fetch/fetchDiscussions')
-const fetchAssets = require('../fetch/fetchAssets')
-const cpoll = require('../tools/calculatePoll')
-const logger = require('../logger')
-const { Show, Asset, MALSnapshot, RedditPollResult, Week, Season, EpisodeResultLink, EpisodeDiscussion, EpisodeDiscussionResult, RedditUserScore, Op} = require('../models')
-
+// const moment = require('moment')
 const Anilist = require('anilist-node')
+const { findAnime } = require('../services/MALService')
+// const fetchDiscussions = require('../fetch/fetchDiscussions')
+// const fetchAssets = require('../fetch/fetchAssets')
+// const cpoll = require('../tools/calculatePoll')
+// const logger = require('../logger')
+// const {
+//   Show, Asset, MALSnapshot, RedditPollResult, Week, Season, EpisodeResultLink, EpisodeDiscussion, EpisodeDiscussionResult, RedditUserScore, Op,
+// } = require('../models')
+
 const aniClient = new Anilist()
 
 //create animetrics anilist app 

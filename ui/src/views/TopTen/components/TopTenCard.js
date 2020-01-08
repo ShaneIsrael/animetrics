@@ -109,7 +109,7 @@ const LightTooltip = withStyles(theme => ({
 const TopFiveCard = (props) => {
   const classes = useStyles()
 
-  const { title, position, poster, score, malId, type} = props
+  const { title, position, poster, score, malId, type } = props
 
   return (
     <Card className={clsx(classes.card)}>
