@@ -11,6 +11,16 @@ const Anilist = require('anilist-node')
 const aniClient = new Anilist()
 
 //create animetrics anilist app 
+const aws = require('aws-sdk')
+const { environment } = require('../config')
+const awsConfig = require('../config')[environment].aws
+
+const endpoint = new aws.Endpoint(awsConfig.endpoint)
+const s3 = new aws.S3({
+  endpoint,
+  accessKeyId: awsConfig.access_key_id,
+  secretAccessKey: awsConfig.access_key_secret,
+})
 
 function getAnilistUrl(text) {
   const url = text.match(/https?:\/\/(www\.)?(\w*anilist\w*)\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]anime\/[0-9]*)/gm)
@@ -27,10 +37,27 @@ function parseAnilistId(post) {
 }
 
 async function fixMyHeroAcademia() {
-  try {
-    throw new Error('omg an error happened line 31')
-  } catch (err) {
-    logger.error(err)
-  }
+  // const s3params = {
+  //   Bucket: 'animetrics',
+  //   MaxKeys: 100,
+  //   Prefix: 'resources/rwc',
+  // };
+  // s3.listObjectsV2 (s3params, (err, data) => {
+  //   for (const d of data.Contents) {
+  //     let { Key } = d
+  //     Key = Key.replace('.png', '')
+  //     const name = Key.split('/')[Key.split('/').length - 1]
+  //     if (name) {
+  //       const split = name.split('_')
+  //       if (split[0] === 'week') {
+  //         console.log(`Week ${split[1]} ${split[2].toUpperCase()} ${split[3]} - https://cdn.animetrics.co/${Key}`)
+  //       } else {
+  //         console.log(`Season Overview ${split[2].toUpperCase()} ${split[3]} - https://cdn.animetrics.co/${Key}`)
+  //       }
+  //     }
+  //   }
+  // })
+  const resp = await findAnime(39960)
+  console.log(resp)
 }
 fixMyHeroAcademia()
