@@ -12,6 +12,7 @@
     "body-parser": "^1.19.0",
     "cheerio": "^1.0.0-rc.3",
     "cors": "^2.8.5",
+    "cross-fetch": "^3.0.4",
     "express": "^4.17.1",
     "gm": "^1.23.1",
     "image-downloader": "^3.5.0",

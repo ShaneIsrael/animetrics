@@ -1,5 +1,5 @@
 const service = {}
-const Jikan = require('jikan-node')
+const Jikan = require('../Jikan')
 
 const mal = new Jikan()
 
