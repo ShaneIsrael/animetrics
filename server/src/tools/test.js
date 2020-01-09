@@ -35,7 +35,7 @@ async function fixMyHeroAcademia() {
     for (const show of shows) {
       console.log(`updating ${index}/${shows.length}`)
       const resp = await aniClient.media.anime(show.anilist_id)
-      show.title = resp.title.userPreffered
+      show.title = resp.title.userPreferred
       show.english_title = resp.title.english
       show.alt_title = resp.title.romaji
       show.save()
