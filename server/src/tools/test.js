@@ -45,7 +45,7 @@ async function fixMyHeroAcademia() {
           if (post) {
             const id = parseAnilistId(post)
             if (!id) {
-              console.log(`could not find an id for show: ${show.title}`)
+              console.log(`could not find an id for show: ${show.title}, ${discussion.post_url}`)
             } else {
               console.log('FOUND')
               show.anilist_id = id
