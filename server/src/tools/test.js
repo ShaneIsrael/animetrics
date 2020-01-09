@@ -40,9 +40,8 @@ async function fixMyHeroAcademia() {
     for (const show of shows) {
       console.log(`updating ${index}/${shows.length}`)
       const resp = await aniClient.search('anime', show.title, 1, 1)
-      console.log(resp.media[0].title)
-      // show.anilist_id = id
-      // show.save()
+      show.anilist_id = resp.media[0].id
+      show.save()
       index += 1
     }
   } catch (err) {
