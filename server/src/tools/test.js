@@ -14,11 +14,13 @@ const aniClient = new Anilist()
 
 function getAnilistUrl(text) {
   const url = text.match(/https?:\/\/(www\.)?(\w*anilist\w*)\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]anime\/[0-9]*)/gm)
+  console.log(url)
   return url ? url[0] : null
 }
 
 function parseAnilistId(post) {
   const anilistUrl = getAnilistUrl(post.selftext)
+  console.log(anilistUrl)
   if (anilistUrl) {
     const anilistId = anilistUrl.match(/([0-9]\d+)/g)
     return anilistId ? anilistId[0] : null
