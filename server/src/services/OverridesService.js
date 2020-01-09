@@ -57,7 +57,7 @@ async function upload(type, overrideAssetUrl) {
  */
 service.overrideAssetPoster = async (assetId, assetUrl, token) => {
   const tk = await Token.findOne({ where: { token } })
-  let asset = await Asset.findByPk(assetId)
+  const asset = await Asset.findByPk(assetId)
   const ulResp = await upload('poster', assetUrl)
   await OverrideHistory.create({
     tokenId: tk.id,
@@ -65,11 +65,10 @@ service.overrideAssetPoster = async (assetId, assetUrl, token) => {
     table_id: asset.id,
     previous_values: asset.dataValues,
   })
-  if (!asset.poster_art) asset.poster_art = ulResp.Key
+  asset.poster_art = ulResp.Key
   asset.s3_poster = ulResp.Key
   asset.s3_poster_compressed = null
   await asset.save()
-  asset = await Asset.findByPk(assetId)
   await fetchAssets.fetchByAsset(asset)
   return asset
 }
