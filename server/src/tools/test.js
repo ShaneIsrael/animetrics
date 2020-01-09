@@ -1,28 +1,16 @@
 const service = {}
-// const moment = require('moment')
-const Anilist = require('anilist-node')
-const { findAnime } = require('../services/MALService')
-// const fetchDiscussions = require('../fetch/fetchDiscussions')
-// const fetchAssets = require('../fetch/fetchAssets')
-// const cpoll = require('../tools/calculatePoll')
-// const logger = require('../logger')
-// const {
-//   Show, Asset, MALSnapshot, RedditPollResult, Week, Season, EpisodeResultLink, EpisodeDiscussion, EpisodeDiscussionResult, RedditUserScore, Op,
-// } = require('../models')
+const moment = require('moment')
+const { findAnime, rawTvDbSearch, authTvDb } = require('../services')
+const fetchDiscussions = require('../fetch/fetchDiscussions')
+const fetchAssets = require('../fetch/fetchAssets')
+const cpoll = require('../tools/calculatePoll')
+const logger = require('../logger')
+const { Show, Asset, MALSnapshot, RedditPollResult, Week, Season, EpisodeResultLink, EpisodeDiscussion, EpisodeDiscussionResult, RedditUserScore, Op} = require('../models')
 
+const Anilist = require('anilist-node')
 const aniClient = new Anilist()
 
 //create animetrics anilist app 
-const aws = require('aws-sdk')
-const { environment } = require('../config')
-const awsConfig = require('../config')[environment].aws
-
-const endpoint = new aws.Endpoint(awsConfig.endpoint)
-const s3 = new aws.S3({
-  endpoint,
-  accessKeyId: awsConfig.access_key_id,
-  secretAccessKey: awsConfig.access_key_secret,
-})
 
 function getAnilistUrl(text) {
   const url = text.match(/https?:\/\/(www\.)?(\w*anilist\w*)\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]anime\/[0-9]*)/gm)
@@ -39,6 +27,40 @@ function parseAnilistId(post) {
 }
 
 async function fixMyHeroAcademia() {
+  try {
+    const shows = await Show.findAll({
+      where: {
+        anilist_id: null
+      },
+      include: [EpisodeDiscussion],
+    })
+    let index = 1
+    for (const show of shows) {
+      console.log(`updating ${index}/${shows.length}`)
+      if (show.EpisodeDiscussions.length > 0) {
+        for (const discussion of show.EpisodeDiscussions) {
+          const post = await fetchDiscussions.getSubmission(discussion.post_id)
+          if (post) {
+            const id = parseAnilistId(post)
+            if (!id) {
+              console.log(`could not find an id for show: ${show.title}`)
+            } else {
+              console.log('FOUND')
+              show.anilist_id = id
+              show.save()
+              break
+            }
+          }
+        }
+      }
+      index += 1
+    }
+  } catch (err) {
+    console.log(err)
+  }
+}
+fixMyHeroAcademia()
+
   // const s3params = {
   //   Bucket: 'animetrics',
   //   MaxKeys: 100,
@@ -59,7 +81,3 @@ async function fixMyHeroAcademia() {
   //     }
   //   }
   // })
-  const resp = await findAnime(39960)
-  console.log(resp)
-}
-fixMyHeroAcademia()
