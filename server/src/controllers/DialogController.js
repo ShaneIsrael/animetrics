@@ -15,9 +15,10 @@ controller.submitFeedback = async (req, res, next) => {
     if (feedback.length > 1000) {
       return res.status(400).send('feedback is over the max allowed length')
     }
+    const ip = req.headers['x-real-ip']
     const submittedTooEarly = await Dialog.findOne({
       where: {
-        ip: req.ip,
+        ip,
         type: 'feedback',
         createdAt: {
           [Op.gte]: moment.utc().subtract(1, 'hour').format(),
@@ -27,10 +28,10 @@ controller.submitFeedback = async (req, res, next) => {
     if (submittedTooEarly) {
       return res.status(429).send('You have reached the maximum number of requests you can submit. Please try again later.')
     }
-    await submitFeedback(feedback, req.ip)
+    await submitFeedback(feedback, ip)
     await messageAdmin(
       `-- Feedback --\n` +
-      `-- ${req.ip} --\n` +
+      `-- ${ip} --\n` +
       `${feedback}`
     )
     return res.status(200).send()
@@ -53,9 +54,10 @@ controller.submitIssue = async (req, res, next) => {
     if (description.length > 1000) {
       return res.status(400).send('description is over the max allowed length')
     }
+    const ip = req.headers['x-real-ip']
     const submittedTooEarly = await Dialog.findOne({
       where: {
-        ip: req.ip,
+        ip,
         type: 'issue',
         createdAt: {
           [Op.gte]: moment.utc().subtract(1, 'hour').format(),
@@ -65,10 +67,10 @@ controller.submitIssue = async (req, res, next) => {
     if (submittedTooEarly) {
       return res.status(429).send('You have reached the maximum number of requests you can submit. Please try again later.')
     }
-    await submitIssue(type, description, req.ip)
+    await submitIssue(type, description, ip)
     await messageAdmin(
       `-- Issue --\n` +
-      `-- ${req.ip} --\n` +
+      `-- ${ip} --\n` +
       `${description}`
     )
     return res.status(200).send()
