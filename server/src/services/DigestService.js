@@ -95,35 +95,40 @@ service.digestDiscussionPost = async (post, ignoreFlair) => {
   const episode = parseEpisode(post)
   const season = parseSeason(post)
   const pollUrl = parsePollUrl(post.selftext)
-  const malDetails = await findAnime(malId)
+  let malDetails
+  try {
+    malDetails = await findAnime(malId)
+  } catch (err) {
+    logger.warn('issue trying to get malDetails: ', err)
+  }
   const anilistDetails = await anilistClient.media.anime(anilistId)
 
-  if (!malDetails || !episode) {
-    logger.error(`Could not parse discussion [${post.id}] malId=${malId} episode=${episode}`)
+  if (!anilistDetails || !episode) {
+    logger.error(`Could not parse discussion [${post.id}] anilistId=${anilistId} episode=${episode}`)
     return
   }
   // don't create discussions for filler episodes such as 5.5
   if (!Number.isInteger(Number(episode))) return
 
-  const showTitle = malDetails.title
+  const showTitle = anilistDetails.title.userPreferred
 
   // Lookup show in the database
-  let showRow = await Show.findOne({ where: { title: malDetails.title, season: season } })
-  if (!showRow && malDetails.title_english) {
-    showRow = await Show.findOne({ where: { english_title: malDetails.title_english, season: season } })
+  let showRow = await Show.findOne({ where: { title: showTitle, season: season } })
+  if (!showRow && anilistDetails.title.english) {
+    showRow = await Show.findOne({ where: { english_title: anilistDetails.title.english, season: season } })
   }
-  if (!showRow && malDetails.title_synonyms && malDetails.title_synonyms.length > 0) {
-    showRow = await Show.findOne({ where: { alt_title: malDetails.title_synonyms[0], season: season } })
+  if (!showRow && anilistDetails.title.romaji) {
+    showRow = await Show.findOne({ where: { alt_title: anilistDetails.title.romaji, season: season } })
   }
 
   if (!showRow) {
     // eslint-disable-next-line no-nested-ternary
-    logger.info(`Creating new show: title=${showTitle} altTitle=${malDetails.title_synonyms ? malDetails.title_synonyms[0] : null} englishTitle=${malDetails.english_title} malId=${malId}`)
+    logger.info(`Creating new show: title=${showTitle} altTitle=${anilistDetails.title.romaji} englishTitle=${anilistDetails.title.english} anilistId=${anilistId}`)
     showRow = await Show.create({
       title: showTitle,
-      alt_title: malDetails.title_synonyms && malDetails.title_synonyms.length > 0 ? malDetails.title_synonyms[0] : null,
-      english_title: malDetails.title_english,
-      synopsis: malDetails.synopsis,
+      alt_title: anilistDetails.title.romaji,
+      english_title: anilistDetails.title.english,
+      synopsis: malDetails ? malDetails.synopsis : anilistDetails.description,
       mal_id: malId,
       anilist_id: anilistId,
       season,
@@ -156,7 +161,7 @@ service.digestDiscussionPost = async (post, ignoreFlair) => {
     })
   }
   if (!discussion) {
-    logger.info(`creating discussion for Show: ${malDetails.title} Season: ${season} Episode: ${episode}`)
+    logger.info(`creating discussion for Show: ${anilistDetails.title.userPreferred} Season: ${season} Episode: ${episode}`)
     discussion = await EpisodeDiscussion.create({
       showId: showRow.id,
       weekId: weekRow.id,
