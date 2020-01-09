@@ -69,6 +69,7 @@ service.overrideAssetPoster = async (assetId, assetUrl, token) => {
   asset.s3_poster = ulResp.Key
   asset.s3_poster_compressed = null
   await asset.save()
+  asset = await Asset.findByPk(assetId)
   await fetchAssets.fetchByAsset(asset)
   return asset
 }
