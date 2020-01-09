@@ -23,6 +23,8 @@ moment.updateLocale('en', {
   },
 })
 
+const sleep = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds))
+
 function getAnilistUrl(text) {
   const url = text.match(/https?:\/\/(www\.)?(\w*anilist\w*)\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]anime\/[0-9]*)/gm)
   return url ? url[0] : null
@@ -102,7 +104,7 @@ service.digestDiscussionPost = async (post, ignoreFlair) => {
     logger.warn('issue trying to get malDetails: ', err)
   }
   const anilistDetails = await anilistClient.media.anime(anilistId)
-
+  await sleep(1000) // until we get a anilist service, add rate limit protection here
   if (!anilistDetails || !episode) {
     logger.error(`Could not parse discussion [${post.id}] anilistId=${anilistId} episode=${episode}`)
     return
