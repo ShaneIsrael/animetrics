@@ -30,12 +30,7 @@ function parseAnilistId(post) {
 
 async function fixMyHeroAcademia() {
   try {
-    const shows = await Show.findAll({
-      where: {
-        anilist_id: null
-      },
-      include: [EpisodeDiscussion],
-    })
+    const shows = await Show.findAll()
     let index = 1
     for (const show of shows) {
       console.log(`updating ${index}/${shows.length}`)
