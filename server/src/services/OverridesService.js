@@ -57,7 +57,7 @@ async function upload(type, overrideAssetUrl) {
  */
 service.overrideAssetPoster = async (assetId, assetUrl, token) => {
   const tk = await Token.findOne({ where: { token } })
-  const asset = await Asset.findByPk(assetId)
+  let asset = await Asset.findByPk(assetId)
   const ulResp = await upload('poster', assetUrl)
   await OverrideHistory.create({
     tokenId: tk.id,
