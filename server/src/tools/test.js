@@ -39,22 +39,10 @@ async function fixMyHeroAcademia() {
     let index = 1
     for (const show of shows) {
       console.log(`updating ${index}/${shows.length}`)
-      if (show.EpisodeDiscussions.length > 0) {
-        for (const discussion of show.EpisodeDiscussions) {
-          const post = await fetchDiscussions.getSubmission(discussion.post_id)
-          if (post) {
-            const id = parseAnilistId(post)
-            if (!id) {
-              console.log(`could not find an id for show: ${show.title}, ${discussion.post_url}`)
-            } else {
-              console.log('FOUND')
-              show.anilist_id = id
-              show.save()
-              break
-            }
-          }
-        }
-      }
+      const resp = await aniClient.search('anime', show.title)
+      console.log(resp)
+      // show.anilist_id = id
+      // show.save()
       index += 1
     }
   } catch (err) {
