@@ -18,6 +18,7 @@ import WarningIcon from '@material-ui/icons/Warning'
 import RateReviewIcon from '@material-ui/icons/RateReview'
 import LocalCafeIcon from '@material-ui/icons/LocalCafe'
 import Filter9PlusIcon from '@material-ui/icons/Filter9Plus'
+import PhotoLibraryIcon from '@material-ui/icons/PhotoLibrary'
 
 import FeedbackDialog from '../../../../components/Dialog/FeedbackDialog'
 import IssueDialog from '../../../../components/Dialog/IssueDialog'
@@ -35,7 +36,7 @@ const categories = [
   {
     id: 'Resources',
     children: [
-      { id: 'Reddadz Charts', path: '/resources/rwc', icon: <ScoreIcon /> },
+      { id: 'Reddadz Charts', path: '/resources/rwc', icon: <PhotoLibraryIcon /> },
     ],
   },
   {
