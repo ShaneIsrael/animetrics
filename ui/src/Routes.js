@@ -12,7 +12,7 @@ import {
   Overrides as OverridesView,
   NotFound as NotFoundView,
   Legend as LegendView,
-  UnderConstruction as UnderConstructionView,
+  // UnderConstruction as UnderConstructionView,
   TopTen as TopTenView
 } from './views'
 

@@ -59,43 +59,9 @@ const useStyles = makeStyles(theme => ({
     maxHeight: '100vh'
   },
   centerGridItem: {
-    // margin: '0 auto'
   }
 
 }))
-const AntSwitch = withStyles(theme => ({
-  root: {
-    width: 28,
-    height: 16,
-    padding: 0,
-    display: 'flex',
-  },
-  switchBase: {
-    padding: 2,
-    color: theme.palette.grey[500],
-    '&$checked': {
-      transform: 'translateX(12px)',
-      color: theme.palette.common.white,
-      '& + $track': {
-        opacity: 1,
-        backgroundColor: theme.palette.primary.main,
-        borderColor: theme.palette.primary.main,
-      },
-    },
-  },
-  thumb: {
-    width: 12,
-    height: 12,
-    boxShadow: 'none',
-  },
-  track: {
-    border: `1px solid ${theme.palette.grey[500]}`,
-    borderRadius: 16 / 2,
-    opacity: 1,
-    backgroundColor: theme.palette.common.white,
-  },
-  checked: {},
-}))(Switch)
 
 function createResults(results, setHandler, openKarmaGraphModal, openRpGraphModal) {
   try {
@@ -161,7 +127,6 @@ const KarmaRankings = () => {
   const [seasonSelectOptions, setSeasonSelectOptions] = React.useState([])
   const [selectedAnime, setSelectedAnime] = React.useState(null)
   const [renderedResults, setRenderedResults] = React.useState([])
-  const [modernCardStyle, setModernCardStyle] = React.useState(true)
 
   const setAnimeSelection = (selection) => {
     setSelectedAnime(selection)
@@ -244,7 +209,6 @@ const KarmaRankings = () => {
         if (ls.get('modernCardStyle') === null) {
           ls('modernCardStyle', true)
         }
-        setModernCardStyle(ls.get('modernCardStyle'))
         const seasons = (await SeasonService.getSeasons()).data
         const wks = (await WeekService.getWeeksBySeason(seasons[0].season, seasons[0].year)).data
         setWeeks(wks)
@@ -333,11 +297,6 @@ const KarmaRankings = () => {
   const handleSeasonChange = async event => {
     setSelectedSeason(event.target.value)
   }
-  const handleCardStyleChange = event => {
-    ls('modernCardStyle', event.target.checked)
-    setModernCardStyle(event.target.checked)
-  }
-
   return (
     <div className={classes.root}>
       {selectedAnime && 

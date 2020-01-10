@@ -39,7 +39,7 @@ export default function ActionAlert(props) {
           variant={variant ? variant : 'filled'}
           severity={type}
           action={closeable ? action : ''}
-          color={color ? color : ''}
+          color={color ? color : null}
         >
           {message}
         </Alert>

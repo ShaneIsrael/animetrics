@@ -10,7 +10,6 @@ import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown'
 import ForwardIcon from '@material-ui/icons/Forward'
 import RemoveIcon from '@material-ui/icons/Remove'
 import Zoom from '@material-ui/core/Zoom'
-import ls from 'local-storage'
 import { LazyLoadImage } from 'components'
 import {isMobileOnly} from 'react-device-detect'
 
@@ -201,28 +200,28 @@ const AnimeRankingResult = (props) => {
   const showId = result.show.id
 
   const scoreChangeIcon = scoreChangeDirection === 'up' 
-    ? <KeyboardArrowUpIcon className={classes.orangeColor, classes.icon}/> 
+    ? <KeyboardArrowUpIcon className={clsx(classes.orangeColor, classes.icon)}/> 
     : scoreChangeDirection === 'down' 
-      ? <KeyboardArrowDownIcon className={classes.purpleColor, classes.icon}/>
+      ? <KeyboardArrowDownIcon className={clsx(classes.purpleColor, classes.icon)}/>
       : null
 
   const redditPollScoreIcon = redditPollScoreDirection === 'up' 
-    ? <KeyboardArrowUpIcon className={classes.orangeColor, classes.icon}/> 
+    ? <KeyboardArrowUpIcon className={clsx(classes.orangeColor, classes.icon)}/> 
     : redditPollScoreDirection === 'down' 
-      ? <KeyboardArrowDownIcon className={classes.purpleColor, classes.icon}/>
+      ? <KeyboardArrowDownIcon className={clsx(classes.purpleColor, classes.icon)}/>
       : null
 
   const commentCountChangeIcon = commentCountChangeDirection === 'up' 
-    ? <KeyboardArrowUpIcon className={classes.orangeColor, classes.icon}/> 
+    ? <KeyboardArrowUpIcon className={clsx(classes.orangeColor, classes.icon)}/> 
     : commentCountChangeDirection === 'down' 
-      ? <KeyboardArrowDownIcon className={classes.purpleColor, classes.icon}/>
+      ? <KeyboardArrowDownIcon className={clsx(classes.purpleColor, classes.icon)}/>
       : null
 
   const posChangeIcon = posDirection === 'up' 
     ? <ForwardIcon className={clsx({[classes.icon]: true, [classes.upIcon]: true})}/> 
     : posDirection === 'down' 
       ? <ForwardIcon className={clsx({[classes.icon]: true, [classes.downIcon]: true})}/>
-      : <RemoveIcon className={classes.icon}/>
+      : <RemoveIcon className={clsx(classes.icon)}/>
 
   function formatZeroes(number) {
     if (number < 10) return `00${number}`
@@ -230,7 +229,6 @@ const AnimeRankingResult = (props) => {
     return number
   }
 
-  const modernCardStyle = ls.get('modernCardStyle')
   const posterUrl = result.assets && result.assets[0].s3_poster_compressed ? `https://cdn.animetrics.co/${result.assets[0].s3_poster_compressed}` : 'https://cdn.animetrics.co/animetrics/missing_poster_art.png'
   return (
     <Grid
@@ -329,7 +327,8 @@ const AnimeRankingResult = (props) => {
                   </LightTooltip>
                 </Grid>
                 <Grid
-                  container
+                  // container
+                  item
                   style={{marginLeft: isMobileOnly ? -5 : -10}}
                   xs={isMobileOnly ? 5 : 3}
                 >
@@ -392,6 +391,7 @@ const AnimeRankingResult = (props) => {
                 </Grid>
                 <Grid
                   container
+                  item
                   xs={3}
                 >
                   <Grid
@@ -451,6 +451,7 @@ const AnimeRankingResult = (props) => {
                 </Grid>
                 <Grid
                   container
+                  item
                   xs={isMobileOnly ? 12 : 9}
                 >
                   <Grid
