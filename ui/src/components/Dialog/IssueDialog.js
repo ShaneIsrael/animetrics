@@ -11,7 +11,7 @@ import CloseIcon from '@material-ui/icons/Close'
 import Slide from '@material-ui/core/Slide'
 import { DialogContent, TextField, FormControl, InputLabel, Select } from '@material-ui/core'
 import { DialogService } from 'services'
-import Alert from 'components/Alert'
+import { Alert } from 'components/Alert'
 
 const useStyles = makeStyles(theme => ({
   appBar: {

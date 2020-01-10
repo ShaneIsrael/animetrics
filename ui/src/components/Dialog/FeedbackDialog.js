@@ -12,7 +12,7 @@ import Slide from '@material-ui/core/Slide'
 import { DialogContent, DialogContentText, TextField } from '@material-ui/core'
 
 import { DialogService } from 'services'
-import Alert from 'components/Alert'
+import { Alert } from 'components'
 
 const useStyles = makeStyles(theme => ({
   appBar: {
