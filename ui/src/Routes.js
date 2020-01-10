@@ -16,6 +16,10 @@ import {
   TopTen as TopTenView
 } from './views'
 
+import {
+  ReddadzWeeklyCharts as RwcView,
+} from './views/Resources'
+
 const Routes = () => {
   return (
     <Switch>
@@ -34,25 +38,25 @@ const Routes = () => {
         component={KarmaRankingsView}
         exact
         layout={MainLayout}
-        path="/karma-rankings"
+        path="/anime/karma-rankings"
       />
       <RouteWithLayout
         component={PollRankingsView}
         exact
         layout={MainLayout}
-        path="/poll-rankings"
+        path="/anime/poll-rankings"
       />
       <RouteWithLayout
         component={TopTenView}
         exact
         layout={MainLayout}
-        path="/top-ten"
+        path="/anime/top-ten"
       />
       <RouteWithLayout
         component={RecentDiscussionsView}
         exact
         layout={MainLayout}
-        path="/discussions"
+        path="/anime/discussions"
       />
       <RouteWithLayout
         component={OverridesView}
@@ -64,7 +68,13 @@ const Routes = () => {
         component={LegendView}
         exact
         layout={MainLayout}
-        path="/legend"
+        path="/anime/legend"
+      />
+      <RouteWithLayout
+        component={RwcView}
+        exact
+        layout={MainLayout}
+        path="/resources/rwc"
       />
       <RouteWithLayout
         component={NotFoundView}

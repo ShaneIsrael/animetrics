@@ -26,18 +26,16 @@ const categories = [
   {
     id: '/r/Anime',
     children: [
-      { id: 'Karma Rankings', path: '/karma-rankings', icon: <ScoreIcon />},
-      { id: 'Poll Rankings', path: '/poll-rankings', icon: <PollIcon /> },
-      { id: 'Top 10 Anime', path: '/top-ten', icon: <Filter9PlusIcon />},
-      { id: 'Discussion Finder', path: '/discussions', icon: <ForumIcon /> },
+      { id: 'Karma Rankings', path: '/anime/karma-rankings', icon: <ScoreIcon />},
+      { id: 'Poll Rankings', path: '/anime/poll-rankings', icon: <PollIcon /> },
+      { id: 'Top 10 Anime', path: '/anime/top-ten', icon: <Filter9PlusIcon />},
+      { id: 'Discussion Finder', path: '/anime/discussions', icon: <ForumIcon /> },
     ],
   },
   {
-    id: '/r/Manga',
+    id: 'Resources',
     children: [
-      { id: 'Karma Rankings', path: 'under-construction', icon: <ScoreIcon /> },
-      { id: 'Poll Rankings', path: 'under-construction', icon: <PollIcon /> },
-      { id: 'Discussion Finder', path: 'under-construction', icon: <ForumIcon /> },
+      { id: 'Reddadz Charts', path: '/resources/rwc', icon: <ScoreIcon /> },
     ],
   },
   {

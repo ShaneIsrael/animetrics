@@ -3,6 +3,7 @@ const Syslog = require('winston-syslog').Syslog
 const { transports, createLogger, format } = require('winston')
 const Sentry = require('winston-sentry-raven-transport')
 const hostname = require('os').hostname()
+const { environment } = require('../config')
 const config = require('../config').sentry
 
 // define the custom settings for each transport (file, console)
@@ -40,6 +41,25 @@ const options = {
   },
 }
 
+const devTransports = [
+  new transports.Console(options.console),
+]
+
+const prodTransports = [
+  new transports.Console(options.console),
+  new Syslog({
+    host: 'logs5.papertrailapp.com',
+    port: 28660,
+    app_name: 'animetrics',
+    localhost: hostname,
+    colorize: true,
+    timestamp: true,
+    handleExceptions: true,
+    level: 'info',
+  }),
+  new Sentry(options.sentry),
+]
+
 const enumerateErrorFormat = format(info => {
   if (info.message instanceof Error) {
     info.message = {
@@ -66,20 +86,7 @@ const logger = createLogger({
     enumerateErrorFormat(),
     format.json(),
   ),
-  transports: [
-    new transports.Console(options.console),
-    new Syslog({
-      host: 'logs5.papertrailapp.com',
-      port: 28660,
-      app_name: 'animetrics',
-      localhost: hostname,
-      colorize: true,
-      timestamp: true,
-      handleExceptions: true,
-      level: 'info',
-    }),
-    new Sentry(options.sentry),
-  ],
+  transports: environment === 'prod' ? prodTransports : devTransports,
   exitOnError: false, // do not exit on handled exceptions
 })
 

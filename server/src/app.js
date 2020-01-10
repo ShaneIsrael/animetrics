@@ -41,6 +41,7 @@ require('./routes/Discussion')(app)
 require('./routes/Dialog')(app)
 require('./routes/Season')(app)
 require('./routes/TopTen')(app)
+require('./routes/Resource')(app)
 require('./cron')
 
 // Error Handler Middleware
