@@ -31,12 +31,17 @@ const useStyles = makeStyles(theme => ({
     height: '80px'
   },
   upIcon: {
+    width: isMobileOnly ? '16px !important' : 24,
     transform: 'rotate(-90deg)',
     WebkitTextStroke: '1px',
     WebkitTextStrokeColor: 'black',
   },
   downIcon: {
+    width: isMobileOnly ? '16px !important' : 24,
     transform: 'rotate(90deg)',
+  },
+  icon: {
+    width: isMobileOnly ? '18px !important' : 24,
   },
   orangeColor: {
     color: deepOrange[500],
@@ -89,10 +94,11 @@ const desktopStyles = makeStyles(theme => ({
   squareChip: {
     borderRadius: 0,
     marginLeft: isMobileOnly ? 5 : theme.spacing(0),
+    marginRight: isMobileOnly ? 20 : theme.spacing(0),
     marginBottom: isMobileOnly ? 1 : theme.spacing(0.75),
     marginTop: isMobileOnly ? 0 : theme.spacing(0),
     minWidth: 80,
-    width: '95%',
+    width: isMobileOnly ? '100%' : '95%',
     height: isMobileOnly ? 28 : 31,
   },
   titleFont: {
@@ -100,13 +106,13 @@ const desktopStyles = makeStyles(theme => ({
     fontSize: isMobileOnly ? 14 : 18
   },
   episodeFont: {
-    fontSize: isMobileOnly ? 14 : 16
+    fontSize: isMobileOnly ? 12 : 16
   },
   positionChip: {
     borderRadius: 0,
-    margin: isMobileOnly ? 0 : theme.spacing(0),
+    marginRight: isMobileOnly ? 0 : theme.spacing(0),
     fontSize: 28,
-    width: 70,
+    width: isMobileOnly ? 50 : 70,
     height: isMobileOnly ? 50 : 70,
   },
   positionChangeChip: {
@@ -114,7 +120,7 @@ const desktopStyles = makeStyles(theme => ({
     margin: isMobileOnly ? 0 : theme.spacing(0),
     marginTop: isMobileOnly ? 2 : theme.spacing(0.5),
     marginBottom: isMobileOnly ? 1 : theme.spacing(0),
-    width: 70,
+    width: isMobileOnly ? 50 : 70,
     height: isMobileOnly ? 34 : 31
   },
   chip: {
@@ -195,28 +201,28 @@ const AnimeRankingResult = (props) => {
   const showId = result.show.id
 
   const scoreChangeIcon = scoreChangeDirection === 'up' 
-    ? <KeyboardArrowUpIcon className={classes.orangeColor}/> 
+    ? <KeyboardArrowUpIcon className={classes.orangeColor, classes.icon}/> 
     : scoreChangeDirection === 'down' 
-      ? <KeyboardArrowDownIcon className={classes.purpleColor}/>
+      ? <KeyboardArrowDownIcon className={classes.purpleColor, classes.icon}/>
       : null
 
   const redditPollScoreIcon = redditPollScoreDirection === 'up' 
-    ? <KeyboardArrowUpIcon className={classes.orangeColor}/> 
+    ? <KeyboardArrowUpIcon className={classes.orangeColor, classes.icon}/> 
     : redditPollScoreDirection === 'down' 
-      ? <KeyboardArrowDownIcon className={classes.purpleColor}/>
+      ? <KeyboardArrowDownIcon className={classes.purpleColor, classes.icon}/>
       : null
 
   const commentCountChangeIcon = commentCountChangeDirection === 'up' 
-    ? <KeyboardArrowUpIcon className={classes.orangeColor}/> 
+    ? <KeyboardArrowUpIcon className={classes.orangeColor, classes.icon}/> 
     : commentCountChangeDirection === 'down' 
-      ? <KeyboardArrowDownIcon className={classes.purpleColor}/>
+      ? <KeyboardArrowDownIcon className={classes.purpleColor, classes.icon}/>
       : null
 
   const posChangeIcon = posDirection === 'up' 
-    ? <ForwardIcon className={clsx({[classes.upIcon]: true})}/> 
+    ? <ForwardIcon className={clsx({[classes.icon]: true, [classes.upIcon]: true})}/> 
     : posDirection === 'down' 
-      ? <ForwardIcon className={clsx({[classes.downIcon]: true})}/>
-      : <RemoveIcon/>
+      ? <ForwardIcon className={clsx({[classes.icon]: true, [classes.downIcon]: true})}/>
+      : <RemoveIcon className={classes.icon}/>
 
   function formatZeroes(number) {
     if (number < 10) return `00${number}`
@@ -231,7 +237,7 @@ const AnimeRankingResult = (props) => {
       item
       xs={12}
     >
-      <Card className={clsx(desktop.card)}>
+      <Card className={clsx({[classes.root]: !isMobileOnly, [desktop.card]: true})}>
         <div
           onClick={() => handleSelection(result.result.id, result.show.id, result.assets, title)}
           style={{flexGrow: 0, cursor: 'pointer'}}
@@ -324,8 +330,8 @@ const AnimeRankingResult = (props) => {
                 </Grid>
                 <Grid
                   container
-                  style={{marginLeft: isMobileOnly ? 0 : -10}}
-                  xs={isMobileOnly ? 4 : 3}
+                  style={{marginLeft: isMobileOnly ? -5 : -10}}
+                  xs={isMobileOnly ? 5 : 3}
                 >
                   <Grid
                     item
@@ -338,7 +344,7 @@ const AnimeRankingResult = (props) => {
                       TransitionComponent={Zoom}
                     >
                       <Chip
-                        avatar={<ScoreIcon />}
+                        avatar={<ScoreIcon className={classes.icon}/>}
                         className={clsx({[desktop.squareChip]: true, [classes.rankColor]: true})}
                         label={score}
                         onClick={() => openKarmaGraphModal(seasonId, showId)}
@@ -357,7 +363,7 @@ const AnimeRankingResult = (props) => {
                       TransitionComponent={Zoom}
                     >
                       <Chip
-                        avatar={<PollIcon className={clsx({[classes.orangeColor]: redditPollScoreDirection === 'up', [classes.purpleColor]: redditPollScoreDirection === 'down'})}/>}
+                        avatar={<PollIcon className={clsx({[classes.icon]: true, [classes.orangeColor]: redditPollScoreDirection === 'up', [classes.purpleColor]: redditPollScoreDirection === 'down'})}/>}
                         className={clsx({[desktop.squareChip]: true})}
                         label={pollScore > 0 ? pollScore.toFixed(2) : '-----'}
                         onClick={() => openRpGraphModal(seasonId, showId)}
@@ -376,7 +382,7 @@ const AnimeRankingResult = (props) => {
                       TransitionComponent={Zoom}
                     >
                       <Chip
-                        avatar={<ForumIcon/>}
+                        avatar={<ForumIcon className={classes.icon}/>}
                         className={clsx({[desktop.squareChip]: true})}
                         label={commentCount}
                         variant="outlined"
@@ -386,7 +392,7 @@ const AnimeRankingResult = (props) => {
                 </Grid>
                 <Grid
                   container
-                  xs={isMobileOnly ? 4 : 3}
+                  xs={3}
                 >
                   <Grid
                     item
@@ -399,7 +405,7 @@ const AnimeRankingResult = (props) => {
                       TransitionComponent={Zoom}
                     >
                       <Chip
-                        avatar={scoreChangeDirection === 'none' ? <RemoveIcon/> : scoreChangeIcon}
+                        avatar={scoreChangeDirection === 'none' ? <RemoveIcon className={classes.icon}/> : scoreChangeIcon}
                         className={clsx({[desktop.squareChip]: true, [classes.orangeColor]: scoreChangeDirection === 'up', [classes.purpleColor]: scoreChangeDirection === 'down'})}
                         label={scoreChangeDirection === 'none' ? '000' : formatZeroes(Math.abs(scoreChange))}
                         variant="outlined"
@@ -417,7 +423,7 @@ const AnimeRankingResult = (props) => {
                       TransitionComponent={Zoom}
                     >
                       <Chip
-                        avatar={redditPollScoreDirection === 'none' ? <RemoveIcon/> : redditPollScoreIcon}
+                        avatar={redditPollScoreDirection === 'none' ? <RemoveIcon className={classes.icon}/> : redditPollScoreIcon}
                         className={clsx({[desktop.squareChip]: true, [classes.orangeColor]: redditPollScoreDirection === 'up', [classes.purpleColor]: redditPollScoreDirection === 'down'})}
                         label={redditPollScoreDirection === 'none' ? '000' : Math.abs(pollScoreChange).toFixed(2)}
                         variant="outlined"
@@ -435,7 +441,7 @@ const AnimeRankingResult = (props) => {
                       TransitionComponent={Zoom}
                     >
                       <Chip
-                        avatar={commentCountChangeDirection === 'none' ? <RemoveIcon/> : commentCountChangeIcon}
+                        avatar={commentCountChangeDirection === 'none' ? <RemoveIcon className={classes.icon}/> : commentCountChangeIcon}
                         className={clsx({[desktop.squareChip]: true, [classes.orangeColor]: commentCountChangeDirection === 'up', [classes.purpleColor]: commentCountChangeDirection === 'down'})}
                         label={commentCountChangeDirection === 'none' ? '000' : formatZeroes(Math.abs(commentCountChange))}
                         variant="outlined"
@@ -445,7 +451,7 @@ const AnimeRankingResult = (props) => {
                 </Grid>
                 <Grid
                   container
-                  xs={isMobileOnly ? 11 : 9}
+                  xs={isMobileOnly ? 12 : 9}
                 >
                   <Grid
                     item

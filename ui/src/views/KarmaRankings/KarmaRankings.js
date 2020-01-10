@@ -40,7 +40,7 @@ TabPanel.propTypes = {
 const useStyles = makeStyles(theme => ({
   root: {
     padding: isMobileOnly ? theme.spacing(1) : 0,
-    margin: 'auto',
+    // margin: 'auto',
   },
   formControl: {
     margin: theme.spacing(1),
@@ -50,7 +50,7 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(2),
   },
   karmaRankingPaper: {
-    padding: 10,
+    padding: isMobileOnly ? 1 : 10,
     // width: 700
     width: '100%',
     maxWidth: 700
@@ -422,6 +422,7 @@ const KarmaRankings = () => {
               <Paper
                 className={clsx({[classes.karmaRankingPaper]: true})}
                 elevation={10}
+                square={isMobileOnly}
               >
                 <Grid
                   alignItems="center"
