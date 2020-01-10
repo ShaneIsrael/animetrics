@@ -39,7 +39,7 @@ TabPanel.propTypes = {
 
 const useStyles = makeStyles(theme => ({
   root: {
-    padding: theme.spacing(1),
+    padding: isMobileOnly ? theme.spacing(1) : 0,
     margin: 'auto',
   },
   formControl: {
