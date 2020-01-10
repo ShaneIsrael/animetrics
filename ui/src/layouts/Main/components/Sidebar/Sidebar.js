@@ -36,7 +36,7 @@ const categories = [
   {
     id: 'Resources',
     children: [
-      { id: 'Reddadz Charts', path: '/resources/rwc', icon: <PhotoLibraryIcon /> },
+      { id: 'Reddadz Charts Library', path: '/resources/rwc', icon: <PhotoLibraryIcon /> },
     ],
   },
   {
@@ -57,8 +57,8 @@ const categories = [
 
 const styles = theme => ({
   categoryHeader: {
-    paddingTop: theme.spacing(2),
-    paddingBottom: theme.spacing(2),
+    paddingTop: theme.spacing(1),
+    paddingBottom: theme.spacing(1),
   },
   categoryHeaderPrimary: {
     color: theme.palette.common.white,
@@ -90,10 +90,13 @@ const styles = theme => ({
   },
   itemIcon: {
     minWidth: 'auto',
-    marginRight: theme.spacing(2),
+    marginRight: theme.spacing(1),
+  },
+  itemFontSmall: {
+
   },
   divider: {
-    marginTop: theme.spacing(2),
+    marginTop: theme.spacing(1),
   },
 });
 

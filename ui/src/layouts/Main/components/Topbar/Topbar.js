@@ -41,7 +41,7 @@ const Topbar = props => {
         </IconButton>
         <RouterLink to="/">
           <img
-            alt="ANIRANKS Logo"
+            alt="Animetrics Logo"
             src="/images/logos/logo_full_light_blue_wlb_stroke.png"
             height={48}
           />

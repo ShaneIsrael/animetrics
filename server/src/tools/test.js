@@ -29,21 +29,22 @@ function parseAnilistId(post) {
 }
 
 async function fixMyHeroAcademia() {
-  try {
-    const shows = await Show.findAll()
-    let index = 1
-    for (const show of shows) {
-      console.log(`updating ${index}/${shows.length}`)
-      const resp = await aniClient.media.anime(show.anilist_id)
-      show.title = resp.title.userPreferred
-      show.english_title = resp.title.english
-      show.alt_title = resp.title.romaji
-      show.save()
-      index += 1
-    }
-  } catch (err) {
-    console.log(err)
-  }
+  await authTvDb()
+  // try {
+  //   const shows = await Show.findAll()
+  //   let index = 1
+  //   for (const show of shows) {
+  //     console.log(`updating ${index}/${shows.length}`)
+  //     const resp = await aniClient.media.anime(show.anilist_id)
+  //     show.title = resp.title.userPreferred
+  //     show.english_title = resp.title.english
+  //     show.alt_title = resp.title.romaji
+  //     show.save()
+  //     index += 1
+  //   }
+  // } catch (err) {
+  //   console.log(err)
+  // }
 }
 fixMyHeroAcademia()
 
