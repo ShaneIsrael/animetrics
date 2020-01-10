@@ -112,7 +112,7 @@ const desktopStyles = makeStyles(theme => ({
     borderRadius: 0,
     marginRight: isMobileOnly ? 0 : theme.spacing(0),
     fontSize: 28,
-    width: isMobileOnly ? 50 : 70,
+    width: isMobileOnly ? '100%' : 70,
     height: isMobileOnly ? 50 : 70,
   },
   positionChangeChip: {
@@ -120,7 +120,7 @@ const desktopStyles = makeStyles(theme => ({
     margin: isMobileOnly ? 0 : theme.spacing(0),
     marginTop: isMobileOnly ? 2 : theme.spacing(0.5),
     marginBottom: isMobileOnly ? 1 : theme.spacing(0),
-    width: isMobileOnly ? 50 : 70,
+    width: isMobileOnly ? '100%' : 70,
     height: isMobileOnly ? 34 : 31
   },
   chip: {
