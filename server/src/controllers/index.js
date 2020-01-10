@@ -9,6 +9,7 @@ const DiscussionController = require('./DiscussionController')
 const SeasonController = require('./SeasonController')
 const DialogController = require('./DialogController')
 const TopTenController = require('./TopTenController')
+const ResourceController = require('./ResourceController')
 
 module.exports = {
   ...WeekController,
@@ -22,4 +23,5 @@ module.exports = {
   ...SeasonController,
   ...DialogController,
   ...TopTenController,
+  ...ResourceController,
 }

@@ -132,7 +132,7 @@ const Dashboard = () => {
                 <Grid item>
                   <Link
                     className={classes.link}
-                    href="/karma-rankings"
+                    href="/anime/karma-rankings"
                     variant="body2"
                   >
                     Anime Metrics
@@ -185,7 +185,7 @@ const Dashboard = () => {
                 <Grid item>
                   <Link
                     className={classes.linkMobile}
-                    href="/karma-rankings"
+                    href="/anime/karma-rankings"
                     variant="body2"
                   >
                           Anime Metrics

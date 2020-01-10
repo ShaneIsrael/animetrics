@@ -4,16 +4,19 @@
     <loc>https://animetrics.co/</loc>
   </url>
  <url>
-    <loc>https://animetrics.co/karma-rankings</loc>
+    <loc>https://animetrics.co/anime/karma-rankings</loc>
  </url>
  <url>
-    <loc>https://animetrics.co/poll-rankings</loc>
+    <loc>https://animetrics.co/anime/poll-rankings</loc>
  </url>
  <url>
-    <loc>https://animetrics.co/discussions</loc>
+    <loc>https://animetrics.co/anime/discussions</loc>
  </url>
  <url>
-    <loc>https://animetrics.co/legend</loc>
+    <loc>https://animetrics.co/anime/legend</loc>
+ </url>
+  <url>
+    <loc>https://animetrics.co/resources/rwc</loc>
  </url>
  <url>
     <loc>https://animetrics.co/404</loc>
