@@ -138,7 +138,6 @@ const TopFive = () => {
               <Paper
                 className={clsx({[classes.paperWrapper]: true})}
                 elevation={10}
-                square
               >
                 <Grid
                   container

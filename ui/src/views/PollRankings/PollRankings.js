@@ -10,7 +10,7 @@ import { Grid, Paper, FormControl, Select, MenuItem } from '@material-ui/core'
 import { AnimePollRanking } from './components'
 import { WeekService, ResultsService, SeasonService } from '../../services'
 import clsx from 'clsx'
-import { Alert, RpGraphModal } from 'components'
+import { ActionAlert, RpGraphModal } from 'components'
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -178,6 +178,7 @@ const PollRankings = () => {
           if (pollResults) {
             setRenderedPollResults(createPollResults(pollResults, openRpGraphModal))
           }
+          if (selectedSeason === 0 && wks.length > 1) setSelectedWeek(1)
         }
       } catch (err) {
         console.log(err)
@@ -278,9 +279,12 @@ const PollRankings = () => {
           justify="center"
           xs={12}
         >
-          <Alert
-            variant="motd"
+          <ActionAlert
+            type="info"
+            color="warning"
             message="You can click on the Poll score to view a change over time graph."
+            closeable={true}
+            variant="outlined"
           />
           <Grid
             container
@@ -327,7 +331,6 @@ const PollRankings = () => {
               <Paper
                 className={clsx({[classes.pollRankingPaper]: true})}
                 elevation={10}
-                square
               >
                 <Grid
                   container
@@ -338,10 +341,10 @@ const PollRankings = () => {
                 >
                   {renderedPollResults}
                   {(!renderedPollResults || renderedPollResults.length === 0) &&
-                  <Alert
-                    message="There are currently 0 results for this week. The first results should appear 48 hours after the week begins. Please check back later."
-                    variant="info"
-                  />
+                    <ActionAlert
+                      message="There are currently 0 results for this week. An Animetrics week begins on Friday, the first results (if any) should appear on Sunday. Please check back later."
+                      type="info"
+                    />
                   }
                 </Grid>
               </Paper>

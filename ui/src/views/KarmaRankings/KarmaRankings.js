@@ -9,7 +9,7 @@ import ls from 'local-storage'
 // eslint-disable-next-line
 import { Grid, Paper, FormControl, Select, MenuItem, Switch, Typography } from '@material-ui/core'
 
-import { Alert, KarmaGraphModal, RpGraphModal } from 'components'
+import { ActionAlert, KarmaGraphModal, RpGraphModal } from 'components'
 import { AnimeRankingResult, DetailsCard } from './components'
 import { WeekService, ResultsService, SeasonService } from '../../services'
 
@@ -39,7 +39,7 @@ TabPanel.propTypes = {
 
 const useStyles = makeStyles(theme => ({
   root: {
-    padding: theme.spacing(0.5),
+    padding: theme.spacing(1),
     margin: 'auto',
   },
   formControl: {
@@ -110,6 +110,8 @@ function createResults(results, setHandler, openKarmaGraphModal, openRpGraphModa
         key={5000+index} 
         malScore={res.mal.score.toFixed(2)} 
         malScorePrevious={res.previous.result ? res.previous.mal.score : null}
+        openKarmaGraphModal={openKarmaGraphModal}
+        openRpGraphModal={openRpGraphModal}
         pollScore={res.poll.score}
         pollScorePrevious={res.previous.poll ? res.previous.poll.score : 0}
         pos={index}
@@ -121,8 +123,6 @@ function createResults(results, setHandler, openKarmaGraphModal, openRpGraphModa
         scorePrevious={res.previous.result ? res.previous.result.ups : null}
         setAnimeSelection={setHandler}
         title={res.show.english_title ? res.show.english_title : res.show.title}
-        openKarmaGraphModal={openKarmaGraphModal}
-        openRpGraphModal={openRpGraphModal}
       />
     })
     return render
@@ -183,17 +183,25 @@ const KarmaRankings = () => {
     if (!weeks || weeks.length === 0) {
       weekSelectOptions.push(
         isMobile ? <option
-                      key={0}
-                      value={0}>Current Week</option> 
-                  : <MenuItem key={0} value={0}>Current Week</MenuItem>
+          key={0}
+          value={0}
+        >Current Week</option> 
+          : <MenuItem
+            key={0}
+            value={0}
+            >Current Week</MenuItem>
       )
     } else {
       weekSelectOptions = weeks.map((week, index) => {
         if (index === 0 && selectedSeason === 0) {
           return isMobile ? <option
             key={index}
-            value={index}>Current Week</option> 
-            : <MenuItem key={index} value={0}>Current Week</MenuItem>
+            value={index}
+          >Current Week</option> 
+            : <MenuItem
+              key={index}
+              value={0}
+              >Current Week</MenuItem>
         } else {
           return isMobile 
             ? 
@@ -205,7 +213,7 @@ const KarmaRankings = () => {
             <MenuItem
               key={index}
               value={index}
-        ><center>Week {weeks.length - index}</center></MenuItem>
+            ><center>Week {weeks.length - index}</center></MenuItem>
         }
       })
     }
@@ -215,16 +223,16 @@ const KarmaRankings = () => {
   const createSeasonSelectOptions = async (seasons) => {
     const seasonSelectOptions = seasons.map((season, index) => {
       return isMobile 
-      ? 
-      <option
-        key={index}
-        value={index}
-      >{season.season.replace(/^\w/, c => c.toUpperCase())} of {season.year}</option>
-      :
-      <MenuItem
-        key={index}
-        value={index}
-      ><center>{season.season.replace(/^\w/, c => c.toUpperCase())} of {season.year}</center></MenuItem>
+        ? 
+        <option
+          key={index}
+          value={index}
+        >{season.season.replace(/^\w/, c => c.toUpperCase())} of {season.year}</option>
+        :
+        <MenuItem
+          key={index}
+          value={index}
+        ><center>{season.season.replace(/^\w/, c => c.toUpperCase())} of {season.year}</center></MenuItem>
     })
     setSeasonSelectOptions(seasonSelectOptions)
   }
@@ -246,6 +254,7 @@ const KarmaRankings = () => {
         if (wks && wks.length > 0) {
           const results = (await ResultsService.getResultsByWeek(wks[wks.length > 1 ? 1 : 0].id)).data
           setRenderedResults(createResults(results, setAnimeSelection, openKarmaGraphModal, openRpGraphModal))
+          if (selectedSeason === 0 && wks.length > 1) setSelectedWeek(1)
         }
       } catch (err) {
         console.log(err)
@@ -330,7 +339,7 @@ const KarmaRankings = () => {
   }
 
   return (
-    <div>
+    <div className={classes.root}>
       {selectedAnime && 
         <DetailsCard
           className={classes.selectedAnimeCard}
@@ -352,19 +361,24 @@ const KarmaRankings = () => {
       <Grid
         container
         justify="center"
-        spacing={2}
+        spacing={4}
       >
-      <Alert
-          variant="motd"
-          message="You can click on the Karma and Poll scores to view a change over time graph."
-        />
         <Grid
           container
+          item
           justify="center"
         >
+          <ActionAlert
+            closeable
+            message="You can click on the Karma and Poll scores to view a change over time graph."
+            type="info"
+            color="warning"
+            variant="outlined"
+          />
           <Grid
             container
-            justify={isMobileOnly ? 'flex-start' : 'center'}>
+            justify={isMobileOnly ? 'flex-start' : 'center'}
+          >
             <Grid item>
               <div>
                 <FormControl 
@@ -396,42 +410,31 @@ const KarmaRankings = () => {
               </div>
             </Grid>
           </Grid>
-          <Grid container direction="column" justify="center" alignItems="center" >
+          <Grid
+            alignItems="center"
+            container
+            direction="column"
+            justify="center"
+          >
             <Grid
               item
             >
               <Paper
                 className={clsx({[classes.karmaRankingPaper]: true})}
                 elevation={10}
-                square
               >
-                {!isMobileOnly &&
-                  <Typography component="div">
-                    <Grid component="label" container alignItems="center" spacing={1}>
-                      <Grid item>Classic</Grid>
-                      <Grid item>
-                        <AntSwitch
-                          checked={modernCardStyle}
-                          onChange={handleCardStyleChange}
-                          value={modernCardStyle}
-                        />
-                      </Grid>
-                      <Grid item>Modern</Grid>
-                    </Grid>
-                  </Typography>
-                }
                 <Grid
+                  alignItems="center"
                   container
                   direction="column"
                   justify="center"
-                  alignItems="center"
                   spacing={1}
                 >
                   {renderedResults}
                   {renderedResults.length === 0 &&
-                    <Alert
-                      variant="info"
-                      message="There are currently 0 results for this week. The first results should appear 48 hours after the week begins. Please check back later."
+                    <ActionAlert
+                      message="There are currently 0 results for this week. An Animetrics week begins on Friday, the first results (if any) should appear on Sunday. Please check back later."
+                      type="info"
                     />
                   }
                 </Grid>

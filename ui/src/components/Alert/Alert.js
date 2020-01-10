@@ -61,7 +61,7 @@ const useStyles1 = makeStyles((theme) => ({
   },
   message: {
     display: 'flex',
-    alignItems: 'center'
+    alignItems: 'center',
   }
 }))
 
@@ -78,6 +78,7 @@ function MySnackbarContentWrapper(props) {
           color="inherit"
           key="close"
           onClick={onClose}
+          style={{display: 'flex-end'}}
         >
           <CloseIcon className={classes.icon} />
         </IconButton>
