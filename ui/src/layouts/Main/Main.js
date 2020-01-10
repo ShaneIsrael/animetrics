@@ -7,7 +7,7 @@ import { makeStyles } from '@material-ui/styles'
 import {isMobileOnly} from 'react-device-detect'
 import { Sidebar, Header } from './components'
 
-const drawerWidth = 200
+const drawerWidth = 225
 const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
