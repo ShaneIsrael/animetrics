@@ -65,7 +65,7 @@ const ReddadzWeeklyCharts = (props) => {
   let panels = []
   if (chartData) {
     let temp = chartData
-    for (const year of Object.keys(temp)) {
+    for (const year of Object.keys(temp).reverse()) {
       // we want the annual entry at the top, thus this sort.
       for (const season of Object.keys(temp[year]).sort((a, b) => {
         if (isNaN(a)) return -1
