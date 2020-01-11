@@ -23,6 +23,7 @@ const uploadFile = async (filePath, name, bucket) => {
     Key: name,
     Body: fileContent,
     ACL: 'public-read',
+    ContentType: 'image/jpeg'
   }
 
   const resp = await s3.upload(params).promise()
