@@ -80,11 +80,16 @@ function parseSeason(post) {
   return 1
 }
 
-async function postTelegramDiscussion(show, episode, postId, media) {
-  const title = show.english_title ? show.english_title : show.title
+async function postTelegramDiscussion(show, episode, postId, media, anilistId, malId) {
+  let title = show.english_title ? show.english_title : show.title
   logger.info(`posting telegram discussion: ${title}`)
+  title = title.replace(/(\sseason\s\d+)/gi, '')
   bot.telegram.sendPhoto(telegramConfig.discussion_feed_channel, media, {
-    caption: `**${title}**\n*Season ${show.season}, Episode ${episode}*\n\nhttps://redd.it/${postId}`,
+    caption: `*${title}*\n` +
+             `_season ${show.season}, episode ${episode}_\n\n` +
+             `[AniList](https://anilist.co/anime/${anilistId}) / [MyAnimeList](https://myanimelist.net/anime/${malId})\n\n`+
+             `[Open Episode Discussion](https://redd.it/${postId})`,
+    parse_mode: 'Markdown'
   }).catch((err) => {
     logger.error(err)
   })
@@ -222,7 +227,7 @@ service.digestDiscussionPost = async (post, ignoreFlair) => {
       })
     }
   }
-  postTelegramDiscussion(showRow, episode, post.id, posterArt)
+  postTelegramDiscussion(showRow, episode, post.id, posterArt, anilistId, malId)
 }
 
 
