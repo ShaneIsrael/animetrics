@@ -84,7 +84,7 @@ async function postTelegramDiscussion(show, episode, postId, media) {
   const title = show.english_title ? show.english_title : show.title
   logger.info(`posting telegram discussion: ${title}`)
   bot.telegram.sendPhoto(telegramConfig.discussion_feed_channel, media, {
-    caption: `${title}\n[Season ${show.season}, Episode ${episode}]\nhttps://redd.it/${postId}`,
+    caption: `**${title}**\n*Season ${show.season}, Episode ${episode}*\n\nhttps://redd.it/${postId}`,
   }).catch((err) => {
     logger.error(err)
   })
