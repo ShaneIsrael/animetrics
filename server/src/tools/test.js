@@ -12,59 +12,33 @@ const aniClient = new Anilist()
 
 //create animetrics anilist app 
 
-function getAnilistUrl(text) {
-  const url = text.match(/https?:\/\/(www\.)?(\w*anilist\w*)\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]anime\/[0-9]*)/gm)
-  console.log(url)
-  return url ? url[0] : null
+const Telegraf = require('telegraf')
+const bot = new Telegraf('924683234:AAH3WaupBKq9NczvPgtouAQb7Z6tWIoUcl0')
+const channelId = '-1001319894434'
+
+async function postTelegramDiscussion(show, episode, postId, media) {
+  const title = show.english_title ? show.english_title : show.title
+  logger.info(`posting telegram discussion: ${title}`)
+  bot.telegram.sendPhoto(channelId, media, {
+    caption: `${title}\n[Season ${show.season}, Episode ${episode}]\nhttps://redd.it/${postId}`,
+  })
+  .then(() => {
+    logger.info(`telegram discussion posted successfully for: ${title}`)
+  })
+  .catch((err) => {
+    logger.error(err)
+  })
 }
 
-function parseAnilistId(post) {
-  const anilistUrl = getAnilistUrl(post.selftext)
-  console.log(anilistUrl)
-  if (anilistUrl) {
-    const anilistId = anilistUrl.match(/([0-9]\d+)/g)
-    return anilistId ? anilistId[0] : null
+async function test() {
+  try {
+    const show = await Show.findOne({
+      include: [Asset, EpisodeDiscussion]
+    })
+
+    postTelegramDiscussion(show, show.EpisodeDiscussions[0].episode, show.EpisodeDiscussions[0].post_id, `https://cdn.animetrics.co/${show.Assets[0].s3_poster_compressed}`)
+  } catch (err) {
+    console.log(err)
   }
-  return null
 }
-
-async function fixMyHeroAcademia() {
-  await authTvDb()
-  // try {
-  //   const shows = await Show.findAll()
-  //   let index = 1
-  //   for (const show of shows) {
-  //     console.log(`updating ${index}/${shows.length}`)
-  //     const resp = await aniClient.media.anime(show.anilist_id)
-  //     show.title = resp.title.userPreferred
-  //     show.english_title = resp.title.english
-  //     show.alt_title = resp.title.romaji
-  //     show.save()
-  //     index += 1
-  //   }
-  // } catch (err) {
-  //   console.log(err)
-  // }
-}
-fixMyHeroAcademia()
-
-  // const s3params = {
-  //   Bucket: 'animetrics',
-  //   MaxKeys: 100,
-  //   Prefix: 'resources/rwc',
-  // };
-  // s3.listObjectsV2 (s3params, (err, data) => {
-  //   for (const d of data.Contents) {
-  //     let { Key } = d
-  //     Key = Key.replace('.png', '')
-  //     const name = Key.split('/')[Key.split('/').length - 1]
-  //     if (name) {
-  //       const split = name.split('_')
-  //       if (split[0] === 'week') {
-  //         console.log(`Week ${split[1]} ${split[2].toUpperCase()} ${split[3]} - https://cdn.animetrics.co/${Key}`)
-  //       } else {
-  //         console.log(`Season Overview ${split[2].toUpperCase()} ${split[3]} - https://cdn.animetrics.co/${Key}`)
-  //       }
-  //     }
-  //   }
-  // })
+test()

@@ -1,6 +1,11 @@
 const service = {}
 const moment = require('moment')
 const Anilist = require('anilist-node')
+const Telegraf = require('telegraf')
+
+const { environment } = require('../config')
+const telegramConfig = require('../config')[environment].telegram
+const bot = new Telegraf(telegramConfig.ANIMETRICS_DISCUSSION_BOT_TOKEN)
 
 const { findAnime } = require('./MALService')
 const utils = require('../tools/utils')
@@ -75,6 +80,16 @@ function parseSeason(post) {
   return 1
 }
 
+async function postTelegramDiscussion(show, episode, postId, media) {
+  const title = show.english_title ? show.english_title : show.title
+  logger.info(`posting telegram discussion: ${title}`)
+  bot.telegram.sendPhoto(telegramConfig.discussion_feed_channel, media, {
+    caption: `${title}\n[Season ${show.season}, Episode ${episode}]\nhttps://redd.it/${postId}`,
+  }).catch((err) => {
+    logger.error(err)
+  })
+}
+
 function parsePollUrl(text) {
   const url = text.match(/https?:\/\/(www\.)?(\w*youpoll\w*)\.[a-zA-Z0-9()]{1,6}\/\d+\/\w*/gm)
   // If the first result has /r assume that the poll wasn't posted with this discussion
@@ -90,6 +105,14 @@ service.digestDiscussionPost = async (post, ignoreFlair) => {
   if (!ignoreFlair && post.link_flair_text && post.link_flair_text !== 'Episode') return
   if (post.title.indexOf('Megathread') !== -1) return
   if (post.title.indexOf('Episode') === -1) return
+
+  let discussion = await EpisodeDiscussion.findOne({
+    where: { post_id: post.id },
+  })
+  if (discussion) {
+    logger.info(`discussion ${post.id} already digested, ignoring.`)
+    return
+  }
   // logger.info(`Digesting: ${post.title}`)
 
   const malId = parseMalId(post)
@@ -136,9 +159,6 @@ service.digestDiscussionPost = async (post, ignoreFlair) => {
       season,
     })
   }
-  let discussion = await EpisodeDiscussion.findOne({
-    where: { post_id: post.id },
-  })
 
   const postWeekStartDt = moment(post.created_utc * 1000)
     .utc()
@@ -162,22 +182,20 @@ service.digestDiscussionPost = async (post, ignoreFlair) => {
       seasonId: seasonRow[0].id,
     })
   }
-  if (!discussion) {
-    logger.info(`creating discussion for Show: ${anilistDetails.title.userPreferred} Season: ${season} Episode: ${episode}`)
-    discussion = await EpisodeDiscussion.create({
-      showId: showRow.id,
-      weekId: weekRow.id,
-      post_id: post.id,
-      season: Number(season) ? Number(season) : 1,
-      episode: Number(episode),
-      post_poll_url: pollUrl,
-      post_title: post.title,
-      post_url: post.url,
-      post_created_dt: moment(post.created_utc * 1000)
-        .utc()
-        .format('YYYY-MM-DD HH:mm:ss'),
-    })
-  }
+  logger.info(`creating discussion for Show: ${anilistDetails.title.userPreferred} Season: ${season} Episode: ${episode}`)
+  discussion = await EpisodeDiscussion.create({
+    showId: showRow.id,
+    weekId: weekRow.id,
+    post_id: post.id,
+    season: Number(season) ? Number(season) : 1,
+    episode: Number(episode),
+    post_poll_url: pollUrl,
+    post_title: post.title,
+    post_url: post.url,
+    post_created_dt: moment(post.created_utc * 1000)
+      .utc()
+      .format('YYYY-MM-DD HH:mm:ss'),
+  })
   const episodeResultLink = await EpisodeResultLink.findOne({ where: { episodeDiscussionId: discussion.id } })
   if (!episodeResultLink) {
     await EpisodeResultLink.create({
@@ -189,12 +207,13 @@ service.digestDiscussionPost = async (post, ignoreFlair) => {
   const assetExists = await Asset.findOne({
     where: { showId: discussion.showId },
   })
+  const posterArt = anilistDetails.coverImage.large ? anilistDetails.coverImage.large : anilistDetails.coverImage.medium
   if (!assetExists) {
     if (anilistDetails) {
       await Asset.create({
         showId: discussion.showId,
         season: discussion.season,
-        poster_art: anilistDetails.coverImage.large ? anilistDetails.coverImage.large : anilistDetails.coverImage.medium,
+        poster_art: posterArt,
       })
     } else {
       await Asset.create({
@@ -203,6 +222,7 @@ service.digestDiscussionPost = async (post, ignoreFlair) => {
       })
     }
   }
+  postTelegramDiscussion(show, episode, post.id, posterArt)
 }
 
 
