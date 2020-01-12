@@ -222,7 +222,7 @@ service.digestDiscussionPost = async (post, ignoreFlair) => {
       })
     }
   }
-  postTelegramDiscussion(show, episode, post.id, posterArt)
+  postTelegramDiscussion(showRow, episode, post.id, posterArt)
 }
 
 
