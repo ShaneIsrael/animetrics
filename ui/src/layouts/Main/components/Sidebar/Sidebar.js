@@ -19,6 +19,7 @@ import RateReviewIcon from '@material-ui/icons/RateReview'
 import LocalCafeIcon from '@material-ui/icons/LocalCafe'
 import Filter9PlusIcon from '@material-ui/icons/Filter9Plus'
 import PhotoLibraryIcon from '@material-ui/icons/PhotoLibrary'
+import AnnouncementIcon from '@material-ui/icons/Announcement'
 
 import FeedbackDialog from '../../../../components/Dialog/FeedbackDialog'
 import IssueDialog from '../../../../components/Dialog/IssueDialog'
@@ -31,6 +32,7 @@ const categories = [
       { id: 'Poll Rankings', path: '/anime/poll-rankings', icon: <PollIcon /> },
       { id: 'Top 10 Anime', path: '/anime/top-ten', icon: <Filter9PlusIcon />},
       { id: 'Discussion Finder', path: '/anime/discussions', icon: <ForumIcon /> },
+      { id: 'Telegram Disc. Channel', href: 'https://t.me/AnimetricsDiscussions', icon: <AnnouncementIcon /> },
     ],
   },
   {
@@ -50,7 +52,7 @@ const categories = [
     id: 'Support Animetrics',
     children: [
       { id: 'Send Feedback', icon: <RateReviewIcon /> },
-      { id: 'Donate', path: 'https://donorbox.org/animetrics-website-support', icon: <LocalCafeIcon /> },
+      { id: 'Donate', href: 'https://donorbox.org/animetrics-website-support', icon: <LocalCafeIcon /> },
     ],
   },
 ];
@@ -167,7 +169,7 @@ function Sidebar(props) {
                   {id}
                 </ListItemText>
               </ListItem>
-              {children.map(({ id: childId, path, icon }, index) => {
+              {children.map(({ id: childId, path, href, icon }, index) => {
                 let onClick = null
                 if (childId === 'Send Feedback') {
                   return <ListItem
@@ -203,12 +205,12 @@ function Sidebar(props) {
                     </ListItemText>
                   </ListItem>
                 }
-                if (childId === 'Donate') {
+                if (href) {
                   return <ListItem
                     button
                     className={clsx(classes.item)}
                     key={childId}
-                    onClick={() => window.open(path, '_blank')}
+                    onClick={() => window.open(href, '_blank')}
                   >
                     <ListItemIcon className={classes.itemIcon}>{icon}</ListItemIcon>
                     <ListItemText
