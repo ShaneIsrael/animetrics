@@ -116,7 +116,7 @@ async function init() {
       await authTvDb()
       logger.info('tvdb auth successful')
       logger.info('starting cron jobs...')
-      // Every 10 minutes | Get Episode Discussions and populate data
+      // Every 15 minutes | Get Episode Discussions and populate data
       cron.schedule('0 */10 * * * *', async () => {
         logger.info('--- Starting Discussion Populate Job ---')
         await generateDiscussionResults()
