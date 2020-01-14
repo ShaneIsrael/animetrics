@@ -1,5 +1,7 @@
 const service = {}
-const Jikan = require('../Jikan')
+
+const { environment } = require('../config')
+const Jikan = (environment === 'dev' ? require('jikan-node') : require('../Jikan'))
 // const Jikan = require('jikan-node')
 
 
