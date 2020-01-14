@@ -77,10 +77,10 @@ async function getDiscussionsAndPopulate() {
   if (discussions) {
     for (const discussion of discussions) {
       const createdDt = moment.utc(discussion.created_utc)
-      const dt15MinsAgo = moment.utc().subtract(15, 'minutes')
+      const dt10MinsAgo = moment.utc().subtract(10, 'minutes')
       // don't process if the discussion isn't at least 15 minutes old. This is to help prevent getting
       // discussions made by non-mods that get deleted.
-      if (createdDt.isSameOrBefore(dt15MinsAgo)) {
+      if (createdDt.isSameOrBefore(dt10MinsAgo)) {
         try {
           logger.info(`digesting ${discussion.title}`)
           await digestDiscussionPost(discussion)
