@@ -1,6 +1,6 @@
 const service = {}
-// const Jikan = require('../Jikan') wait until updated docker container with latest issue fixed
-const Jikan = require('jikan-node')
+const Jikan = require('../Jikan')
+// const Jikan = require('jikan-node')
 
 
 const mal = new Jikan()
