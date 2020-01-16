@@ -11,9 +11,9 @@ const useStyles = makeStyles(() => ({
   },
 }))
 
-const NotFound = () => {
+const UnderConstruction = (props) => {
   const classes = useStyles()
-
+  console.log(props.match.params['0'])
   return (
     <div className={classes.root}>
       <Typography variant="h3">Coming Soon!</Typography>
@@ -21,4 +21,4 @@ const NotFound = () => {
   )
 }
 
-export default NotFound
+export default UnderConstruction
