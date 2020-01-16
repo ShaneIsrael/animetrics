@@ -16,6 +16,8 @@ import {
   TopTen as TopTenView
 } from './views'
 
+import Charts from 'components/charts/Charts'
+
 import {
   ReddadzWeeklyCharts as RwcView,
 } from './views/Resources'
@@ -53,7 +55,13 @@ const Routes = () => {
         path="/anime/top-ten"
       />
       <RouteWithLayout
-        component={UnderConstructionView}
+        component={RecentDiscussionsView}
+        exact
+        layout={MainLayout}
+        path="/anime/discussions"
+      />
+      <RouteWithLayout
+        component={Charts}
         exact
         layout={MainLayout}
         path="/anime/*"
