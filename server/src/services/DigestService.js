@@ -106,17 +106,17 @@ function parsePollUrl(text) {
  * @param {Object} post A reddit discussion post object
  */
 service.digestDiscussionPost = async (post, ignoreFlair) => {
-  if (post.author.name !== 'AutoLovepon') return
-  if (!ignoreFlair && post.link_flair_text && post.link_flair_text !== 'Episode') return
-  if (post.title.indexOf('Megathread') !== -1) return
-  if (post.title.indexOf('Episode') === -1) return
+  if (post.author.name !== 'AutoLovepon') return false
+  if (!ignoreFlair && post.link_flair_text && post.link_flair_text !== 'Episode') return false
+  if (post.title.indexOf('Megathread') !== -1) return false
+  if (post.title.indexOf('Episode') === -1) return false
 
   let discussion = await EpisodeDiscussion.findOne({
     where: { post_id: post.id },
   })
   if (discussion) {
     logger.info(`discussion ${post.id} already digested, ignoring.`)
-    return
+    return false
   }
   // logger.info(`Digesting: ${post.title}`)
 
@@ -135,21 +135,15 @@ service.digestDiscussionPost = async (post, ignoreFlair) => {
   await sleep(1000) // until we get a anilist service, add rate limit protection here
   if (!anilistDetails || !episode) {
     logger.error(`Could not parse discussion [${post.id}] anilistId=${anilistId} episode=${episode}`)
-    return
+    return false
   }
   // don't create discussions for filler episodes such as 5.5
-  if (!Number.isInteger(Number(episode))) return
+  if (!Number.isInteger(Number(episode))) return false
 
   const showTitle = anilistDetails.title.userPreferred
 
   // Lookup show in the database
   let showRow = await Show.findOne({ where: { anilist_id: anilistId } })
-  if (!showRow && anilistDetails.title.english) {
-    showRow = await Show.findOne({ where: { english_title: anilistDetails.title.english, season: season } })
-  }
-  if (!showRow && anilistDetails.title.romaji) {
-    showRow = await Show.findOne({ where: { alt_title: anilistDetails.title.romaji, season: season } })
-  }
 
   if (!showRow) {
     // eslint-disable-next-line no-nested-ternary
@@ -228,6 +222,7 @@ service.digestDiscussionPost = async (post, ignoreFlair) => {
     }
   }
   postTelegramDiscussion(showRow, episode, post.id, posterArt, anilistId, malId)
+  return true
 }
 
 
