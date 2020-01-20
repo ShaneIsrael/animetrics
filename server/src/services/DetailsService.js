@@ -1,5 +1,23 @@
 const service = {}
-const { Show, EpisodeDiscussionResult, EpisodeDiscussion } = require('../models')
+const {
+  Show, Asset, EpisodeDiscussionResult, EpisodeDiscussion,
+} = require('../models')
+
+/**
+ * Get Anime Info
+ * @returns {Object} Information about an anime
+ */
+service.getAnime = async (id) => {
+  const show = await Show.findOne({
+    where: {
+      id,
+    },
+    include: [Asset],
+  })
+
+  return show
+}
+
 
 /**
  * Get all weeks recorded

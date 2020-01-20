@@ -12,7 +12,7 @@ import {
   Overrides as OverridesView,
   NotFound as NotFoundView,
   Legend as LegendView,
-  UnderConstruction as UnderConstructionView,
+  Overview as AnimeOverviewView,
   TopTen as TopTenView
 } from './views'
 
@@ -61,10 +61,10 @@ const Routes = () => {
         path="/anime/discussions"
       />
       <RouteWithLayout
-        component={Charts}
+        component={AnimeOverviewView}
         exact
         layout={MainLayout}
-        path="/anime/*"
+        path="/anime/(\d+)"
       />
       <RouteWithLayout
         component={OverridesView}
