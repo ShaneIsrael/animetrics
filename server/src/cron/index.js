@@ -16,6 +16,8 @@ const pollFixer = require('../tools/pollFixer')
 
 const anilistClient = new Anilist()
 
+const sleep = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds))
+
 async function updatePosters() {
   logger.info('updating posters')
   const assets = await Asset.findAll({
@@ -38,8 +40,7 @@ async function updatePosters() {
         asset.poster_art = art
         asset.save()
       }
-    }
-    catch (err) {
+    } catch (err) {
       logger.error(err)
     }
   }
@@ -84,6 +85,8 @@ async function getDiscussionsAndPopulate() {
         try {
           logger.info(`digesting ${discussion.title}`)
           await digestDiscussionPost(discussion)
+          // give db time to close so we don't get duplicate results
+          await sleep(1000)
           logger.info(`finishing digesting ${discussion.title}`)
         } catch (err) {
           logger.error(err)
