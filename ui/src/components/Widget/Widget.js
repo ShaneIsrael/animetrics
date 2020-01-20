@@ -40,7 +40,7 @@ export default function Widget({
             <React.Fragment>
               <Typography
                 color="textSecondary"
-                variant="h5"
+                variant="h6"
               >
                 {title}
               </Typography>

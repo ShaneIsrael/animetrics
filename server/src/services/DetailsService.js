@@ -33,6 +33,7 @@ service.getAnimeStats = async (id) => {
   const stats = {
     seasonalKarma: [],
     seasonalRatings: [],
+    seasonalPopularity: [],
   }
   const eds = await EpisodeDiscussion.findAll({
     where: {
@@ -45,14 +46,15 @@ service.getAnimeStats = async (id) => {
 
   for (const discussion of eds) {
     if (discussion.EpisodeDiscussionResult) {
+      let karma = discussion.EpisodeDiscussionResult.ups
       stats.seasonalKarma.push({
         name: `Ep ${discussion.episode}`,
-        karma: discussion.EpisodeDiscussionResult.ups,
-        comments: discussion.EpisodeDiscussionResult.comment_count,
+        Karma: discussion.EpisodeDiscussionResult.ups,
+        Comments: discussion.EpisodeDiscussionResult.comment_count,
       })
       stats.seasonalRatings.push({
         name: `Ep ${discussion.episode}`,
-        RedditAnimeList: discussion.EpisodeDiscussionResult.ralScore === 0 ? 1 : discussion.EpisodeDiscussionResult.ralScore,
+        RedditAnimeList: Number(discussion.EpisodeDiscussionResult.ralScore) === 0 ? 1 : discussion.EpisodeDiscussionResult.ralScore,
         MyAnimeList: discussion.EpisodeDiscussionResult.MALSnapshot.score,
       })
     }

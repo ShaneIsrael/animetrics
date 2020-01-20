@@ -47,7 +47,6 @@ export default function Header(props) {
 
   const { animeInfo } = props
 
-  console.log(animeInfo)
   const poster = animeInfo.Assets ? animeInfo.Assets[0].s3_poster_compressed || animeInfo.Assets[0].s3_poster: null
   const title = animeInfo.english_title || animeInfo.title
   const synopsis = animeInfo.synopsis
