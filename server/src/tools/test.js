@@ -10,33 +10,22 @@ const { Show, Asset, MALSnapshot, RedditPollResult, Week, Season, EpisodeResultL
 const Anilist = require('anilist-node')
 const aniClient = new Anilist()
 
-//create animetrics anilist app 
-
-const Telegraf = require('telegraf')
-const bot = new Telegraf('924683234:AAH3WaupBKq9NczvPgtouAQb7Z6tWIoUcl0')
-const channelId = '-1001319894434'
-
-async function postTelegramDiscussion(show, episode, postId, media) {
-  const title = show.english_title ? show.english_title : show.title
-  logger.info(`posting telegram discussion: ${title}`)
-  bot.telegram.sendPhoto(channelId, media, {
-    caption: `${title}\n[Season ${show.season}, Episode ${episode}]\nhttps://redd.it/${postId}`,
-  })
-  .then(() => {
-    logger.info(`telegram discussion posted successfully for: ${title}`)
-  })
-  .catch((err) => {
-    logger.error(err)
-  })
-}
-
+const sleep = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds))
 async function test() {
   try {
-    const show = await Show.findOne({
-      include: [Asset, EpisodeDiscussion]
-    })
+    const shows = await Show.findAll()
 
-    postTelegramDiscussion(show, show.EpisodeDiscussions[0].episode, show.EpisodeDiscussions[0].post_id, `https://cdn.animetrics.co/${show.Assets[0].s3_poster_compressed}`)
+    for (const show of shows) {
+      if (show.anilist_id) {
+        const anilistDetails = await aniClient.media.anime(show.anilist_id)
+        await sleep(500) // until we get a anilist service, add rate limit protection here
+        // show.season = 
+        // show.synopsis = 
+        console.log(anilistDetails)
+        //show.save()
+      }
+    }
+
   } catch (err) {
     console.log(err)
   }

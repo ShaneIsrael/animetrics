@@ -52,7 +52,7 @@ service.getAnimeStats = async (id) => {
       })
       stats.seasonalRatings.push({
         name: `Ep ${discussion.episode}`,
-        RedditAnimeList: discussion.EpisodeDiscussionResult.ralScore,
+        RedditAnimeList: discussion.EpisodeDiscussionResult.ralScore === 0 ? 1 : discussion.EpisodeDiscussionResult.ralScore,
         MyAnimeList: discussion.EpisodeDiscussionResult.MALSnapshot.score,
       })
     }

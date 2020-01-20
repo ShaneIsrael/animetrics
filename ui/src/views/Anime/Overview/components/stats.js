@@ -77,6 +77,8 @@ export default function Stats(props) {
   const theme = useTheme()
 
   const { stats } = props
+
+  console.log(stats)
   return (
     <Grid
       container
@@ -164,7 +166,7 @@ export default function Stats(props) {
             height={250}
             width="100%"
           >
-            <AreaChart
+            <LineChart
               data={stats.seasonalRatings}
               // height={200}
               margin={{
@@ -175,41 +177,29 @@ export default function Stats(props) {
               }}
               // width={500}
             >
-              <defs>
-                <linearGradient id="colorRal" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor={theme.palette.primary.main} stopOpacity={0.8}/>
-                  <stop offset="95%" stopColor={theme.palette.primary.main} stopOpacity={0}/>
-                </linearGradient>
-                <linearGradient id="colorMal" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor={theme.palette.secondary.main} stopOpacity={0.8}/>
-                  <stop offset="95%" stopColor={theme.palette.secondary.main} stopOpacity={0}/>
-                </linearGradient>
-              </defs>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis
                 dataKey="name"
                 tick={{fill: theme.palette.primary.main}}
               />
-              <YAxis tick={{fill: theme.palette.primary.main}} />
+              <YAxis tick={{fill: theme.palette.primary.main}} type='number' domain={[dataMin => dataMin - 1, 10]} />
               <Tooltip contentStyle={{background: theme.palette.primary.dark}} />
               <Legend />
-              <Area
+              <Line
                 activeDot={{ r: 8 }}
                 dataKey="RedditAnimeList"
                 stroke={theme.palette.primary.main}
                 strokeWidth={2}
                 type="monotone"
-                fill="url(#colorRal)"
               />
-              <Area
+              <Line
                 activeDot={{ r: 8 }}
                 dataKey="MyAnimeList"
                 stroke={theme.palette.secondary.main}
                 strokeWidth={2}
                 type="monotone"
-                fill="url(#colorMal)"
               />
-            </AreaChart>
+            </LineChart>
           </ResponsiveContainer>
         </Widget>
       </Grid>
