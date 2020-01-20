@@ -154,7 +154,7 @@ export default function DetailsCard(props) {
                     <a className={classes.link} href={`${details.discussion.post_url}`} target="_blank" rel="noopener noreferrer">View Discussion</a>
                   </Button>
                   <Button size="small" color="primary">
-                    <a className={classes.link} href={`/anime/${details.show.id}`} target="_blank" rel="noopener noreferrer">View Show Stats</a>
+                    <a className={classes.link} href={`/anime/${details.show.id}`} rel="noopener noreferrer">View Show Stats</a>
                   </Button>
                 </div>
               }
@@ -194,7 +194,7 @@ export default function DetailsCard(props) {
                   <a className={classes.link} href={`${details.discussion.post_url}`} target="_blank" rel="noopener noreferrer">View Episode Discussion</a>
                 </Button>
                 <Button size="small" color="primary">
-                  <a className={classes.link} href={`https://myanimelist.net/anime/${details.show.mal_id}`} target="_blank" rel="noopener noreferrer">Learn More</a>
+                <a className={classes.link} href={`/anime/${details.show.id}`} rel="noopener noreferrer">View Show Stats</a>
                 </Button>
               </div>
             }
