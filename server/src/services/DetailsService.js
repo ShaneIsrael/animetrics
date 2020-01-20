@@ -1,6 +1,6 @@
 const service = {}
 const {
-  Show, Asset, EpisodeDiscussionResult, EpisodeDiscussion,
+  Show, Asset, EpisodeDiscussionResult, EpisodeDiscussion, MALSnapshot,
 } = require('../models')
 
 /**
@@ -16,6 +16,49 @@ service.getAnime = async (id) => {
   })
 
   return show
+}
+
+/**
+ * Get Anime Stats
+ * @returns {Object} Stats about an anime
+ */
+service.getAnimeStats = async (id) => {
+  const show = await Show.findOne({
+    where: {
+      id,
+    },
+  })
+
+  const { season } = show
+  const stats = {
+    seasonalKarma: [],
+    seasonalRatings: [],
+  }
+  const eds = await EpisodeDiscussion.findAll({
+    where: {
+      showId: id,
+      season,
+    },
+    order: [['episode', 'ASC']],
+    include: [{ model: EpisodeDiscussionResult, include: [MALSnapshot] }],
+  })
+
+  for (const discussion of eds) {
+    if (discussion.EpisodeDiscussionResult) {
+      stats.seasonalKarma.push({
+        name: `Ep ${discussion.episode}`,
+        karma: discussion.EpisodeDiscussionResult.ups,
+        comments: discussion.EpisodeDiscussionResult.comment_count,
+      })
+      stats.seasonalRatings.push({
+        name: `Ep ${discussion.episode}`,
+        RedditAnimeList: discussion.EpisodeDiscussionResult.ral,
+        MyAnimeList: discussion.EpisodeDiscussionResult.MALSnapshot.score,
+      })
+    }
+  }
+
+  return stats
 }
 
 

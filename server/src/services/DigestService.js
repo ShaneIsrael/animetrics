@@ -143,7 +143,7 @@ service.digestDiscussionPost = async (post, ignoreFlair) => {
   const showTitle = anilistDetails.title.userPreferred
 
   // Lookup show in the database
-  let showRow = await Show.findOne({ where: { title: showTitle, season: season } })
+  let showRow = await Show.findOne({ where: { anilist_id: anilistId } })
   if (!showRow && anilistDetails.title.english) {
     showRow = await Show.findOne({ where: { english_title: anilistDetails.title.english, season: season } })
   }

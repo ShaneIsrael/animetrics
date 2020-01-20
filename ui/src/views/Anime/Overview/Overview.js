@@ -4,6 +4,7 @@ import { makeStyles } from '@material-ui/styles'
 import { AnimeService } from 'services'
 
 import Header from './components/header'
+import Stats from './components/stats'
 
 const useStyles = makeStyles(theme => ({
   card: {
@@ -13,7 +14,7 @@ const useStyles = makeStyles(theme => ({
     // backgroundColor: 'green'
   },
   stats: {
-    backgroundColor: 'red'
+    // backgroundColor: 'red'
   },
   footer: {
     backgroundColor: 'blue'
@@ -27,6 +28,7 @@ const useStyles = makeStyles(theme => ({
 export default function Overview(props) {
   var classes = useStyles()
   const [ animeInfo, setAnimeInfo ] = React.useState({})
+  const [ animeStats, setAnimeStats ] = React.useState(null)
 
   React.useEffect(() => {
     async function fetch() {
@@ -36,12 +38,14 @@ export default function Overview(props) {
           return props.history.push('/404')
         }
         setAnimeInfo(info)
+        const stats = (await AnimeService.getAnimeStats(props.match.params['0'])).data
+        setAnimeStats(stats)
       } catch(err) {
         console.log(err)
       }
     }
     fetch()
-  }, [setAnimeInfo])
+  }, [setAnimeInfo, setAnimeStats])
 
   return (
     <React.Fragment>
@@ -49,7 +53,9 @@ export default function Overview(props) {
         <Header animeInfo={animeInfo} />
       </Grid>
       <Grid className={classes.stats} container spacing={1}>
-
+        {animeStats && 
+          <Stats stats={animeStats} />
+        }
       </Grid>
       <Grid className={classes.footer} container spacing={1}>
 

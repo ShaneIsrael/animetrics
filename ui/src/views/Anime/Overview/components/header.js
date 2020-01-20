@@ -43,20 +43,21 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 export default function Header(props) {
-  var classes = useStyles()
+  const classes = useStyles()
 
   const { animeInfo } = props
 
-  const poster = animeInfo.Assets ? animeInfo.Assets[0].s3_poster_compressed : null
+  console.log(animeInfo)
+  const poster = animeInfo.Assets ? animeInfo.Assets[0].s3_poster_compressed || animeInfo.Assets[0].s3_poster: null
   const title = animeInfo.english_title || animeInfo.title
   const synopsis = animeInfo.synopsis
-  const detailsText = animeInfo.season === 1 ? 'Season 1' : `Season ${animeInfo.season} of ${animeInfo.seriesName}`
+  const detailsText = animeInfo.season === 1 ? 'Season 1' : animeInfo.seriesName ? `Season ${animeInfo.season} of ${animeInfo.seriesName}` : `Season ${animeInfo.season}`
   const missingPosterUrl = 'https://cdn.animetrics.co/animetrics/missing_poster_art.png'
 
   return (
     <Grid container item sm={12} spacing={1}>
       <Grid item>
-        <Paper square={true} className={classes.paper}>
+        <Paper square={false} className={classes.paper}>
           <LazyLoadImage
             className={classes.coverImage}
             width={200}
@@ -68,7 +69,7 @@ export default function Header(props) {
         </Paper>
       </Grid>
       <Grid item sm>
-        <Paper square={true} className={classes.info}>
+        <Paper square={false} className={classes.info}>
           <Typography className={classes.title} variant={'h5'}>{title}</Typography>
           <Typography className={classes.details} variant={'subtitle2'}>{detailsText}</Typography>
           <Typography className={classes.synopsis} variant={'subtitle2'}>{synopsis}</Typography>

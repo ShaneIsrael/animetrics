@@ -6,4 +6,9 @@ export default {
       params: {id}
     })
   },
+  getAnimeStats(id) {
+    return Api().get('/api/v1/anime/stats', {
+      params: {id}
+    })
+  },
 }
