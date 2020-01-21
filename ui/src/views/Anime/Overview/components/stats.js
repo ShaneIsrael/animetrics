@@ -15,6 +15,7 @@ import {
   Pie,
   PieChart,
   ResponsiveContainer,
+  Brush,
   Sector,
   Tooltip,
   XAxis,
@@ -23,6 +24,7 @@ import {
 
 // components
 import Widget from 'components/Widget/Widget'
+import { amber } from '@material-ui/core/colors'
 
 const useStyles = makeStyles(theme => ({
 }))
@@ -56,6 +58,7 @@ export default function Stats(props) {
             width="100%"
           >
             <AreaChart
+              syncId="0"
               data={stats.seasonalKarma}
               // height={200}
               margin={{
@@ -85,7 +88,7 @@ export default function Stats(props) {
               <Tooltip contentStyle={{background: theme.palette.primary.dark}} />
               <Legend />
               <Area
-                activeDot={{ r: 8 }}
+                activeDot={{ r: 4 }}
                 dataKey="Karma"
                 stroke={theme.palette.primary.main}
                 strokeWidth={2}
@@ -93,7 +96,7 @@ export default function Stats(props) {
                 fill="url(#colorKarma)"
               />
               <Area
-                activeDot={{ r: 8 }}
+                activeDot={{ r: 4 }}
                 dataKey="Comments"
                 stroke={theme.palette.secondary.main}
                 strokeWidth={2}
@@ -117,10 +120,11 @@ export default function Stats(props) {
           disableWidgetMenu={true}
         >
           <ResponsiveContainer
-            height={200}
+            height={250}
             width="100%"
           >
-            <LineChart
+            <AreaChart
+              syncId="0"
               data={stats.seasonalRatings}
               // height={200}
               margin={{
@@ -131,6 +135,20 @@ export default function Stats(props) {
               }}
               // width={500}
             >
+              <defs>
+                <linearGradient id="colorRal" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor={theme.palette.secondary.main} stopOpacity={0.4}/>
+                  <stop offset="95%" stopColor={theme.palette.secondary.main} stopOpacity={0}/>
+                </linearGradient>
+                <linearGradient id="colorMal" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor={amber[400]} stopOpacity={0.4}/>
+                  <stop offset="95%" stopColor={amber[400]} stopOpacity={0}/>
+                </linearGradient>
+                <linearGradient id="colorRPoll" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor={theme.palette.primary.main} stopOpacity={0.4}/>
+                  <stop offset="95%" stopColor={theme.palette.primary.main} stopOpacity={0}/>
+                </linearGradient>
+              </defs>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis
                 dataKey="name"
@@ -139,21 +157,32 @@ export default function Stats(props) {
               <YAxis tick={{fill: theme.palette.primary.main}} type='number' domain={['auto', '10']} />
               <Tooltip contentStyle={{background: theme.palette.primary.dark}} />
               <Legend />
-              <Line
-                activeDot={{ r: 8 }}
-                dataKey="RedditAnimeList"
+              <Area
+                activeDot={{ r: 4 }}
+                dataKey="RedditPollScore"
                 stroke={theme.palette.primary.main}
                 strokeWidth={2}
                 type="monotone"
+                fill="url(#colorRPoll)"
               />
-              <Line
-                activeDot={{ r: 8 }}
-                dataKey="MyAnimeList"
+              <Area
+                activeDot={{ r: 4 }}
+                dataKey="RedditAnimeList"
                 stroke={theme.palette.secondary.main}
                 strokeWidth={2}
                 type="monotone"
+                fill="url(#colorRal)"
               />
-            </LineChart>
+              <Area
+                activeDot={{ r: 4 }}
+                dataKey="MyAnimeList"
+                stroke={amber[400]}
+                strokeWidth={2}
+                type="monotone"
+                fill="url(#colorMal)"
+              />
+              <Brush height={15} stroke={theme.palette.primary.main} />
+            </AreaChart>
           </ResponsiveContainer>
         </Widget>
       </Grid>
