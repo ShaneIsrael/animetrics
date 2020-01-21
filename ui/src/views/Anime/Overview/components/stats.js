@@ -181,7 +181,7 @@ export default function Stats(props) {
                 type="monotone"
                 fill="url(#colorMal)"
               />
-              <Brush height={15} stroke={theme.palette.primary.main} />
+              <Brush height={20} stroke={theme.palette.primary.main} />
             </AreaChart>
           </ResponsiveContainer>
         </Widget>

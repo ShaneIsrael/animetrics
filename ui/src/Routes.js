@@ -13,10 +13,9 @@ import {
   NotFound as NotFoundView,
   Legend as LegendView,
   Overview as AnimeOverviewView,
-  TopTen as TopTenView
+  TopTen as TopTenView,
+  SeriesSearch as SeriesSearchView,
 } from './views'
-
-import Charts from 'components/charts/Charts'
 
 import {
   ReddadzWeeklyCharts as RwcView,
@@ -59,6 +58,12 @@ const Routes = () => {
         exact
         layout={MainLayout}
         path="/anime/discussions"
+      />
+      <RouteWithLayout
+        component={SeriesSearchView}
+        exact
+        layout={MainLayout}
+        path="/anime/search"
       />
       <RouteWithLayout
         component={AnimeOverviewView}

@@ -13,15 +13,21 @@ const aniClient = new Anilist()
 const sleep = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds))
 async function test() {
   try {
-    const shows = await Show.findAll()
+    const shows = await Show.findAll({
+      include: [Asset]
+    })
 
     for (const show of shows) {
-      if (show.anilist_id) {
+      if (!show.Assets[0]) {
         const anilistDetails = await aniClient.media.anime(show.anilist_id)
         await sleep(500) // until we get a anilist service, add rate limit protection here
-        // show.season = 
-        // show.synopsis = 
-        console.log(anilistDetails)
+        const posterArt = anilistDetails.coverImage.large ? anilistDetails.coverImage.large : anilistDetails.coverImage.medium
+        await Asset.create({
+          showId: show.id,
+          season: show.season,
+          poster_art: posterArt,
+        })
+        console.log(`created asset for ${show.id}`)
         //show.save()
       }
     }
