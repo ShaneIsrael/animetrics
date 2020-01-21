@@ -20,6 +20,7 @@ import LocalCafeIcon from '@material-ui/icons/LocalCafe'
 import Filter9PlusIcon from '@material-ui/icons/Filter9Plus'
 import PhotoLibraryIcon from '@material-ui/icons/PhotoLibrary'
 import AnnouncementIcon from '@material-ui/icons/Announcement'
+import SearchRoundedIcon from '@material-ui/icons/SearchRounded'
 
 import FeedbackDialog from '../../../../components/Dialog/FeedbackDialog'
 import IssueDialog from '../../../../components/Dialog/IssueDialog'
@@ -28,6 +29,7 @@ const categories = [
   {
     id: '/r/Anime',
     children: [
+      { id: 'Browse Series', path: '/anime/search', icon: <SearchRoundedIcon />},
       { id: 'Karma Rankings', path: '/anime/karma-rankings', icon: <ScoreIcon />},
       { id: 'Poll Rankings', path: '/anime/poll-rankings', icon: <PollIcon /> },
       { id: 'Top 10 Anime', path: '/anime/top-ten', icon: <Filter9PlusIcon />},

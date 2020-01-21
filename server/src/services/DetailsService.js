@@ -1,6 +1,6 @@
 const service = {}
 const {
-  Show, Asset, EpisodeDiscussionResult, EpisodeDiscussion, MALSnapshot, RedditPollResult
+  Show, Asset, EpisodeDiscussionResult, EpisodeDiscussion, MALSnapshot, RedditPollResult, Op, Sequelize
 } = require('../models')
 
 /**
@@ -77,5 +77,46 @@ service.getAnimeDetailsByShowId = async (resultId, showId) => {
 
   return { show, discussion }
 }
+
+
+/**
+ * Gets anime by search query
+ * @returns {Array} An array of anime
+ */
+service.searchAnimetricsAnime = async (query) => {
+  const shows = await Show.findAll({
+    attributes: ['title', 'english_title', 'id'],
+    where: {
+      [Op.or]: [
+        {
+          title: {
+            [Op.like]: `%${query}%`,
+          },
+        },
+        {
+          alt_title: {
+            [Op.like]: `%${query}%`,
+          },
+        },
+        {
+          english_title: {
+            [Op.like]: `%${query}%`,
+          },
+        },
+        {
+          seriesName: {
+            [Op.like]: `%${query}%`,
+          },
+        },
+      ],
+    },
+    include: [{ model: Asset, attributes: ['s3_poster', 's3_poster_compressed']}],
+    order: query ? [['english_title', 'DESC']] : Sequelize.literal('random()'),
+    limit: 50
+  })
+
+  return shows
+}
+
 
 module.exports = service

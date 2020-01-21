@@ -11,4 +11,9 @@ export default {
       params: {id}
     })
   },
+  searchSeries(query) {
+    return Api().get('/api/v1/anime/search', {
+      params: {query}
+    })
+  },
 }
