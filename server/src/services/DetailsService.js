@@ -1,6 +1,6 @@
 const service = {}
 const {
-  Show, Asset, EpisodeDiscussionResult, EpisodeDiscussion, MALSnapshot,
+  Show, Asset, EpisodeDiscussionResult, EpisodeDiscussion, MALSnapshot, RedditPollResult
 } = require('../models')
 
 /**
@@ -41,7 +41,7 @@ service.getAnimeStats = async (id) => {
       season,
     },
     order: [['episode', 'ASC']],
-    include: [{ model: EpisodeDiscussionResult, include: [MALSnapshot] }],
+    include: [{ model: EpisodeDiscussionResult, include: [MALSnapshot] }, RedditPollResult],
   })
 
   for (const discussion of eds) {
@@ -56,6 +56,7 @@ service.getAnimeStats = async (id) => {
         name: `Ep ${discussion.episode}`,
         RedditAnimeList: Number(discussion.EpisodeDiscussionResult.ralScore) === 0 ? 1 : discussion.EpisodeDiscussionResult.ralScore,
         MyAnimeList: discussion.EpisodeDiscussionResult.MALSnapshot.score,
+        RedditPollScore: discussion.RedditPollResult ? discussion.RedditPollResult.score : 0
       })
     }
   }
