@@ -88,6 +88,7 @@ export default function Stats(props) {
               <Tooltip contentStyle={{background: theme.palette.primary.dark}} />
               <Legend />
               <Area
+                dot={{ r: 3 }}
                 activeDot={{ r: 4 }}
                 dataKey="Karma"
                 stroke={theme.palette.primary.main}
@@ -96,6 +97,7 @@ export default function Stats(props) {
                 fill="url(#colorKarma)"
               />
               <Area
+                dot={{ r: 3 }}
                 activeDot={{ r: 4 }}
                 dataKey="Comments"
                 stroke={theme.palette.secondary.main}
@@ -154,10 +156,11 @@ export default function Stats(props) {
                 dataKey="name"
                 tick={{fill: theme.palette.primary.main}}
               />
-              <YAxis tick={{fill: theme.palette.primary.main}} type='number' domain={['auto', '10']} />
+              <YAxis ticks={[2, 4, 6, 8, 10]} tick={{fill: theme.palette.primary.main}} type='number' domain={[0, 10]} />
               <Tooltip contentStyle={{background: theme.palette.primary.dark}} />
               <Legend />
               <Area
+                dot={{ r: 3 }}
                 activeDot={{ r: 4 }}
                 dataKey="RedditPollScore"
                 stroke={theme.palette.primary.main}
@@ -166,6 +169,7 @@ export default function Stats(props) {
                 fill="url(#colorRPoll)"
               />
               <Area
+                dot={{ r: 3 }}
                 activeDot={{ r: 4 }}
                 dataKey="RedditAnimeList"
                 stroke={theme.palette.secondary.main}
@@ -174,6 +178,7 @@ export default function Stats(props) {
                 fill="url(#colorRal)"
               />
               <Area
+                dot={{ r: 3 }}
                 activeDot={{ r: 4 }}
                 dataKey="MyAnimeList"
                 stroke={amber[400]}

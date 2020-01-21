@@ -1,6 +1,8 @@
-const { getAnime, getAnimeStats, getAnimeDetailsByShowId, searchAnimetricsAnime } = require('../services')
+const { getAnime, getAnimeStats, getAnimeDetailsByShowId, searchAnimetricsAnime, getRandomAnime } = require('../services')
 
 const controller = {}
+
+const { environment } = require('../config')
 
 /**
  * Get show info for a given anime
@@ -48,6 +50,18 @@ controller.searchAnime = async (req, res, next) => {
     
     const anime = await searchAnimetricsAnime(query)
     res.status(200).send(anime)
+  } catch (err) {
+    next(err)
+  }
+}
+
+/**
+ * Redirects user to a random anime page
+ */
+controller.getRandomAnime = async (req, res, next) => {
+  try {
+    const anime = await getRandomAnime()
+    res.status(200).send({anime})
   } catch (err) {
     next(err)
   }

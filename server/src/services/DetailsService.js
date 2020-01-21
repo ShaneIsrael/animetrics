@@ -118,5 +118,19 @@ service.searchAnimetricsAnime = async (query) => {
   return shows
 }
 
+/**
+ * Gets random anime
+ * @returns {number} id of a random anime
+ */
+service.getRandomAnime = async () => {
+  const show = await Show.findOne({
+    attributes: ['id'],
+    order: Sequelize.literal('random()'),
+  })
+
+  return show.id
+}
+
+
 
 module.exports = service

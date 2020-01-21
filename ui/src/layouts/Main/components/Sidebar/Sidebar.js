@@ -21,15 +21,19 @@ import Filter9PlusIcon from '@material-ui/icons/Filter9Plus'
 import PhotoLibraryIcon from '@material-ui/icons/PhotoLibrary'
 import AnnouncementIcon from '@material-ui/icons/Announcement'
 import SearchRoundedIcon from '@material-ui/icons/SearchRounded'
+import CasinoOutlinedIcon from '@material-ui/icons/CasinoOutlined'
 
 import FeedbackDialog from '../../../../components/Dialog/FeedbackDialog'
 import IssueDialog from '../../../../components/Dialog/IssueDialog'
+
+import { AnimeService } from 'services'
 
 const categories = [
   {
     id: '/r/Anime',
     children: [
       { id: 'Browse Series', path: '/anime/search', icon: <SearchRoundedIcon />},
+      { id: 'Random Series', icon: <CasinoOutlinedIcon /> },
       { id: 'Karma Rankings', path: '/anime/karma-rankings', icon: <ScoreIcon />},
       { id: 'Poll Rankings', path: '/anime/poll-rankings', icon: <PollIcon /> },
       { id: 'Top 10 Anime', path: '/anime/top-ten', icon: <Filter9PlusIcon />},
@@ -109,11 +113,20 @@ function Sidebar(props) {
   const [ reportIssueOpen, setReportIssueOpen ] = React.useState(false)
   const { classes, ...other } = props;
 
-  const handleReportIssueClose  = () => {
+  const handleReportIssueClose = () => {
     setReportIssueOpen(false)
   }
-  const handleFeedbackClose  = () => {
+  const handleFeedbackClose = () => {
     setFeedbackOpen(false)
+  }
+
+  const handleRandomAnime = async () => {
+    try {
+      const anime = (await AnimeService.getRandomAnime()).data.anime
+      window.location.href = `/anime/${anime}`
+    } catch (err) {
+      console.log(err)
+    }
   }
 
   return (
@@ -206,6 +219,23 @@ function Sidebar(props) {
                       {childId}
                     </ListItemText>
                   </ListItem>
+                }
+                if (childId === 'Random Series') {
+                  return <ListItem
+                  button
+                  className={clsx(classes.item, (window.location.pathname === path) && classes.itemActiveItem)}
+                  key={childId}
+                  onClick={() => handleRandomAnime()}
+                >
+                  <ListItemIcon className={classes.itemIcon}>{icon}</ListItemIcon>
+                  <ListItemText
+                    classes={{
+                      primary: classes.itemPrimary,
+                    }}
+                  >
+                    {childId}
+                  </ListItemText>
+                </ListItem>
                 }
                 if (href) {
                   return <ListItem

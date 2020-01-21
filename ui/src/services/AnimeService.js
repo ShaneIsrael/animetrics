@@ -16,4 +16,7 @@ export default {
       params: {query}
     })
   },
+  getRandomAnime() {
+    return Api().get('/api/v1/anime/random')
+  },
 }

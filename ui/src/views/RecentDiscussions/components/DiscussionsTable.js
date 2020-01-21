@@ -67,7 +67,7 @@ export default function DiscussionsTable(props) {
         onClick={() => window.open(href, '_blank')}
         variant="outlined"
       >
-        view
+        View
       </Button>
     )
   }, [])
