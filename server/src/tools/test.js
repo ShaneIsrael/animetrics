@@ -36,4 +36,10 @@ async function test() {
     console.log(err)
   }
 }
-test()
+// test()
+
+async function testAnilist() {
+  const anilistDetails = await aniClient.media.anime(106479)
+  console.log(anilistDetails)
+}
+testAnilist()
