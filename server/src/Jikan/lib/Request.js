@@ -9,7 +9,13 @@ module.exports = class Request {
     async send(args, params) {
         var res = await fetch(this.createUrl(args, params))
         var data = await res.json()
-        if (res.status !== 200) throw new Error(data)
+        if (res.status !== 200) {
+          let err = new Error(data.error)
+          err.status = res.status
+          err.trace = res.trace
+          err.baseURL = this.baseURL
+          throw err
+        }
         else return data
     }
 
