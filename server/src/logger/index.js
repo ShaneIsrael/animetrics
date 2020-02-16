@@ -47,16 +47,16 @@ const devTransports = [
 
 const prodTransports = [
   new transports.Console(options.console),
-  new Syslog({
-    host: 'logs5.papertrailapp.com',
-    port: 28660,
-    app_name: 'animetrics',
-    localhost: hostname,
-    colorize: true,
-    timestamp: true,
-    handleExceptions: true,
-    level: 'info',
-  }),
+  // new Syslog({
+  //   host: 'logs5.papertrailapp.com',
+  //   port: 28660,
+  //   app_name: 'animetrics',
+  //   localhost: hostname,
+  //   colorize: true,
+  //   timestamp: true,
+  //   handleExceptions: true,
+  //   level: 'info',
+  // }),
   new Sentry(options.sentry),
 ]
 
