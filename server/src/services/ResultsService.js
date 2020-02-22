@@ -185,7 +185,7 @@ service.createDiscussionResult = async (link) => {
       showId: link.Show.id,
       weekId: link.Week.id,
       score: malDetails.score || 0,
-      scored_by: malDetails.scored_by,
+      scored_by: malDetails.scored_by || 0,
       rank: malDetails.rank || 0,
       episodes: malDetails.episodes,
       favorites: malDetails.favorites,
