@@ -37,7 +37,7 @@ service.getReddadzWeeklyKarmaRanks = async () => {
     for (const d of data.Contents) {
       let { Key } = d
       const url = `https://cdn.animetrics.co/${Key}`
-      Key = Key.replace('.png', '')
+      Key = Key.replace('.jpg', '')
       const name = Key.split('/')[Key.split('/').length - 1]
       if (name) {
         const split = name.split('_')
