@@ -86,7 +86,7 @@ module.exports = {
           }
         }
       } catch (err) {
-        logger.error(err)
+        logger.warn(err)
       }
     }
     const totalTime = (times.reduce((a, b) => a + b, 0))
