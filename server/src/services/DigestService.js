@@ -131,6 +131,10 @@ service.digestDiscussionPost = async (post, ignoreFlair) => {
   } catch (err) {
     logger.warn('issue trying to get malDetails: ', err)
   }
+  if (!anilistId) {
+    logger.warn(`Could not parse anilist id for show: ${post.title} href: ${post.url}`)
+    return false
+  }
   const anilistDetails = await anilistClient.media.anime(anilistId)
   await sleep(1000) // until we get a anilist service, add rate limit protection here
   if (!anilistDetails || !episode) {
