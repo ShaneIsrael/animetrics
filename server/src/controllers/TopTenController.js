@@ -11,7 +11,7 @@ controller.getYearlyTopTen = async (req, res, next) => {
     if (isNaN(year)) return res.status(400).send('year must be a number')
     if (typeof scoreType !== 'string') return res.status(400).send('scoreType must be a string')
     if (['karma', 'poll', 'ral'].indexOf(scoreType) === -1) return res.status(400).send('Invalid score type given')
-    if ([2018, 2019].indexOf(Number(year)) === -1) return res.status(400).send('Invalid year given')
+    if ([2018, 2019, 2020].indexOf(Number(year)) === -1) return res.status(400).send('Invalid year given')
 
     if (scoreType === 'karma') {
       const results = await getYearlyTopTenAnimeByKarma(year)
