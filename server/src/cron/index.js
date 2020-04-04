@@ -72,9 +72,9 @@ async function generateDiscussionResults() {
   }
 }
 async function getDiscussionsAndPopulate() {
-  const psDiscussions = await fetchDiscussions.fetch()
-  const rApiDiscussions = await fetchDiscussions.fetchReddit()
-  const discussions = psDiscussions.concat(rApiDiscussions)
+  //const psDiscussions = [] //await fetchDiscussions.fetch()
+ // const rApiDiscussions = await fetchDiscussions.fetchReddit()
+  const discussions = await fetchDiscussions.fetchReddit()//psDiscussions.concat(rApiDiscussions)
   if (discussions) {
     for (const discussion of discussions) {
       const createdDt = moment.utc(discussion.created_utc)
@@ -84,10 +84,14 @@ async function getDiscussionsAndPopulate() {
       if (createdDt.isSameOrBefore(dt10MinsAgo)) {
         try {
           logger.info(`digesting ${discussion.title}`)
-          await digestDiscussionPost(discussion)
+          const {result, reason} = await digestDiscussionPost(discussion)
+	  if (!result) {
+	    logger.info(`Failed to digest ${discussion.title}, ${reason}`)
+	  } else {
+	    logger.info(`Successfully digested ${discussion.title}`)
+	  }
           // give db time to close so we don't get duplicate results
           await sleep(1000)
-          logger.info(`finishing digesting ${discussion.title}`)
         } catch (err) {
           logger.error(err)
         }
@@ -116,7 +120,7 @@ async function init() {
   try {
     if (environment === 'prod') {
       logger.info('beginning cron jobs')
-      await authTvDb()
+     // await authTvDb()
       logger.info('tvdb auth successful')
       logger.info('starting cron jobs...')
       // Every 15 minutes | Get Episode Discussions and populate data
@@ -163,7 +167,7 @@ async function init() {
       logger.info('Running in dev mode, cron jobs halted.')
     }
   } catch (err) {
-    // console.log(err)
+    console.log(err)
     logger.error(err)
   }
 }

@@ -64,7 +64,7 @@ module.exports = {
     const posts = await r
       .getSubreddit('anime')
       .search({
-        query: '%episode%discussion',
+        query: 'episode discussion',
         limit: 1000,
         time: 'week',
         sort: 'relevance',

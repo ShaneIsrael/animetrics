@@ -106,17 +106,18 @@ function parsePollUrl(text) {
  * @param {Object} post A reddit discussion post object
  */
 service.digestDiscussionPost = async (post, ignoreFlair) => {
-  if (post.author !== 'AutoLovepon') return false
-  if (!ignoreFlair && post.link_flair_text && post.link_flair_text !== 'Episode') return false
-  if (post.title.indexOf('Megathread') !== -1) return false
-  if (post.title.indexOf('Episode') === -1) return false
+  if (post.author.name !== 'AutoLovepon') return {result: false, reason: `Incorrect Author [${post.author.name}]`}
+  if (post.selftext === '[removed]') return {result: false, reason: 'Removed'}
+  if (!ignoreFlair && post.link_flair_text && post.link_flair_text !== 'Episode') return {result: false, reason: 'Invalid Flair'}
+  if (post.title.indexOf('Megathread') !== -1) return {result: false, reason: 'Is Megathread'}
+  if (post.title.indexOf('Episode') === -1) return {result: false, reason: 'Episode not in title'}
 
   let discussion = await EpisodeDiscussion.findOne({
     where: { post_id: post.id },
   })
   if (discussion) {
     logger.info(`discussion ${post.id} already digested, ignoring.`)
-    return false
+    return {result: false, reason: 'Already Digested'}
   }
   // logger.info(`Digesting: ${post.title}`)
 
@@ -133,16 +134,16 @@ service.digestDiscussionPost = async (post, ignoreFlair) => {
   }
   if (!anilistId) {
     logger.warn(`Could not parse anilist id for show: ${post.title} href: ${post.url}`)
-    return false
+    return {result: false, reason: 'Unable to parse Anilist id'}
   }
   const anilistDetails = await anilistClient.media.anime(anilistId)
   await sleep(1000) // until we get a anilist service, add rate limit protection here
   if (!anilistDetails || !episode) {
     logger.error(`Could not parse discussion [${post.id}] anilistId=${anilistId} episode=${episode}`)
-    return false
+    return {result: false, reason: 'Could not parse discussion'}
   }
   // don't create discussions for filler episodes such as 5.5
-  if (!Number.isInteger(Number(episode))) return false
+  if (!Number.isInteger(Number(episode))) return {result: false, reason: 'Filler Episode or Extra'}
 
   const showTitle = anilistDetails.title.userPreferred
 
@@ -226,7 +227,7 @@ service.digestDiscussionPost = async (post, ignoreFlair) => {
     }
   }
   postTelegramDiscussion(showRow, episode, post.id, posterArt, anilistId, malId)
-  return true
+  return {result: true}
 }
 
 
