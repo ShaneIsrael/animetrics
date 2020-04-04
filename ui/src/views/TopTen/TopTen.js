@@ -68,7 +68,7 @@ function createTopFiveCards(topFiveResults, type) {
 const TopFive = () => {
   const classes = useStyles()
 
-  const [selectedYear, setSelectedYear] = React.useState(2019)
+  const [selectedYear, setSelectedYear] = React.useState(2020)
   const [selectedScoreType, setSelectedScoreType] = React.useState('karma')
   const [topFiveCards, setTopFiveCards] = React.useState([])
 
