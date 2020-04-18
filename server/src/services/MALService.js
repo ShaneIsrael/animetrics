@@ -10,12 +10,14 @@ const mal = new Jikan()
 const sleep = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds))
 
 service.findAnime = async (id) => {
+  if (!id) return null
   const anime = await mal.findAnime(id)
   if (!anime.request_cached) await sleep(2000)
   return anime
 }
 
 service.searchAnime = async (title) => {
+  if (!title) return null
   const result = await mal.search('anime', title)
   if (!result.request_cached) await sleep(2000)
   return result
