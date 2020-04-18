@@ -10,11 +10,23 @@ module.exports = class Request {
         var res = await fetch(this.createUrl(args, params))
         var data = await res.json()
         if (res.status !== 200) {
-          let err = new Error(data.error)
-          err.status = res.status
-          err.trace = res.trace
-          err.baseURL = this.baseURL
-          throw err
+	  if (data.error || data.message) {
+            let err = new Error(data.error || data.message)
+            err.status = res.status
+            err.trace = res.trace
+            err.baseURL = this.baseURL
+            err.args = args
+	    err.params = params
+            throw err
+	  } else {
+	    let err = new Error(JSON.stringify(data))
+	    err.status = res.status
+	    err.trace = res.trace
+	    err.baseURL = this.baseURL
+            err.args = args
+	    err.params = params
+	    throw err
+	  }
         }
         else return data
     }

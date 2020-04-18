@@ -118,9 +118,17 @@ async function updateRalScores() {
 
 async function init() {
   try {
+    if (environment === 'prod'){
+      await authTvDb()
+    }
+  }
+  catch (err) {
+    logger.error(`unable to auth with tvdb: ${err.message}`)
+  }
+  try {
     if (environment === 'prod') {
       logger.info('beginning cron jobs')
-     // await authTvDb()
+      //await authTvDb()
       logger.info('tvdb auth successful')
       logger.info('starting cron jobs...')
       // Every 15 minutes | Get Episode Discussions and populate data

@@ -33,7 +33,7 @@ service.getReddadzWeeklyKarmaRanks = async () => {
       if (err) reject(err)
       resolve(data)
     }))
-    const results = {}
+    const results = {2019: {}, 2020: {}, 2021: {}}
     for (const d of data.Contents) {
       let { Key } = d
       const url = `https://cdn.animetrics.co/${Key}`
