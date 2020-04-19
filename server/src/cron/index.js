@@ -131,6 +131,7 @@ async function init() {
         await updatePosters()
         await fetchAssets.fetch()
         await pollFixer.init()
+	logger.info('--- Finished Discussion Populate and Asset Update jobs ---')
       })
       // Every Hour | Check for unset ral scores and update them
       cron.schedule('0 0 * * * *', async () => {
