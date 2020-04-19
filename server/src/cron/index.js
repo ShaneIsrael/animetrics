@@ -33,12 +33,14 @@ async function updatePosters() {
         const resp = await anilistClient.media.anime(asset.Show.anilist_id)
         art = resp.coverImage.large ? resp.coverImage.large : resp.coverImage.medium
       }
-      if (!art && asset.Show.tvdb_id && asset.Show.tvdb_id !== -1) {
-        art = await getSeriesPoster(asset.Show.tvdb_id)
-      }
+      //if (!art && asset.Show.tvdb_id && asset.Show.tvdb_id !== -1) {
+      //  art = await getSeriesPoster(asset.Show.tvdb_id)
+      //}
       if (art) {
         asset.poster_art = art
         asset.save()
+      } else {
+        logger.error(`temp error - No Asset Art Found - ShowId=${asset.Show.id} AssetId=${asset.id} ShowTitle=${asset.Show.title}`)
       }
     } catch (err) {
       logger.error(err)
@@ -118,25 +120,14 @@ async function updateRalScores() {
 
 async function init() {
   try {
-    if (environment === 'prod'){
-      await authTvDb()
-    }
-  }
-  catch (err) {
-    logger.error(`unable to auth with tvdb: ${err.message}`)
-  }
-  try {
     if (environment === 'prod') {
-      logger.info('beginning cron jobs')
-      //await authTvDb()
-      logger.info('tvdb auth successful')
       logger.info('starting cron jobs...')
       // Every 15 minutes | Get Episode Discussions and populate data
       cron.schedule('0 */10 * * * *', async () => {
         logger.info('--- Starting Discussion Populate Job ---')
         await generateDiscussionResults()
         await getDiscussionsAndPopulate()
-        await updateTvDbIds()
+       // await updateTvDbIds()
         await updatePosters()
         await fetchAssets.fetch()
         await pollFixer.init()
@@ -163,14 +154,14 @@ async function init() {
       })
 
       // Every 6 Hours | Refresh with TvDb
-      cron.schedule('0 0 */6 * * *', async () => {
-        logger.info('--- Starting Refresh TVDB Auth Token Job ---')
-        try {
-          await refreshTvDb()
-        } catch (err) {
-          logger.error(err)
-        }
-      })
+      //cron.schedule('0 0 */6 * * *', async () => {
+      //  logger.info('--- Starting Refresh TVDB Auth Token Job ---')
+      //  try {
+      //    await refreshTvDb()
+      //  } catch (err) {
+      //    logger.error(err)
+      //  }
+      //})
     } else {
       logger.info('Running in dev mode, cron jobs halted.')
     }
