@@ -21,7 +21,6 @@ const {
 } = require('../models')
 
 const logger = require('../logger')
-const { digestDiscussionPost } = require('.')
 const anilistClient = new Anilist()
 
 moment.updateLocale('en', {
