@@ -118,7 +118,7 @@ service.submitDiscussion = async (postId) => {
     return `Failed to digest: ${digestResult.reason}`
   } catch(err) {
     logger.error(err)
-    return "Unable to digest that discussion, is it a valid discussion id?"
+    return `Unable to digest that discussion, is it a valid discussion id? ${postId}\n\n${err.message}`
   }
 }
 
