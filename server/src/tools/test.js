@@ -38,8 +38,18 @@ async function test() {
 }
 // test()
 
-async function testAnilist() {
-  const anilistDetails = await aniClient.media.anime(106479)
-  console.log(anilistDetails)
+// async function testAnilist() {
+//   const anilistDetails = await aniClient.media.anime(106479)
+//   console.log(anilistDetails)
+// }
+// testAnilist()
+
+async function test2() {
+  try {
+    const post = await fetchDiscussions.getSubmission("hcqnym")
+    console.log(post)
+  } catch (err) {
+    console.log(err)
+  }
 }
-testAnilist()
+test2()
