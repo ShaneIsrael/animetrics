@@ -6,6 +6,7 @@ const controller = {}
 controller.submitDiscussion = async (req, res, next) => {
   try {
     const { id } = req.body
+    if (!id) return res.status(400).send('id must be supplied')
     const response = await submitDiscussion(id)
     res.status(200).send(response)
   } catch (err) {
