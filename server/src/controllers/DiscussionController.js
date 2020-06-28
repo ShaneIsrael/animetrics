@@ -1,6 +1,17 @@
-const { getTodaysDiscussions, getRecentDiscussions, getDiscussionsByPage } = require('../services')
+const { getTodaysDiscussions, getRecentDiscussions, getDiscussionsByPage, submitDiscussion } = require('../services')
 
 const controller = {}
+
+
+controller.submitDiscussion = async (req, res, next) => {
+  try {
+    const { id } = req.body
+    const response = await submitDiscussion(id)
+    res.status(200).send(response)
+  } catch (err) {
+    next(err)
+  }
+}
 
 /**
  * Gets discusssions that were created today

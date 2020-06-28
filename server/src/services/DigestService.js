@@ -4,6 +4,7 @@ const Anilist = require('anilist-node')
 const Telegraf = require('telegraf')
 
 const { environment } = require('../config')
+const { getSubmission } = require('../fetch/fetchDiscussions')
 const telegramConfig = require('../config')[environment].telegram
 const bot = new Telegraf(telegramConfig.ANIMETRICS_DISCUSSION_BOT_TOKEN)
 
@@ -20,6 +21,7 @@ const {
 } = require('../models')
 
 const logger = require('../logger')
+const { digestDiscussionPost } = require('.')
 const anilistClient = new Anilist()
 
 moment.updateLocale('en', {
@@ -101,6 +103,25 @@ function parsePollUrl(text) {
   if (url && url[0].indexOf('/r') >= 0) return null
   return url ? url[0] : null
 }
+
+/**
+ * Takes a reddit discussion post id and digests it.
+ * @param {string} postId A reddit post id
+ */
+service.submitDiscussion = async (postId) => {
+  try {
+    const post = await getSubmission(postId)
+    const digestResult = await digestDiscussionPost(post)
+    if (digestResult.result === true) {
+      return "Discussion digested successfully!"
+    }
+    return `Failed to digest: ${digestResult.reason}`
+  } catch(err) {
+    logger.error(err)
+    return "Unable to digest that discussion, is it a valid discussion id?"
+  }
+}
+
 /**
  * Digests a discussion post and stores in the database
  * @param {Object} post A reddit discussion post object
