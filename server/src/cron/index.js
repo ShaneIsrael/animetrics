@@ -68,7 +68,9 @@ async function generateDiscussionResults() {
       try {
         await createDiscussionResult(link)
       } catch (err) {
-        logger.error(err)
+       //logger.error(`failed for ${link.EpisodeDiscussion.post_title} json=${JSON.stringify(link)}`) 
+       logger.error(err)
+      
       }
     }
   }
