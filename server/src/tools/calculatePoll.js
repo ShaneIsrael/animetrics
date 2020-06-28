@@ -1,5 +1,6 @@
 const _ = require('lodash')
 const { Show, RedditUserScore } = require('../models')
+const logger = require('../logger')
 
 module.exports = {
   /**
@@ -11,8 +12,7 @@ module.exports = {
     if (!poll) return [0, 0, 'no-result']
     let total = 0
     const keys = Object.keys(poll)
-
-    if (_.difference(keys, ['Excellent', 'Great', 'Good', 'Bad', 'Mediocre']).length === 0) {
+    if (_.difference(keys, ['Excellent', 'Great', 'Good', 'Mediocre', 'Bad']).length === 0 || _.difference(keys, ['Excellent', 'Great', 'Good', 'Medicore', 'Bad']).length === 0) {
       let weighted = 0
       for (const key of keys) {
         let value = poll[key]
@@ -30,6 +30,9 @@ module.exports = {
           break
         case 'Mediocre':
           weighted += value * 0.5
+          break
+	case 'Medicore':
+	  weighted += value * 0.7
           break
         case 'Bad':
           weighted += value * 0.2
@@ -59,6 +62,7 @@ module.exports = {
       }
       return [((poll.Like / total) * 10).toFixed(2), total, 'simple']
     }
+    logger.error(`Unknown Poll Type: ${keys}`)
     return null
   },
   /**

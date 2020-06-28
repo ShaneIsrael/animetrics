@@ -82,11 +82,13 @@ module.exports = {
             logger.info('scraping poll data and generating result...')
             pollDetails = await scrapePollData(post_poll_url)
             const pollResult = calculatePoll.calculateRating(pollDetails)
-            poll.poll = pollDetails
-            poll.score = pollResult[1] === 0 ? 0 : pollResult[0]
-            poll.votes = pollResult[1]
-            poll.save()
-            logger.info(pollDetails)
+            if (pollResult) {
+	      poll.poll = pollDetails
+              poll.score = pollResult[1] === 0 ? 0 : pollResult[0]
+              poll.votes = pollResult[1]
+              poll.save()
+              logger.info(pollDetails)
+	    }
           }
         }
         catch (err) {

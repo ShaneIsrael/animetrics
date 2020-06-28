@@ -27,6 +27,7 @@ moment.updateLocale('en', {
 const sleep = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds))
 
 async function scrapePollData(url) {
+  url = url.replace('/r', '')
   const html = (await axios.get(`${url}/r`)).data
   const $ = cheerio.load(html)
   const results = {};
@@ -218,7 +219,7 @@ service.createDiscussionResult = async (link) => {
       },
     })
     let rpr
-    if (!hasPollResult) {
+    if (!hasPollResult && pollResult) {
       logger.info('creating poll result...')
       rpr = await RedditPollResult.create({
         showId: link.Show.id,

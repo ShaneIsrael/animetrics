@@ -69,7 +69,7 @@ service.getYearlyTopTenAnimeByRedditScore = async (year) => {
   })
   
   for (const r of results) {
-    if (r.EpisodeDiscussionResult && r.RedditPollResult.votes >= 50) {
+    if (r.EpisodeDiscussionResult && r.RedditPollResult && r.RedditPollResult.votes >= 50) {
       const show = r.EpisodeDiscussionResult.Show.title
       if (animeResults[show]) {
         animeResults[show].entries.push(r)

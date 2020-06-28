@@ -1,8 +1,10 @@
 const service = {}
 
 const { environment } = require('../config')
+const logger = require('../logger')
 const Jikan = (environment === 'dev' ? require('jikan-node') : require('../Jikan'))
-// const Jikan = require('jikan-node')
+
+//const Jikan = require('jikan-node')
 
 
 const mal = new Jikan()
@@ -11,9 +13,14 @@ const sleep = (milliseconds) => new Promise((resolve) => setTimeout(resolve, mil
 
 service.findAnime = async (id) => {
   if (!id) return null
-  const anime = await mal.findAnime(id)
-  if (!anime.request_cached) await sleep(2000)
-  return anime
+  try {
+    const anime = await mal.findAnime(id)
+    if (!anime.request_cached) await sleep(2000)
+    return anime
+  } catch(err) {
+    logger.error(err)
+    return {}
+  }
 }
 
 service.searchAnime = async (title) => {
