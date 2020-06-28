@@ -110,7 +110,7 @@ function parsePollUrl(text) {
 service.submitDiscussion = async (postId) => {
   try {
     const post = await getSubmission(postId)
-    const digestResult = await service.digestDiscussionPost(post[0])
+    const digestResult = await service.digestDiscussionPost(post)
     if (digestResult.result === true) {
       return "Discussion digested successfully!"
     }
