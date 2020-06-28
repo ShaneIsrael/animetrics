@@ -128,7 +128,7 @@ service.submitDiscussion = async (postId) => {
 service.digestDiscussionPost = async (post, ignoreFlair) => {
   if (post.author.name !== 'AutoLovepon') return {result: false, reason: `Incorrect Author [${post.author.name}]`}
   if (post.selftext === '[removed]') return {result: false, reason: 'Removed'}
-  if (!ignoreFlair && post.link_flair_text && post.link_flair_text !== 'Episode') return {result: false, reason: 'Invalid Flair'}
+  if (!ignoreFlair && post.link_flair_text && (post.link_flair_text !== 'Episode' || post.link_flair_text !== 'Episode - FINAL')) return {result: false, reason: 'Invalid Flair'}
   if (post.title.indexOf('Megathread') !== -1) return {result: false, reason: 'Is Megathread'}
   if (post.title.indexOf('Episode') === -1) return {result: false, reason: 'Episode not in title'}
 
