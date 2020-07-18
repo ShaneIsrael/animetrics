@@ -49,7 +49,7 @@ app.use((err, req, res, next) => {
   logger.error(`${err.status || 500} - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.headers['x-real-ip']} - ${err.stack}`)
   // This will get passed back to the user as a generic server error
   // message for caught errors.
-  res.status(500).send('Unexpected server error occurred.')
+  res.status(500).send(err.message || 'Unexpected server error occurred.')
   next()
 })
 
