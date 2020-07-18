@@ -1,9 +1,11 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/styles'
-import { ExpansionPanel, ExpansionPanelDetails, ExpansionPanelSummary, Typography} from '@material-ui/core'
+import { ExpansionPanel, ExpansionPanelDetails, ExpansionPanelSummary, Typography, Grid, Button} from '@material-ui/core'
 import { LazyLoadImage } from 'components'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import { ResourceService } from 'services'
+import { SubmitRWC } from 'components/Dialog';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -27,6 +29,7 @@ function getSeason(season) {
 const ReddadzWeeklyCharts = (props) => {
   const classes = useStyles()
   const [chartData, setChartData] = React.useState(null)
+  const [submitRWCOpen, setSubmitRWCOpen] = React.useState(false)
 
   React.useEffect(() => {
     async function fetch() {
@@ -40,21 +43,25 @@ const ReddadzWeeklyCharts = (props) => {
     if(!chartData) fetch()
   })
 
+  const handleSubmitRWCClose = () => {
+    setSubmitRWCOpen(false)
+  }
 
+  // eslint-disable-next-line react/no-multi-comp
   function createExpansionPanel(title, imageUrl) {
     return (
       <ExpansionPanel key={title}>
         <ExpansionPanelSummary
-          expandIcon={<ExpandMoreIcon />}
           aria-controls={`${title}-content`}
+          expandIcon={<ExpandMoreIcon />}
           id={`${title}-header`}
         >
           <Typography className={classes.heading}>{title}</Typography>
         </ExpansionPanelSummary>
         <ExpansionPanelDetails>
           <LazyLoadImage 
-            src={imageUrl}
             alt={`${title} Chart Image`}
+            src={imageUrl}
             width="100%"
           />
         </ExpansionPanelDetails>
@@ -96,7 +103,29 @@ const ReddadzWeeklyCharts = (props) => {
 
   return (
     <div className={classes.root}>
-      {panels}
+      <SubmitRWC
+        handleClose={handleSubmitRWCClose}
+        open={submitRWCOpen}
+      />
+      <Grid
+        container
+        justify="left"
+        spacing={4}
+      >
+        <Grid item xs={4}>
+          <Button
+            variant="outlined"
+            color="default"
+            startIcon={<CloudUploadIcon />}
+            onClick={() => setSubmitRWCOpen(true)}
+          >
+            Upload Chart
+          </Button>
+        </Grid>
+        <Grid item xs={12}>
+          {panels}
+        </Grid>
+      </Grid>
     </div>
   )
 }
