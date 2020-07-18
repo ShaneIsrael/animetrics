@@ -256,7 +256,6 @@ export default function SubmitRWC(props) {
                             <MenuItem value={11}>11</MenuItem>
                             <MenuItem value={12}>12</MenuItem>
                             <MenuItem value={13}>13</MenuItem>
-                            <MenuItem value={14}>14</MenuItem>
                           </Select>
                         </FormControl>
                       }
