@@ -165,6 +165,8 @@ service.digestDiscussionPost = async (post, ignoreFlair) => {
   // don't create discussions for filler episodes such as 5.5
   if (!Number.isInteger(Number(episode))) return {result: false, reason: 'Filler Episode or Extra'}
 
+  if (!anilistDetails.title) return {result: false, reason: `No anilist title available ${anilistId}`}
+  
   const showTitle = anilistDetails.title.userPreferred
 
   // Lookup show in the database
