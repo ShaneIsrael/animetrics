@@ -131,7 +131,7 @@ service.digestDiscussionPost = async (post, ignoreFlair) => {
   if (!ignoreFlair && post.link_flair_text && (post.link_flair_text !== 'Episode' && post.link_flair_text !== 'Episode - FINAL')) return {result: false, reason: 'Invalid Flair'}
   if (post.title.indexOf('Megathread') !== -1) return {result: false, reason: 'Is Megathread'}
   if (post.title.indexOf('Episode') === -1) return {result: false, reason: 'Episode not in title'}
-  if (post.title.indexOf('[Rewatcher thread]')) return {result: false, reason: 'Rewatcher only thread'}
+  if (post.title.indexOf('[Rewatcher thread]') >= 0) return {result: false, reason: 'Rewatcher only thread'}
 
   let discussion = await EpisodeDiscussion.findOne({
     where: { post_id: post.id },
