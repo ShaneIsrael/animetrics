@@ -32,7 +32,7 @@ service.getRecentDiscussions = async () => {
   const discussions = await EpisodeDiscussion.findAll({
     order: [['post_created_dt', 'DESC']],
     include: [{ model: Show, include: [Asset] }],
-    limit: 15,
+    limit: 30,
   })
   return discussions
 }
