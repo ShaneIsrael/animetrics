@@ -145,8 +145,6 @@ service.getResultsByWeek = async (id) => {
       let prevPosition = 0
       for (const prl of previousResultLinks) {
         if (rl.showId === prl.showId) {
-          logger.info(prl.id)
-          console.log(prl.id)
           resultObjects[rl.showId].previous = {
             show: prl.Show.dataValues,
             assets: {
