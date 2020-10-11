@@ -60,18 +60,22 @@ async function generateDiscussionResults() {
     },
   )
   for (const link of links) {
-    const createDt = moment.utc(link.EpisodeDiscussion.post_created_dt, 'YYYY-MM-DD HH:mm:ss')
-    const dt48hoursAgo = moment.utc().subtract(48, 'hours')
-
-    if (createDt.isSameOrBefore(dt48hoursAgo)) {
-      logger.info(`Creating discussion result for: ${link.EpisodeDiscussion.post_title}`)
-      try {
-        await createDiscussionResult(link)
-      } catch (err) {
-       //logger.error(`failed for ${link.EpisodeDiscussion.post_title} json=${JSON.stringify(link)}`) 
-       logger.error(err)
-      
+    try {
+      const createDt = moment.utc(link.EpisodeDiscussion.post_created_dt, 'YYYY-MM-DD HH:mm:ss')
+      const dt48hoursAgo = moment.utc().subtract(48, 'hours')
+  
+      if (createDt.isSameOrBefore(dt48hoursAgo)) {
+        logger.info(`Creating discussion result for: ${link.EpisodeDiscussion.post_title}`)
+        try {
+          await createDiscussionResult(link)
+        } catch (err) {
+         //logger.error(`failed for ${link.EpisodeDiscussion.post_title} json=${JSON.stringify(link)}`) 
+         logger.error(err)
+        
+        }
       }
+    } catch (err) {
+      logger.error(`An error occurred with EpisodeResultLink=${link.id}`)
     }
   }
 }
