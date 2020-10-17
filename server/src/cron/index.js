@@ -75,7 +75,7 @@ async function generateDiscussionResults() {
         }
       }
     } catch (err) {
-      logger.error(`An error occurred with EpisodeResultLink=${link.id}`)
+      logger.error(`An error occurred with EpisodeResultLink=${link.id}\n${err}`)
     }
   }
 }
