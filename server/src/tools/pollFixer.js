@@ -39,7 +39,7 @@ module.exports = {
             logger.info(`no pull url, attempting to retrieve...`)
             const post = await fetchDiscussions.getSubmission(poll.EpisodeDiscussion.post_id)
             let pollUrl
-            if (post.selftext === '[removed]' || post.selftext.indexOf('youpoll.me') === -1) {
+            if (post.selftext === '[removed]' || post.selftext.indexOf('youpoll.me') === -1 || post_poll_url === 'https://youpoll.me//') {
               logger.info(`could not retrieve poll url, setting default values...`)
               // give it a default value so that future fixes don't pick this poll up
               poll.poll = {like: 0, dislike: 0}
