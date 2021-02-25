@@ -60,7 +60,6 @@ async function scrapePollData(url) {
     }
     return results
   } catch (err) {
-    logger.error(err)
     return null
   }
 }
