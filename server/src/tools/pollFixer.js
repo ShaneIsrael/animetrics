@@ -39,7 +39,7 @@ module.exports = {
             logger.info(`no pull url, attempting to retrieve...`)
             const post = await fetchDiscussions.getSubmission(poll.EpisodeDiscussion.post_id)
             let pollUrl
-            if (post.selftext === '[removed]' || post.selftext.indexOf('youpoll.me') === -1 || post_poll_url === 'https://youpoll.me//') {
+            if (post.selftext === '[removed]' || post.selftext.indexOf('youpoll.me') === -1) {
               logger.info(`could not retrieve poll url, setting default values...`)
               // give it a default value so that future fixes don't pick this poll up
               poll.poll = {like: 0, dislike: 0}
@@ -79,16 +79,25 @@ module.exports = {
           }
           let pollDetails = null
           if (post_poll_url) {
-            logger.info('scraping poll data and generating result...')
-            pollDetails = await scrapePollData(post_poll_url)
-            const pollResult = calculatePoll.calculateRating(pollDetails)
-            if (pollResult) {
-	      poll.poll = pollDetails
-              poll.score = pollResult[1] === 0 ? 0 : pollResult[0]
-              poll.votes = pollResult[1]
+            if (post_poll_url === 'https://youpoll.me//') {
+              // in some cases, discussions are not given a proper poll url so default to 0's
+              logger.info(`Invalid poll url ${post_poll_url}... Defaulting to 0 score.`)
+              poll.poll = {like: 0, dislike: 0}
+              poll.score = 0
+              poll.votes = 0
               poll.save()
-              logger.info(pollDetails)
-	    }
+            } else {
+              logger.info('scraping poll data and generating result...')
+              pollDetails = await scrapePollData(post_poll_url)
+              const pollResult = calculatePoll.calculateRating(pollDetails)
+              if (pollResult) {
+                poll.poll = pollDetails
+                poll.score = pollResult[1] === 0 ? 0 : pollResult[0]
+                poll.votes = pollResult[1]
+                poll.save()
+                logger.info(`Poll details: ${pollDetails}`)
+              }
+            }
           }
         }
         catch (err) {
