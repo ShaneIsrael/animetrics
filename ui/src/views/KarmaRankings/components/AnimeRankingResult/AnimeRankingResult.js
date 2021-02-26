@@ -229,6 +229,11 @@ const AnimeRankingResult = (props) => {
     return number
   }
 
+  scoreText = score
+  if (score >= 10000) {
+    scoreText = `${Math.round(score * 10) / 10}K`
+  }
+
   const posterUrl = result.assets && result.assets[0].s3_poster_compressed ? `https://cdn.animetrics.co/${result.assets[0].s3_poster_compressed}` : 'https://cdn.animetrics.co/animetrics/missing_poster_art.png'
   return (
     <Grid
@@ -345,7 +350,7 @@ const AnimeRankingResult = (props) => {
                       <Chip
                         avatar={<ScoreIcon className={classes.icon}/>}
                         className={clsx({[desktop.squareChip]: true, [classes.rankColor]: true})}
-                        label={score}
+                        label={scoreText}
                         onClick={() => openKarmaGraphModal(seasonId, showId)}
                         variant="outlined"
                       />
