@@ -231,7 +231,7 @@ const AnimeRankingResult = (props) => {
 
   let scoreText = score
   if (score >= 10000) {
-    scoreText = `${Math.round(score * 10) / 10}K`
+    scoreText = `${Math.round((score/1000) * 10) / 10}K`
   }
 
   const posterUrl = result.assets && result.assets[0].s3_poster_compressed ? `https://cdn.animetrics.co/${result.assets[0].s3_poster_compressed}` : 'https://cdn.animetrics.co/animetrics/missing_poster_art.png'
