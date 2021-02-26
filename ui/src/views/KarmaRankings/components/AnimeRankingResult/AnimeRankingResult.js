@@ -229,7 +229,7 @@ const AnimeRankingResult = (props) => {
     return number
   }
 
-  scoreText = score
+  let scoreText = score
   if (score >= 10000) {
     scoreText = `${Math.round(score * 10) / 10}K`
   }
