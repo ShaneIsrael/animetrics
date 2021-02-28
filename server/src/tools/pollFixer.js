@@ -59,9 +59,15 @@ module.exports = {
             }
             // attempt to get it from the table
             if (!pollUrl) {
-	      logger.info(`Attempt to get poll url from table for discussion ${poll.EpisodeDiscussion.post_id}`)
-	      if (post.selftext.split(`${poll.EpisodeDiscussion.episode}|`).length > 1) {
-                pollUrl = post.selftext.split(`${poll.EpisodeDiscussion.episode}|`)[1].split('[]')[1].split(')')[0].replace('(', '').replace('/r', '')
+              logger.info(`Attempt to get poll url from table for discussion ${poll.EpisodeDiscussion.post_id}`)
+              if (post.selftext.split(`${poll.EpisodeDiscussion.episode}|`).length > 1) {
+                const chunk1 = post.selftext.split(`${poll.EpisodeDiscussion.episode}|`)[1]
+                let chunk2, chunk3
+                if (chunk1) chunk2 = chunk1.split('[]')[1]
+                if (chunk2) chunk3 = chunk2.split(')')[0]
+                if (chunk3) {
+                  pollUrl = chunk3.replace('(', '').replace('/r', '')
+                }
               }
             }
             if (!pollUrl) {
