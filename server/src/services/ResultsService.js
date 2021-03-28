@@ -269,6 +269,9 @@ service.getResultsByOrderAndWeek = async (order, wk) => {
     results.push({
       title: show.title,
       episode_number: discussion.episode,
+      season_number: discussion.season,
+      mal_id: show.mal_id,
+      anilist_id: show.anilist_id,
       malScore: mal.score,
       ralScore: Number(epResult.ralScore),
       ups: epResult.ups,
@@ -279,6 +282,8 @@ service.getResultsByOrderAndWeek = async (order, wk) => {
       result_created_dt: epResult.createdAt,
       discussion_created_dt: discussion.post_created_dt,
       poster_art: `cdn.animetrics.com/${assets[0].s3_poster_compressed ? assets[0].s3_poster_compressed : assets[0].s3_poster}`,
+      banner_art: `cdn.animetrics.com/${assets[0].s3_banner}`,
+      avatar_art: `cdn.animetrics.com/${assets[0].s3_avatar}`,
     })
   }
   if (order === 'karma') {
