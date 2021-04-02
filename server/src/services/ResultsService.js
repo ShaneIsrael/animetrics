@@ -268,6 +268,9 @@ service.getResultsByOrderAndWeek = async (order, wk) => {
     if (order === 'poll' && redditPoll.votes < 50) continue
     results.push({
       title: show.title,
+      alt_title: show.alt_title,
+      english_title: show.english_title,
+      series_name: show.seriesName,
       episode_number: discussion.episode,
       season_number: discussion.season,
       mal_id: show.mal_id,
