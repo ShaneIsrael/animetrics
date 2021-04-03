@@ -265,7 +265,7 @@ service.getResultsByOrderAndWeek = async (order, wk) => {
     const assets = r.Show.Assets
     const discussion = r.EpisodeDiscussion
     const redditPoll = r.EpisodeDiscussion.RedditPollResult
-    if (order === 'poll' && redditPoll.votes < 50) continue
+    if (order === 'poll' && redditPoll && redditPoll.votes < 50) continue
     results.push({
       title: show.title,
       alt_title: show.alt_title,
