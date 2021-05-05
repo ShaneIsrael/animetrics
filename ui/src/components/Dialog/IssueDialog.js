@@ -148,7 +148,7 @@ export default function IssueDialog(props) {
             className={classes.textField}
             fullWidth
             id="descriptionField"
-            label={`Describe the issue ${description.length}/${maxLength}`}
+            label={`Describe the issue ${description.length}/${maxLength}, leave an email address if you would like a response back :)`}
             multiline
             onChange={handleDescribeIssueChange}
             rows={4}

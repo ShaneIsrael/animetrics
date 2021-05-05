@@ -90,7 +90,7 @@ export default function FeedbackDialog(props) {
           </DialogContentText>
           <TextField
             id="feedbackField"
-            label={`${text.length}/${maxLength}`}
+            label={`${text.length}/${maxLength}, leave an email address if you would like a response back :)`}
             variant="outlined"
             multiline
             rows={10}
