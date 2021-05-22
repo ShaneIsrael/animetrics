@@ -261,10 +261,13 @@ service.getResultsByOrderAndWeek = async (order, wk) => {
   for (const r of resultLinks) {
     const show = r.Show
     const epResult = r.EpisodeDiscussionResult
-    const mal = r.EpisodeDiscussionResult.MALSnapshot
-    const assets = r.Show.Assets
     const discussion = r.EpisodeDiscussion
-    const redditPoll = r.EpisodeDiscussion.RedditPollResult
+    if (!epResult) throw new Error(`No Episode Result found for ResultLink id=${r.id}`)
+    if (!discussion) throw new Error(`No Episode Discussion found for ResultLink id=${r.id}`)
+
+    const assets = show.Assets
+    const mal = epResult.MALSnapshot
+    const redditPoll = discussion.RedditPollResult
     if (order === 'poll' && redditPoll && redditPoll.votes < 50) continue
     results.push({
       title: show.title,
