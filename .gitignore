@@ -3,6 +3,8 @@ ui/.vscode
 
 node_modules/
 
+.DS_Store
+
 server/package-lock.json
 ui/package-lock.json
 
