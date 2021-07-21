@@ -27,14 +27,16 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const desktopYearSelectOptions = [
-  <MenuItem key={0} value={2020}>Top 10 of 2020</MenuItem>,
+  <MenuItem key={0} value={2018}>Top 10 of 2018</MenuItem>,
   <MenuItem key={1} value={2019}>Top 10 of 2019</MenuItem>,
-  <MenuItem key={2} value={2018}>Top 10 of 2018</MenuItem>,
+  <MenuItem key={2} value={2020}>Top 10 of 2020</MenuItem>,
+  <MenuItem key={3} value={2021}>Current 2021 Top</MenuItem>,
 ]
 const mobileYearSelectOptions = [
-  <option key={0} value={2020}>Top 10 of 2020</option>,
+  <option key={0} value={2018}>Top 10 of 2018</option>,
   <option key={1} value={2019}>Top 10 of 2019</option>,
-  <option key={2} value={2018}>Top 10 of 2018</option>,
+  <option key={2} value={2020}>Top 10 of 2020</option>,
+  <option key={3} value={2021}>Current 2021 Top</option>,
 ]
 
 const desktopScoreTypeSelectOptions = [
@@ -47,6 +49,9 @@ const mobileScoreTypeSelectOptions = [
   <option key={1} value={'poll'}>By Reddit Poll</option>,
   <option key={2} value={'ral'}>By RedditAnimeList</option>,
 ]
+
+desktopYearSelectOptions.reverse()
+mobileYearSelectOptions.reverse()
 
 
 function createTopFiveCards(topFiveResults, type) {
@@ -68,7 +73,7 @@ function createTopFiveCards(topFiveResults, type) {
 const TopFive = () => {
   const classes = useStyles()
 
-  const [selectedYear, setSelectedYear] = React.useState(2020)
+  const [selectedYear, setSelectedYear] = React.useState(2021)
   const [selectedScoreType, setSelectedScoreType] = React.useState('karma')
   const [topFiveCards, setTopFiveCards] = React.useState([])
 
