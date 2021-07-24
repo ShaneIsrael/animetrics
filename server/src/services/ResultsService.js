@@ -131,7 +131,7 @@ service.getResultsByWeek = async (id) => {
 
   const resultObjects = {}
   for (const rl of resultLinks) {
-    resultObjects[rl.showId] = {
+    resultObjects[rl.id] = {
       seasonId: week.seasonId,
       show: rl.Show.dataValues,
       assets: rl.Show.Assets,
@@ -149,7 +149,7 @@ service.getResultsByWeek = async (id) => {
       let prevPosition = 0
       for (const prl of previousResultLinks) {
         if (rl.showId === prl.showId) {
-          resultObjects[rl.showId].previous = {
+          resultObjects[rl.id].previous = {
             show: prl.Show.dataValues,
             assets: {
               season: prl.Show.Assets,
