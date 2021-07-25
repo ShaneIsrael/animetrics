@@ -1,6 +1,6 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-import { Alert } from '@material-ui/lab'
+import { Alert, AlertTitle } from '@material-ui/lab'
 import IconButton from '@material-ui/core/IconButton'
 import Collapse from '@material-ui/core/Collapse'
 import CloseIcon from '@material-ui/icons/Close'
@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
 export default function ActionAlert(props) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
-  const { type, message, color, closeable, variant } = props
+  const { type, message, color, closeable, variant, title } = props
 
   const action = (
     <IconButton
@@ -41,6 +41,7 @@ export default function ActionAlert(props) {
           action={closeable ? action : ''}
           color={color ? color : null}
         >
+          {title ? <AlertTitle>{title}</AlertTitle> : null}
           {message}
         </Alert>
       </Collapse>
