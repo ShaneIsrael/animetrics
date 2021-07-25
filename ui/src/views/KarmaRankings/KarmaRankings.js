@@ -329,10 +329,11 @@ const KarmaRankings = () => {
         >
           <ActionAlert
             closeable
-            message="You can click on the Karma and Poll scores to view a change over time graph."
+            message="with the IP Address ending in *.*.56.164, stop spamming me multiple times a day if an episodes karma is off by 1 (it's not) or there's some bug you found. Once is enough, I'll get to them as soon as I can usually within a day but sometimes people are busy. This is also completely funded out of my own pocket, so like chill please :)"
             type="info"
-            color="warning"
-            variant="outlined"
+            color="info"
+            title="Hey Guy"
+            // variant="outlined"
           />
           <Grid
             container
