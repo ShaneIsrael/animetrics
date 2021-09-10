@@ -5,7 +5,7 @@ node_modules/
 
 .DS_Store
 
-server/src/.env
+server/.env
 server/package-lock.json
 ui/package-lock.json
 
