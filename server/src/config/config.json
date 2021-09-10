@@ -1,0 +1,20 @@
+{
+  "dev": {
+    "dialect": "sqlite",
+    "storage": "/mnt/c/database/dev.db",
+    "logging": false
+  },
+  "prod": {
+    "dialect": "sqlite",
+    "storage": "/database/prod.db",
+    "logging": false
+  },
+  "test": {
+    "dialect": "sqlite",
+    "storage": "databases/test.db"
+  },
+  "production": {
+    "dialect": "sqlite",
+    "storage": "databases/prod.db"
+  }
+}
