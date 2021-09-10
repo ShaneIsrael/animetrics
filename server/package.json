@@ -37,9 +37,9 @@
   },
   "scripts": {
     "start": "export NODE_ENV=dev && node src/app.js",
-    "mac": "export NODE_ENV=mac && nodemon node src/app.js",
-    "local": "export NODE_ENV=development && ./node_modules/.bin/eslint ./src --ext .js && nodemon src/app.js ",
-    "local:lintless": "nodemon src/app.js",
+    "mac": "export NODE_ENV=mac && source .env && nodemon node src/app.js",
+    "local": "export NODE_ENV=dev && source .env && ./node_modules/.bin/eslint ./src --ext .js && nodemon src/app.js ",
+    "local:lintless": "export NODE_ENV=dev && source .env && nodemon src/app.js",
     "lint": "./node_modules/.bin/eslint ./src --ext .js",
     "lint:fix": "./node_modules/.bin/eslint ./src --ext .js --fix",
     "test": "export NODE_ENV=test && mocha --recursive --exit"
