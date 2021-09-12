@@ -153,8 +153,8 @@ service.digestDiscussionPost = async (post, ignoreFlair) => {
   } catch (err) {
     logger.warn('issue trying to get malDetails: ', err)
   }
-  if (!anilistId) {
-    logger.warn(`Could not parse anilist id for show: ${post.title} href: ${post.url}`)
+  if (!anilistId || isNaN(anilistId)) {
+    logger.warn(`Could not parse anilist id for show: ${post.title} href: ${post.url} anilistId: ${anilistId}`)
     return {result: false, reason: 'Unable to parse Anilist id'}
   }
   const anilistDetails = await anilistClient.media.anime(anilistId)
