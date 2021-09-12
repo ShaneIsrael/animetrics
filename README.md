@@ -1,3 +1,7 @@
+# animetrics
+
+https://animetrics.co
+=======
 # Animetrics
 
 Animetrics is a fully automated website that ranks currently airing anime series by their discussion data harvested from the /r/anime subreddit. It uses the Karma that discussions generate to rank anime on a weekly basis as well as scrapes pull results from those discussions.
