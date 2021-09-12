@@ -153,11 +153,11 @@ service.digestDiscussionPost = async (post, ignoreFlair) => {
   } catch (err) {
     logger.warn('issue trying to get malDetails: ', err)
   }
-  if (!anilistId || isNaN(anilistId)) {
+  if (!anilistId || isNaN(Number(anilistId))) {
     logger.warn(`Could not parse anilist id for show: ${post.title} href: ${post.url} anilistId: ${anilistId}`)
     return {result: false, reason: 'Unable to parse Anilist id'}
   }
-  const anilistDetails = await anilistClient.media.anime(anilistId)
+  const anilistDetails = await anilistClient.media.anime(Number(anilistId))
   await sleep(1000) // until we get a anilist service, add rate limit protection here
   if (!anilistDetails || !episode) {
     logger.error(`Could not parse discussion [${post.id}] anilistId=${anilistId} episode=${episode}`)
