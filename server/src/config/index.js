@@ -17,8 +17,8 @@ module.exports = {
   },
   dev: {
     telegram: {
-      ANIMETRICS_DISCUSSION_BOT_TOKEN: process.env.TELEGRAM_DISCUSSION_BOT_TOKEN,
-      discussion_feed_channel: process.env.TELEGRAM_DISCUSSION_FEED_CHANNEL
+      ANIMETRICS_DISCUSSION_BOT_TOKEN: process.env.TELEGRAM_DEV_DISCUSSION_BOT_TOKEN,
+      discussion_feed_channel: process.env.TELEGRAM_DEV_DISCUSSION_FEED_CHANNEL
     },
     reddit: {
       CLIENT_ID: process.env.REDDIT_CLIENT_ID,
@@ -65,8 +65,8 @@ module.exports = {
   },
   mac: {
     telegram: {
-      ANIMETRICS_DISCUSSION_BOT_TOKEN: process.env.TELEGRAM_DISCUSSION_BOT_TOKEN,
-      discussion_feed_channel: process.env.TELEGRAM_DISCUSSION_FEED_CHANNEL
+      ANIMETRICS_DISCUSSION_BOT_TOKEN: process.env.TELEGRAM_DEV_DISCUSSION_BOT_TOKEN,
+      discussion_feed_channel: process.env.TELEGRAM_DEV_DISCUSSION_FEED_CHANNEL
     },
     reddit: {
       CLIENT_ID: process.env.REDDIT_CLIENT_ID,
