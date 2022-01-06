@@ -3,7 +3,7 @@ const URL = require('url').URL
 
 module.exports = class Request {
     constructor(){
-        this.baseURL = "http://localhost:9001/public/v3"
+        this.baseURL = "http://localhost:9001/v3"
 	//this.baseURL = "https://api.jikan.moe/v3"
     }
     
